@@ -1,0 +1,14 @@
+<Project Sdk="Microsoft.NET.Sdk.Web">
+
+  <PropertyGroup>
+
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Bastilia.Rating.Database\Bastilia.Rating.Database.csproj" />
+    <ProjectReference Include="..\Bastilia.Rating.Domain\Bastilia.Rating.Domain.csproj" />
+    <ProjectReference Include="..\Bastilia.Rating.Portal.Client\Bastilia.Rating.Portal.Client.csproj" />
+    <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly.Server" />
+  </ItemGroup>
+
+</Project>

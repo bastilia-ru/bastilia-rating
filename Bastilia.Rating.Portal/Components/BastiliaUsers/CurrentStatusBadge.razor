@@ -1,0 +1,28 @@
+﻿@switch (Status)
+{
+    case BastiliaFinalStatus.Active:
+        <span class="badge bg-success">
+            <i class="bi bi-check-circle me-1"></i>Активный участник
+        </span>
+        break;
+    case BastiliaFinalStatus.Retired:
+        <span class="badge bg-secondary">
+            <i class="bi bi-clock-history me-1"></i>Ветеран
+        </span>
+        break;
+    case BastiliaFinalStatus.Mate:
+        <span class="badge bg-info">
+            <i class="bi bi-people me-1"></i>Соратник
+        </span>
+        break;
+    default:
+        <span class="badge bg-light text-dark">
+            <i class="bi bi-question-circle me-1"></i>Не определен
+        </span>
+        break;
+}
+
+@code {
+    [Parameter]
+    public BastiliaFinalStatus? Status { get; set; }
+}

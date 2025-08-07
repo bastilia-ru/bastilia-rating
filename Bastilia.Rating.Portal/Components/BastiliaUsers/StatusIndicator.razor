@@ -1,0 +1,29 @@
+﻿@if (Status == BastiliaFinalStatus.Active)
+{
+    <Badge Color="Success">
+        <i class="bi bi-check-circle"></i> Активный участник
+    </Badge>
+}
+else if (Status == BastiliaFinalStatus.Retired)
+{
+    <Badge Color="Secondary">
+        <i class="bi bi-clock-history"></i> Ветеран
+    </Badge>
+}
+else if (Status == BastiliaFinalStatus.Mate)
+{
+    <Badge Color="Info">
+        <i class="bi bi-people"></i> Соратник
+    </Badge>
+}
+else
+{
+    <Badge Color="Light" class="text-dark">
+        <i class="bi bi-question-circle"></i> Не определен
+    </Badge>
+}
+
+@code {
+    [Parameter]
+    public BastiliaFinalStatus Status { get; set; }
+}
