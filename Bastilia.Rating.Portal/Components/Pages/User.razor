@@ -1,0 +1,39 @@
+﻿@page "/member/{UserIdentificator}"
+@using Bastilia.Rating.Portal.Components.BastiliaUsers
+@inject IBastiliaMemberRepository Repository
+@inject NavigationManager NavigationManager
+
+<PageTitle>Профиль участника</PageTitle>
+
+@if (member == null)
+{
+    <LoadingSpinner />
+}
+else
+{
+    <BastiliaMemberCard Member="member" />
+}
+
+@code {
+    [Parameter]
+    public string UserIdentificator { get; set; } = null!;
+
+    private BastiliaMember? member;
+
+    protected override async Task OnParametersSetAsync()
+    {
+        if (int.TryParse(UserIdentificator, out var userId))
+        {
+            member = await Repository.GetByIdAsync(userId);
+        }
+        else
+        {
+            member = await Repository.GetByUserNameAsync(UserIdentificator);
+        }
+
+        if (member is null)
+        {
+            NavigationManager.NavigateTo("/404");
+        }
+    }
+}

@@ -1,24 +1,29 @@
-﻿using Bastilia.Rating.Domain;
+﻿using System.Linq.Expressions;
+using Bastilia.Rating.Domain;
 using Microsoft.EntityFrameworkCore;
 
 namespace Bastilia.Rating.Database;
 
 public class BastiliaMemberRepository(AppDbContext context) : IBastiliaMemberRepository
 {
-    public async Task<BastiliaMember?> GetByIdAsync(int userId)
+    public Task<BastiliaMember?> GetByIdAsync(int userId) => GetMemberImpl(u => u.JoinrpgUserId == userId);
+
+    public Task<BastiliaMember?> GetByUserNameAsync(string username) => GetMemberImpl(u => u.Username == username);
+
+    private async Task<BastiliaMember?> GetMemberImpl(Expression<Func<Entities.User, bool>> predicate)
     {
         var user = await context.Users
-            .Include(u => u.BastiliaStatuses)
-            .Include(u => u.ProjectAdmins)
-                .ThenInclude(pa => pa.Project)
-            .Include(u => u.Achievements)
-                .ThenInclude(a => a.Template)
-            .Include(u => u.Achievements)
-                .ThenInclude(a => a.GrantedByUser)
-            .Include(u => u.Achievements)
-                .ThenInclude(a => a.RemovedByUser)
-            .AsNoTracking()
-            .FirstOrDefaultAsync(u => u.JoinrpgUserId == userId);
+                    .Include(u => u.BastiliaStatuses)
+                    .Include(u => u.ProjectAdmins)
+                        .ThenInclude(pa => pa.Project)
+                    .Include(u => u.Achievements)
+                        .ThenInclude(a => a.Template)
+                    .Include(u => u.Achievements)
+                        .ThenInclude(a => a.GrantedByUser)
+                    .Include(u => u.Achievements)
+                        .ThenInclude(a => a.RemovedByUser)
+                    .AsNoTracking()
+                    .FirstOrDefaultAsync(predicate);
 
         if (user == null) return null;
 
@@ -58,4 +63,6 @@ public class BastiliaMemberRepository(AppDbContext context) : IBastiliaMemberRep
                 .ToList()
                 .AsReadOnly());
     }
+
+
 }
