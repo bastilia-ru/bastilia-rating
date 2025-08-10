@@ -18,6 +18,6 @@ jobs:
     uses: ./.github/workflows/deploy-common.yml
     with:
       deployVersion: latest 
-      environment: prod
+      environment: bastilia-rating-prod
       environment_url: https://rating.bastilia.ru
     secrets: inherit
