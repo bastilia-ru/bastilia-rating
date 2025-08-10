@@ -84,7 +84,7 @@ jobs:
 
             images:
             - name: ${APP_NAME}
-              newName: ${{ env.APP_IMAGE_ID }}
+              newName: ${REGISTRY_HOST}/${{ env.APP_IMAGE_ID }}
               newTag: ${{ env.APP_IMAGE_VERSION_WITH_DIGEST }}
 
             EOF

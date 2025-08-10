@@ -1,7 +1,7 @@
 apiVersion: policy/v1
 kind: PodDisruptionBudget
 metadata:
-  name: joinrpg-portal
+  name:  bastilia-rating
 spec:
   minAvailable: 1
   selector:
