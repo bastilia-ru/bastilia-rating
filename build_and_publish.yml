@@ -1,0 +1,95 @@
+name: Build and publish
+
+on:
+  pull_request:
+  merge_group:
+    branches:
+      - master
+  push:
+    branches:
+      - master
+    tags:
+      - v**
+  workflow_dispatch:
+
+env:
+  APP_NAME: bastilia-rating
+
+  DOTNET_NOLOGO: true
+  DOTNET_CLI_TELEMETRY_OPTOUT: true
+
+jobs:
+  build:
+    name: Build and publish
+    runs-on: ubuntu-24.04
+    permissions:
+      packages: write
+      checks: write
+      actions: write
+      statuses: write
+
+    steps:
+    - name: Checkout Repo
+      uses: actions/checkout@v4
+      with:
+        fetch-depth: 0  # Fetch the whole repo history
+
+    # TODO: Make GitHub Action from this script
+    - name: Git Version  # Fills env.CALCULATED_VERSION and env.CALCULATED_VERSION_IS_RELEASE
+      id: version
+      run:  iex ((New-Object System.Net.WebClient).DownloadString('https://raw.githubusercontent.com/AntonSmolkov/HandyPoshScripts/v1.0.2/DevOps/SemVerCalc_GitHubFlow_Actions.ps1'))
+      shell: pwsh
+      env:
+        REF_NAME: ${{ github.ref_name }}
+        REF_TYPE: ${{ github.ref_type }}
+
+    - name: Setup .NET
+      uses: actions/setup-dotnet@v4.3.1
+      with:
+        global-json-file: global.json
+
+    - name: Restore nuget dependencies cache
+      uses: actions/cache@v4
+      with:
+        path: ~/.nuget/packages
+        # Look to see if there is a cache hit for the corresponding requirements file
+        key: ${{ runner.os }}-nuget-${{ hashFiles('**/packages.lock.json') }}
+        restore-keys: |
+          ${{ runner.os }}-nuget
+
+ #temporary disable docker cache
+ #   - name: Restore docker images cache
+ #     uses: satackey/action-docker-layer-caching@v0.0.11
+ #     continue-on-error: true
+
+    - name: Restore
+      run: dotnet restore
+
+    - name: Format
+      run: dotnet format --no-restore --verify-no-changes --severity error
+
+    - name: Build
+      run: dotnet build -c Release --property:Version=${{ env.CALCULATED_VERSION }}
+
+    - name: Test
+      run: dotnet test -c Release --no-build --logger trx --results-directory ./TestResults
+
+    - name: Save test results to artifacts
+      uses: actions/upload-artifact@v4  # upload test results
+      if: success() || failure()        # run this step even if previous step failed
+      with:
+        name: test-results
+        path: TestResults
+
+    #Rest of the pipeline implies write api privileges and can't be run on PRs
+
+    - name: Log in to Yandex Container Registry
+      if: github.event_name != 'pull_request' && github.event_name != 'merge_group'
+      id: login-cr
+      uses: yc-actions/yc-cr-login@v3
+      with:
+        yc-sa-json-credentials: ${{ secrets.YANDEX_CR_SA_KEY_JSON }}
+
+    - name: Publish & push portal
+      if: github.event_name != 'pull_request' && github.event_name != 'merge_group'
+      run: dotnet publish --os linux --arch x64 -c Release --no-build /t:PublishContainer .\Bastilia.Rating.Portal\Bastilia.Rating.Portal.csproj -p:Version=${{ env.CALCULATED_VERSION }}
