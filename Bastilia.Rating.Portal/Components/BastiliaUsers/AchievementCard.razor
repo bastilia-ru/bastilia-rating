@@ -16,6 +16,9 @@
     [Parameter, EditorRequired]
     public MemberAchievement Achievement { get; set; } = null!;
 
+    [Parameter]
+    public bool ShowValue {get;set;} = false;
+
     private string GrantedDate =>
         Achievement.GrantedDate.ToString("d MMM yyyy", CultureInfo.GetCultureInfo("ru-RU"));
 }

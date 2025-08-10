@@ -82,7 +82,7 @@
                     @foreach (var achievement in Member.Achievements.OrderByDescending(a => a.NotExpired).ThenByDescending(a => a.GrantedDate))
                     {
                         <div class="col-md-6">
-                            <AchievementCard Achievement="achievement" />
+                            <AchievementCard Achievement="achievement" ShowValue=@Member.ParticipateInRating/>
                         </div>
                     }
                 </div>
