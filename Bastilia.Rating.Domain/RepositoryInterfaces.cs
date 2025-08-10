@@ -10,7 +10,7 @@ public interface IBastiliaMemberRepository
 
 public interface IBastiliaProjectRepository
 {
-    Task<BastiliaProject?> GetByIdAsync(int projectId);
+    Task<BastiliaProjectWithDetails?> GetByIdAsync(int projectId);
     Task<IReadOnlyCollection<BastiliaProject>> GetActiveProjects();
     Task<IReadOnlyCollection<BastiliaProject>> GetActualProjects();
 }

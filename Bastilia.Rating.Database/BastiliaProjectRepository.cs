@@ -2,19 +2,47 @@ namespace Bastilia.Rating.Database;
 
 internal class BastiliaProjectRepository(AppDbContext context) : IBastiliaProjectRepository
 {
-    public async Task<BastiliaProject?> GetByIdAsync(int projectId)
+    public async Task<BastiliaProjectWithDetails?> GetByIdAsync(int projectId)
     {
-        var project = await Query(p => p.BastiliaProjectId == projectId).FirstOrDefaultAsync();
+        var project = await Query(p => p.BastiliaProjectId == projectId)
+            .Include(p => p.AchievementTemplates)
+            .ThenInclude(p => p.Achievements)
+            .ThenInclude(p => p.User)
+            .FirstOrDefaultAsync();
 
         if (project == null) { return null; }
 
 
-        return ToProject(project);
+        return new BastiliaProjectWithDetails(
+           project.BastiliaProjectId,
+           project.ProjectName,
+           project.ProjectType,
+           project.BrandType,
+           project.OngoingProject,
+           project.ProjectOfTheYear,
+           project.JoinrpgProjectId,
+           project.KogdaIgraProjectId,
+           project.ProjectUri,
+           [.. project.ProjectAdmins.Select(pa => ToUserLink(pa.User))],
+           [.. project.AchievementTemplates.SelectMany(a => a.Achievements).Select(ToPma)]
+           );
     }
+
+
 
     public Task<IReadOnlyCollection<BastiliaProject>> GetActiveProjects() => GetProjectsByPredicate(p => p.EndDate == null);
 
     public Task<IReadOnlyCollection<BastiliaProject>> GetActualProjects() => GetProjectsByPredicate(p => p.EndDate == null || p.EndDate > DateTime.UtcNow.AddYears(-2));
+
+    private static ProjectMemberAchievement ToPma(Entities.Achievement a)
+    {
+        return new ProjectMemberAchievement(ToUserLink(a.User), a.OverrideName ?? a.Template.AchievementName, a.User.ParticipateInRating ? a.Template.AchievementRatingValue : null);
+    }
+
+    private static UserLink ToUserLink(Entities.User user)
+    {
+        return new UserLink(user.JoinRpgUserId, user.Slug, user.Username);
+    }
 
     private async Task<IReadOnlyCollection<BastiliaProject>> GetProjectsByPredicate(Expression<Func<Entities.BastiliaProject, bool>> predicate)
     {
@@ -45,7 +73,7 @@ internal class BastiliaProjectRepository(AppDbContext context) : IBastiliaProjec
             project.JoinrpgProjectId,
             project.KogdaIgraProjectId,
             project.ProjectUri,
-            [.. project.ProjectAdmins.Select(pa => new UserLink(pa.User.JoinRpgUserId, pa.User.Slug, pa.User.Username))]
+            [.. project.ProjectAdmins.Select(pa => ToUserLink(pa.User))]
             );
     }
 

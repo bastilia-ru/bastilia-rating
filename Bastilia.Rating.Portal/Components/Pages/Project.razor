@@ -1,41 +1,50 @@
 @page "/project/{projectId:int}"
+@using Bastilia.Rating.Portal.Components.BastiliaUsers
+@using Microsoft.AspNetCore.Components.QuickGrid
+
 @inject IBastiliaProjectRepository Repository
 @inject NavigationManager NavigationManager
 <PageTitle>Проект @project?.ProjectName</PageTitle>
-@if (project is null)
+@if (project is null || pmaItems is null)
 {
     <LoadingSpinner />
     return;
 }
 <h3>Проект @project.ProjectName</h3>
 <p>
-    @if(project.JoinrpgProjectId is not null)
-    {
-        <text>[<a href="https://joinrpg.ru/@project.JoinrpgProjectId/home">JoinRpg</a>] </text>
-    }
-    @if(project.KogdaIgraProjectId is not null)
-    {
-        <text>[<a href="https://kogda-igra.ru/game/@project.KogdaIgraProjectId">КогдаИгра</a>] </text>
-    }
-    @if (project.ProjectUri is not null)
-    {
-        <text>[<a href="@project.ProjectUri">Сайт</a>] </text>
-    }
+ <Bastilia.Rating.Portal.Components.BastiliaUsers.ProjectLinks Project="project" />
 </p>
+
+<QuickGrid Items="pmaItems" Class="table table-striped" Virtualize="false">
+    <TemplateColumn Context="item" Title="Имя" SortBy="@usernameSort">
+        <BastiliaUserLink  Member="@item.User"/>
+    </TemplateColumn>
+    <PropertyColumn Property="i => i.Name" Title="Достижение">
+    </PropertyColumn>
+    <PropertyColumn Property="i => i.Value" Title="Рейтинг" IsDefaultSortColumn="true" Sortable="true">
+    </PropertyColumn>
+</QuickGrid>
 
 @code {
     [Parameter]
     public int ProjectId { get; set; }
 
-    private BastiliaProject? project;
+    private BastiliaProjectWithDetails? project;
+    private IQueryable<ProjectMemberAchievement>? pmaItems;
+
+    private GridSort<ProjectMemberAchievement> usernameSort = GridSort<ProjectMemberAchievement>.ByDescending(x => x.User.UserName);
 
     protected override async Task OnParametersSetAsync()
     {
         project = await Repository.GetByIdAsync(ProjectId);
 
+
         if (project is null)
         {
             NavigationManager.NavigateTo("/404");
+        }
+        else {
+            pmaItems = project.ProjectMemberAchievements.AsQueryable();
         }
     }
 }

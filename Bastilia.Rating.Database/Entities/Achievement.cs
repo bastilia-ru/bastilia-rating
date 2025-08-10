@@ -1,4 +1,4 @@
-﻿namespace Bastilia.Rating.Database.Entities;
+namespace Bastilia.Rating.Database.Entities;
 
 public class Achievement
 {

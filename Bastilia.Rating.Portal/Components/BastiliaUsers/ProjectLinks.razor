@@ -1,0 +1,17 @@
+@if (Project.JoinrpgProjectId is not null)
+{
+    <text>[<a href="https://joinrpg.ru/@Project.JoinrpgProjectId/home">JoinRpg</a>] </text>
+}
+@if (Project.KogdaIgraProjectId is not null)
+{
+    <text>[<a href="https://kogda-igra.ru/game/@Project.KogdaIgraProjectId">КогдаИгра</a>] </text>
+}
+@if (Project.ProjectUri is not null)
+{
+    <text>[<a href="@Project.ProjectUri">Сайт</a>] </text>
+}
+
+@code {
+    [Parameter, EditorRequired]
+    public BastiliaProject Project { get; set; } = null!;
+}
