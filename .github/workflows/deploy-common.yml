@@ -13,7 +13,8 @@ on:
         type: string
 env:
   APP_NAME: bastilia-rating
-  REGISTRY_URL: "cr.yandex/crp54lmmh2i4829mf2rc"
+  APP_IMAGE_ID: "crp54lmmh2i4829mf2rc/bastilia-rating"
+  REGISTRY_HOST: cr.yandex
   #MIGRATOR_NAME: joinrpg-dal-migrate
 
 jobs:
@@ -39,14 +40,10 @@ jobs:
         run: |
           set -euxo pipefail
 
-          APP_REPOSITORY_ID=$(echo ${REGISTRY_URL}/${APP_NAME}  | tr '[A-Z]' '[a-z]')
-
           COMMON_IMAGE_VERSION=$(echo ${{ inputs.deployVersion }} | tr '[A-Z]' '[a-z]')
 
-          docker pull --quiet ${APP_REPOSITORY_ID}:${COMMON_IMAGE_VERSION} > /dev/null
-          APP_IMAGE_DIGEST=$(docker inspect --format='{{index .RepoDigests 0}}' ${APP_REPOSITORY_ID}:${COMMON_IMAGE_VERSION} | cut -d@ -f2)
-
-          echo "APP_IMAGE_ID=${APP_IMAGE_ID}" >> $GITHUB_ENV
+          docker pull --quiet ${REGISTRY_HOST}:${APP_IMAGE_ID}:${COMMON_IMAGE_VERSION} > /dev/null
+          APP_IMAGE_DIGEST=$(docker inspect --format='{{index .RepoDigests 0}}' ${REGISTRY_HOST}:${APP_IMAGE_ID}:${COMMON_IMAGE_VERSION} | cut -d@ -f2)
 
           #Having digest with version provides google/k8s-digester like experience and helps to avoid common pitfalls with "latest" tag
           echo "APP_IMAGE_VERSION_WITH_DIGEST=${COMMON_IMAGE_VERSION}@${APP_IMAGE_DIGEST}" >> $GITHUB_ENV
