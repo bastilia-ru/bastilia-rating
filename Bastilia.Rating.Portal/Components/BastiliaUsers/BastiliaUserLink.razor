@@ -2,14 +2,14 @@
 
 @if (Member.Slug is null)
 {
-    <a href="/member/@Member.JoinrpgUserId">@Member.Username</a>
+    <a href="/member/@Member.JoinrpgUserId">@Member.UserName</a>
 }
 else
 {
-    <a href="/member/@Member.Slug">@Member.Username</a>
+    <a href="/member/@Member.Slug">@Member.UserName</a>
 }
 
 @code {
     [Parameter, EditorRequired]
-    public BastiliaMember Member { get; set; } = null!;
+    public IUserLink Member { get; set; } = null!;
 }

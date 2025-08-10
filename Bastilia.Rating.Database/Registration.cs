@@ -1,4 +1,3 @@
-using Bastilia.Rating.Domain;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
@@ -11,6 +10,7 @@ namespace Bastilia.Rating.Database
         {
             services.AddJoinEfCoreDbContext<AppDbContext>(configuration, environment, "BastiliaRating");
             services.AddTransient<IBastiliaMemberRepository, BastiliaMemberRepository>();
+            services.AddTransient<IBastiliaProjectRepository, BastiliaProjectRepository>();
         }
     }
 }

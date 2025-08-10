@@ -1,0 +1,26 @@
+@switch (Type)
+{
+    case BrandType.Bastilia:
+        <span class="badge bg-success">
+            Бастилия и друзья
+        </span>
+        break;
+    case BrandType.PubliclySupported:
+        <span class="badge bg-success">
+            Поддерживаем проект
+        </span>
+        break;
+    case BrandType.PrivatelySupported:
+    case BrandType.JustTracked:
+        break;
+    default:
+        <span class="badge bg-light text-dark">
+            Не определен
+        </span>
+        break;
+}
+
+@code {
+    [Parameter]
+    public BrandType? Type { get; set; }
+}

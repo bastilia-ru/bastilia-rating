@@ -1,6 +1,3 @@
-using Microsoft.EntityFrameworkCore;
-using System.Linq.Expressions;
-
 namespace Bastilia.Rating.Database;
 
 public class BastiliaMemberRepository(AppDbContext context) : IBastiliaMemberRepository
@@ -34,7 +31,7 @@ public class BastiliaMemberRepository(AppDbContext context) : IBastiliaMemberRep
     {
         return new BastiliaMember(
             JoinrpgUserId: user.JoinRpgUserId,
-            Username: user.Username,
+            UserName: user.Username,
             AvatarUrl: user.AvatarUrl,
             Slug: user.Slug,
             ParticipateInRating: user.ParticipateInRating,

@@ -1,0 +1,33 @@
+@using Bastilia.Rating.Domain
+@using Microsoft.AspNetCore.Components.QuickGrid
+
+<QuickGrid Items="Projects" Class="table table-striped" Virtualize="false">
+    <TemplateColumn Context="project" Title="Название проекта" SortBy="@projectNameSort">
+        <a href="/project/@project.BastiliaProjectId">@project.ProjectName</a>
+    </TemplateColumn>
+    <TemplateColumn Context="project" Title="Тип">
+        <ProjectTypeBadge Type="project.ProjectType" />
+    </TemplateColumn>
+    <TemplateColumn Context="project" Title="Бренд">
+        <BrandBadge Type="project.BrandType" />
+    </TemplateColumn>
+    <TemplateColumn Context="project" Title="Глава/Координатор">
+        @foreach (var user in project.Coordinators)
+        {
+            <BastiliaUserLink Member="@user" />
+        }
+    </TemplateColumn>
+</QuickGrid>
+
+@code {
+    [Parameter, EditorRequired]
+    public IQueryable<BastiliaProject> Projects { get; set; }
+
+    GridSort<BastiliaProject> projectNameSort = GridSort<BastiliaProject>
+       .ByDescending(x => x.ProjectName);
+
+    GridSort<BastiliaMember> ratingSort = GridSort<BastiliaMember>
+        .ByDescending(x => x.IsActiveMember)
+        .ThenDescending(x => x.RatingValue);
+}
+

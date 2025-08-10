@@ -1,7 +1,7 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Diagnostics.HealthChecks;
 
-namespace JoinRpg.Portal.Infrastructure.HealthChecks;
+namespace Bastilia.Rating.Portal.Common;
 
 internal static class HealthChecks
 {

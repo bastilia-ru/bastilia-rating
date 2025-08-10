@@ -103,7 +103,7 @@
     public BastiliaMember Member { get; set; } = null!;
 
     private string AvatarUrl => Member.AvatarUrl ?? "default-avatar.png";
-    private string Username => Member.Username;
+    private string Username => Member.UserName;
     private int UserId => Member.JoinrpgUserId;
     private bool IsPresident => Member.IsPresident;
 }

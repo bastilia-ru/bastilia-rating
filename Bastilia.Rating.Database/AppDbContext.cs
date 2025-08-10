@@ -1,6 +1,5 @@
 using Bastilia.Rating.Database.Entities;
-using Bastilia.Rating.Domain;
-using Microsoft.EntityFrameworkCore;
+using BastiliaProject = Bastilia.Rating.Database.Entities.BastiliaProject;
 
 namespace Bastilia.Rating.Database;
 

@@ -1,7 +1,22 @@
 @page "/projects"
+@inject IBastiliaProjectRepository Repository
 <h3>Список проектов</h3>
-<p>Здесь будет список проектов</p>
 
-@code {
+@if (list is null)
+{
+    <LoadingSpinner />
+}
+else
+{
+    <Bastilia.Rating.Portal.Components.BastiliaUsers.ProjectList Projects="list" />
+}
 
+
+@code
+{
+    private IQueryable<BastiliaProject>? list;
+    protected override async Task OnInitializedAsync()
+    {
+        list = (await Repository.GetActualProjects()).AsQueryable();
+    }
 }

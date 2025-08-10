@@ -4,13 +4,13 @@ namespace Bastilia.Rating.Domain;
 // Domain Models
 public record BastiliaMember(
     int JoinrpgUserId,
-    string Username,
+    string UserName,
     string AvatarUrl,
     string? Slug,
     bool ParticipateInRating,
     IReadOnlyCollection<BastiliaStatusHistory> StatusHistory,
     IReadOnlyCollection<ProjectAdminInfo> HisProjects,
-    IReadOnlyCollection<MemberAchievement> Achievements)
+    IReadOnlyCollection<MemberAchievement> Achievements) : IUserLink
 {
     public BastiliaFinalStatus CurrentStatus { get; } = CalculateStatus(StatusHistory, Achievements);
 
@@ -24,7 +24,7 @@ public record BastiliaMember(
 
     public int? RatingValue { get; } = ParticipateInRating ? CalculateRating(Achievements) : null;
 
-    public IReadOnlyCollection<ProjectAdminInfo> HisActiveProjects { get; } = HisProjects.Where(p => p.IsActive).ToList();
+    public IReadOnlyCollection<ProjectAdminInfo> HisActiveProjects { get; } = [.. HisProjects.Where(p => p.IsActive)];
 
     private static int CalculateRating(IReadOnlyCollection<MemberAchievement> achievements)
     {

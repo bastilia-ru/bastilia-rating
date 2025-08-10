@@ -1,0 +1,33 @@
+@switch (Type)
+{
+    case ProjectType.MasteringGame:
+        <span class="badge bg-success">
+            Мастерение игры
+        </span>
+        break;
+    case ProjectType.NearRpgProject:
+        <span class="badge bg-success">
+            Ролевой проект
+        </span>
+        break;
+    case ProjectType.InternalProject:
+        <span class="badge bg-success">
+            Внутрибастильский проект
+        </span>
+        break;
+    case ProjectType.TeamPlaying:
+        <span class="badge bg-success">
+            Командный выезд
+        </span>
+        break;
+    case ProjectType.ActivityOnConvent:
+        <span class="badge bg-success">
+            Мероприятие на конвенте
+        </span>
+        break;
+
+}
+@code {
+    [Parameter]
+    public ProjectType? Type { get; set; }
+}

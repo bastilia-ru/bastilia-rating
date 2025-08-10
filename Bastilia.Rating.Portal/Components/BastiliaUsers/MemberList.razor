@@ -25,7 +25,7 @@
     public IQueryable<BastiliaMember> Members { get; set; }
 
     GridSort<BastiliaMember> usernameSort = GridSort<BastiliaMember>
-       .ByDescending(x => x.Username);
+       .ByDescending(x => x.UserName);
 
     GridSort<BastiliaMember> ratingSort = GridSort<BastiliaMember>
         .ByDescending(x => x.IsActiveMember)

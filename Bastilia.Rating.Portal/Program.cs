@@ -1,6 +1,6 @@
 using Bastilia.Rating.Database;
+using Bastilia.Rating.Portal.Common;
 using Bastilia.Rating.Portal.Components;
-using JoinRpg.Portal.Infrastructure.HealthChecks;
 
 var builder = WebApplication.CreateBuilder(args);
 
