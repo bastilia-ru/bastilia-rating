@@ -1,23 +1,23 @@
-﻿@switch (Status)
+@switch (Status)
 {
     case BastiliaFinalStatus.Active:
         <span class="badge bg-success">
-            <i class="bi bi-check-circle me-1"></i>Бастилец
+            Бастилец
         </span>
         break;
     case BastiliaFinalStatus.Retired:
         <span class="badge bg-secondary">
-            <i class="bi bi-clock-history me-1"></i>Досрочно-освобожденный
+            Досрочно-освобожденный
         </span>
         break;
     case BastiliaFinalStatus.Mate:
         <span class="badge bg-info">
-            <i class="bi bi-people me-1"></i>Прибастиленный
+            Прибастиленный
         </span>
         break;
     default:
         <span class="badge bg-light text-dark">
-            <i class="bi bi-question-circle me-1"></i>Не определен
+            Не определен
         </span>
         break;
 }
