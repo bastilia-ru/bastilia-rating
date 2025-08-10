@@ -29,7 +29,7 @@ patchesJson6902:
         value: www.rating.bastilia.ru
       - op: replace
         path: /spec/tls/0/secretName
-        value: bastilia-ru-tls
+        value: bastilia-rating-tls
       - op: add
         path: "/metadata/annotations/nginx.ingress.kubernetes.io~1from-to-www-redirect"
         value: true
@@ -56,7 +56,7 @@ patchesJson6902:
       group: policy
       version: v1
       kind: PodDisruptionBudget
-      name: joinrpg-portal
+      name: bastilia-rating
     patch: |-
       - op: replace
         path: /spec/minAvailable
