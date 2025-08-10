@@ -8,6 +8,6 @@
 	  <NoWarn>${NoWarn};CS1591</NoWarn>
   </PropertyGroup>
 	<ItemGroup>
-		<GlobalPackageReference Include="ReferenceTrimmer" Version="3.3.11" />
+		<GlobalPackageReference Include="ReferenceTrimmer" Version="3.3.12" />
 	</ItemGroup>
 </Project>
