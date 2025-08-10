@@ -1,0 +1,41 @@
+@page "/project/{projectId:int}"
+@inject IBastiliaProjectRepository Repository
+@inject NavigationManager NavigationManager
+<PageTitle>Проект @project?.ProjectName</PageTitle>
+@if (project is null)
+{
+    <LoadingSpinner />
+    return;
+}
+<h3>Проект @project.ProjectName</h3>
+<p>
+    @if(project.JoinrpgProjectId is not null)
+    {
+        <text>[<a href="https://joinrpg.ru/@project.JoinrpgProjectId/home">JoinRpg</a>] </text>
+    }
+    @if(project.KogdaIgraProjectId is not null)
+    {
+        <text>[<a href="https://kogda-igra.ru/game/@project.KogdaIgraProjectId">КогдаИгра</a>] </text>
+    }
+    @if (project.ProjectUri is not null)
+    {
+        <text>[<a href="@project.ProjectUri">Сайт</a>] </text>
+    }
+</p>
+
+@code {
+    [Parameter]
+    public int ProjectId { get; set; }
+
+    private BastiliaProject? project;
+
+    protected override async Task OnParametersSetAsync()
+    {
+        project = await Repository.GetByIdAsync(ProjectId);
+
+        if (project is null)
+        {
+            NavigationManager.NavigateTo("/404");
+        }
+    }
+}
