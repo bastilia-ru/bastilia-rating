@@ -19,6 +19,6 @@ spec:
             pathType: Prefix
             backend:
               service:
-                name: joinrpg-portal
+                name: bastilia-rating
                 port:
                   number: 80
