@@ -1,5 +1,6 @@
 using Bastilia.Rating.Database;
 using Bastilia.Rating.Portal.Components;
+using JoinRpg.Portal.Infrastructure.HealthChecks;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -7,6 +8,8 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddRazorComponents()
     .AddInteractiveServerComponents()
     .AddInteractiveWebAssemblyComponents();
+
+builder.Services.AddHealthChecks();
 
 builder.Services.RegisterRatingDal(builder.Configuration, builder.Environment);
 
@@ -34,6 +37,8 @@ app.MapRazorComponents<App>()
     .AddInteractiveServerRenderMode()
     .AddInteractiveWebAssemblyRenderMode()
     .AddAdditionalAssemblies(typeof(Bastilia.Rating.Portal.Client._Imports).Assembly);
+
+app.MapBrHealthChecks();
 
 app.Run();
 
