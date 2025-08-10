@@ -46,10 +46,6 @@ jobs:
           docker pull --quiet ${APP_REPOSITORY_ID}:${COMMON_IMAGE_VERSION} > /dev/null
           APP_IMAGE_DIGEST=$(docker inspect --format='{{index .RepoDigests 0}}' ${APP_REPOSITORY_ID}:${COMMON_IMAGE_VERSION} | cut -d@ -f2)
 
-          #Check app image existence and save it's digest
-          APP_IMAGE_DIGEST=$(curl --head --fail -H "Authorization: Bearer ${REPOSITORY_TOKEN}" https://ghcr.io/v2/${APP_IMAGE_ID}/manifests/${COMMON_IMAGE_VERSION} \
-          | grep -i ^docker-content-digest: | cut -d: -f2- | xargs)
-
           echo "APP_IMAGE_ID=${APP_IMAGE_ID}" >> $GITHUB_ENV
 
           #Having digest with version provides google/k8s-digester like experience and helps to avoid common pitfalls with "latest" tag
