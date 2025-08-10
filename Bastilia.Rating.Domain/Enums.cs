@@ -1,4 +1,4 @@
-﻿namespace Bastilia.Rating.Domain;
+namespace Bastilia.Rating.Domain;
 
 public enum ProjectType
 {

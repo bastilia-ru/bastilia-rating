@@ -1,4 +1,4 @@
-﻿
+
 namespace Bastilia.Rating.Domain;
 
 // Domain Models
@@ -16,6 +16,8 @@ public record BastiliaMember(
     public bool IsPresident { get; } =
         StatusHistory
         .Any(bsh => bsh.StatusType == BastiliaStatusType.President && bsh.IsActive);
+
+    public DateOnly? PresidentUntil { get; } = StatusHistory.SingleOrDefault(bsh => bsh.StatusType == BastiliaStatusType.President && bsh.IsActive)?.EndDate;
 
     public int? RatingValue { get; } = ParticipateInRating ? CalculateRating(Achievements) : null;
 

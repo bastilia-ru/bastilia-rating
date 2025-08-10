@@ -1,5 +1,3 @@
-using Bastilia.Rating.Domain;
-
 namespace Bastilia.Rating.Database.Entities;
 
 public class BastiliaProject
@@ -15,6 +13,10 @@ public class BastiliaProject
     public DateTime? PlannedEndDate { get; set; }
     public DateTime? EndDate { get; set; }
     public bool? ProjectOfTheYear { get; set; }
+
+    public int? JoinrpgProjectId { get; set; }
+    public int? KogdaIgraProjectId { get; set; }
+    public string? ProjectUri { get; set; }
 
     public ICollection<ProjectAdmin> ProjectAdmins { get; set; } = [];
     public ICollection<AchievementTemplate> AchievementTemplates { get; set; } = [];

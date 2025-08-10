@@ -1,4 +1,4 @@
-﻿namespace Bastilia.Rating.Domain;
+namespace Bastilia.Rating.Domain;
 
 public record MemberAchievement(
     string AchievementName,
@@ -8,7 +8,7 @@ public record MemberAchievement(
     DateOnly GrantedDate,
     string GrantedBy,
     DateOnly? RemoveDate,
-    string RemovedBy,
+    string? RemovedBy,
     DateOnly? ExpirationDate)
 {
     public bool NotExpired { get; } = RemoveDate is null && (ExpirationDate is null || ExpirationDate.Value.ToDateTime(TimeOnly.MinValue) > DateTime.Now);

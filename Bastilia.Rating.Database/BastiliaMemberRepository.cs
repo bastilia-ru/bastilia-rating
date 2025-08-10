@@ -1,6 +1,5 @@
-using System.Linq.Expressions;
-using Bastilia.Rating.Domain;
 using Microsoft.EntityFrameworkCore;
+using System.Linq.Expressions;
 
 namespace Bastilia.Rating.Database;
 
@@ -57,7 +56,7 @@ public class BastiliaMemberRepository(AppDbContext context) : IBastiliaMemberRep
                     a.GrantedDate,
                     a.GrantedByUser.Username,
                     a.RemovedDate,
-                    a.RemovedByUser.Username,
+                    a.RemovedByUser?.Username,
                     a.ExpirationDate
                     ))
                 .ToList()

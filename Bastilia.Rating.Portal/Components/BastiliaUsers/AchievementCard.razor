@@ -1,11 +1,11 @@
-﻿@using System.Globalization
+@using System.Globalization
 <div class="card h-100">
     <div class="card-body">
         <div class="d-flex justify-content-between">
             <div>
                 <img src="@Achievement.AchievementIconUri.AbsoluteUri" width="50" height="50" />
                 <h5 class="card-title">@Achievement.AchievementName</h5>
-                <h6 class="card-subtitle mb-2 text-muted">+@Achievement.RatingValue очков</h6>
+                <h6 class="card-subtitle mb-2 text-muted">+@CountHelper.DisplayCount(Achievement.RatingValue, "очко", "очка", "очков")</h6>
             </div>
         </div>
         <p class="card-text">@Achievement.Description</p>
