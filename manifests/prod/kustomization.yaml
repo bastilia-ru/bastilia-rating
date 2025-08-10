@@ -1,0 +1,63 @@
+resources:
+  - ../base
+
+namespace: bastilia-rating-prod
+
+commonLabels:
+  managed-by-kustomize: "true" #Careful. 
+
+configMapGenerator:
+  - name: bastilia-rating-config
+    envs: # now using envs to create a configmap with envvars as keys inside
+      - .env
+
+patchesJson6902:
+  - target:
+      kind: Ingress
+      group: networking.k8s.io
+      version: v1
+      name: bastilia-rating
+    patch: |-
+      - op: replace
+        path: /spec/rules/0/host
+        value: rating.bastilia.ru
+      - op: replace
+        path: /spec/tls/0/hosts/0
+        value: rating.bastilia.ru
+      - op: add
+        path: /spec/tls/0/hosts/1
+        value: www.rating.bastilia.ru
+      - op: replace
+        path: /spec/tls/0/secretName
+        value: bastilia-ru-tls
+      - op: add
+        path: "/metadata/annotations/nginx.ingress.kubernetes.io~1from-to-www-redirect"
+        value: true
+
+  - target:
+      group: apps
+      version: v1
+      kind: Deployment
+      name: bastilia-rating
+    patch: |-
+      - op: remove #Remove CPU limits to reduce latency
+        path: /spec/template/spec/containers/0/resources/limits/cpu
+      - op: replace
+        path: /spec/template/spec/containers/0/resources/requests/cpu
+        value: 1000m
+      - op: replace
+        path: /spec/template/spec/containers/0/resources/limits/memory
+        value: 3072Mi
+      - op: replace
+        path: /spec/template/spec/containers/0/resources/requests/memory
+        value: 2048Mi
+
+  - target:
+      group: policy
+      version: v1
+      kind: PodDisruptionBudget
+      name: joinrpg-portal
+    patch: |-
+      - op: replace
+        path: /spec/minAvailable
+        value: 1
