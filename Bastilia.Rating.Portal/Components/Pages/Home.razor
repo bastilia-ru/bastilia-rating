@@ -1,24 +1,9 @@
 @page "/"
-@inject IBastiliaMemberRepository Repository
+@inject NavigationManager NavigationManager
 
-<PageTitle>Home</PageTitle>
-
-<h1>Бастильцы и прибастиленные</h1>
-
-@if (members is null)
-{
-    <LoadingSpinner />
-}
-else
-{
-    <Bastilia.Rating.Portal.Components.BastiliaUsers.MemberList Members="members" />
-}
-
-@code
-{
-    private IQueryable<BastiliaMember>? members;
-    protected override async Task OnInitializedAsync()
+@code {
+    protected override void OnInitialized()
     {
-        members = (await Repository.GetAllAsync()).AsQueryable();
+        NavigationManager.NavigateTo("/members");
     }
 }

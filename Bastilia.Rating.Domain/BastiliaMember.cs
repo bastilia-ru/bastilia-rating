@@ -6,6 +6,7 @@ public record BastiliaMember(
     int JoinrpgUserId,
     string Username,
     string AvatarUrl,
+    string? Slug,
     bool ParticipateInRating,
     IReadOnlyCollection<BastiliaStatusHistory> StatusHistory,
     IReadOnlyCollection<ProjectAdminInfo> HisProjects,

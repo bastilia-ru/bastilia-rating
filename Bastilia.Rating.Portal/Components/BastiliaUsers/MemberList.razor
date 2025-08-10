@@ -2,7 +2,9 @@
 @using Microsoft.AspNetCore.Components.QuickGrid
 
 <QuickGrid Items="Members" Class="table table-striped" Virtualize="false">
-    <PropertyColumn Property="@(m => m.Username)" Title="Имя" />
+    <TemplateColumn Context="member" Title="Имя" SortBy="@usernameSort">
+        <BastiliaUserLink  Member="@member"/>
+    </TemplateColumn>
     <TemplateColumn Context="member" Title="Статус">
         <CurrentStatusBadge Status="member.CurrentStatus" />
     </TemplateColumn>
@@ -13,5 +15,8 @@
 @code {
     [Parameter, EditorRequired]
     public IQueryable<BastiliaMember> Members { get; set; }
+
+    GridSort<BastiliaMember> usernameSort = GridSort<BastiliaMember>
+       .ByDescending(x => x.Username);
 }
 

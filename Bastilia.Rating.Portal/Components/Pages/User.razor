@@ -1,4 +1,4 @@
-﻿@page "/member/{UserIdentificator}"
+@page "/member/{UserIdentificator}"
 @using Bastilia.Rating.Portal.Components.BastiliaUsers
 @inject IBastiliaMemberRepository Repository
 @inject NavigationManager NavigationManager
@@ -28,7 +28,7 @@ else
         }
         else
         {
-            member = await Repository.GetByUserNameAsync(UserIdentificator);
+            member = await Repository.GetBySlugAsync(UserIdentificator);
         }
 
         if (member is null)

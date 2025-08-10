@@ -7,7 +7,7 @@ public class BastiliaMemberRepository(AppDbContext context) : IBastiliaMemberRep
 {
     public async Task<BastiliaMember?> GetByIdAsync(int userId) => (await GetMemberImpl(u => u.JoinRpgUserId == userId)).FirstOrDefault();
 
-    public async Task<BastiliaMember?> GetByUserNameAsync(string username) => (await GetMemberImpl(u => u.Username == username)).FirstOrDefault();
+    public async Task<BastiliaMember?> GetBySlugAsync(string slug) => (await GetMemberImpl(u => u.Slug == slug)).FirstOrDefault();
 
     public Task<IReadOnlyCollection<BastiliaMember>> GetAllAsync() => GetMemberImpl(u => true);
 
@@ -36,6 +36,7 @@ public class BastiliaMemberRepository(AppDbContext context) : IBastiliaMemberRep
             JoinrpgUserId: user.JoinRpgUserId,
             Username: user.Username,
             AvatarUrl: user.AvatarUrl,
+            Slug: user.Slug,
             ParticipateInRating: user.ParticipateInRating,
             StatusHistory: user.BastiliaStatuses
                 .Select(s => new BastiliaStatusHistory(

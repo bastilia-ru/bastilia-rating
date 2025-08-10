@@ -1,0 +1,15 @@
+@using Bastilia.Rating.Domain
+
+@if (Member.Slug is null)
+{
+    <a href="/member/@Member.JoinrpgUserId">@Member.Username</a>
+}
+else
+{
+    <a href="/member/@Member.Slug">@Member.Username</a>
+}
+
+@code {
+    [Parameter, EditorRequired]
+    public BastiliaMember Member { get; set; } = null!;
+}

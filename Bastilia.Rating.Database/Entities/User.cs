@@ -11,6 +11,8 @@ public class User
     public required string AvatarUrl { get; set; }
     public bool ParticipateInRating { get; set; }
 
+    public string? Slug { get; set; }
+
     public ICollection<ProjectAdmin> ProjectAdmins { get; set; } = [];
     public ICollection<AchievementTemplate> OwnedAchievementTemplates { get; set; } = [];
     public ICollection<Achievement> Achievements { get; set; } = [];
