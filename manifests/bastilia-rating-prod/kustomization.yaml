@@ -44,13 +44,13 @@ patchesJson6902:
         path: /spec/template/spec/containers/0/resources/limits/cpu
       - op: replace
         path: /spec/template/spec/containers/0/resources/requests/cpu
-        value: 1000m
+        value: 200m
       - op: replace
         path: /spec/template/spec/containers/0/resources/limits/memory
-        value: 3072Mi
+        value: 256Mi
       - op: replace
         path: /spec/template/spec/containers/0/resources/requests/memory
-        value: 2048Mi
+        value: 256Mi
 
   - target:
       group: policy
