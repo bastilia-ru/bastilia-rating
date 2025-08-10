@@ -42,8 +42,8 @@ jobs:
 
           COMMON_IMAGE_VERSION=$(echo ${{ inputs.deployVersion }} | tr '[A-Z]' '[a-z]')
 
-          docker pull --quiet ${REGISTRY_HOST}:${APP_IMAGE_ID}:${COMMON_IMAGE_VERSION} > /dev/null
-          APP_IMAGE_DIGEST=$(docker inspect --format='{{index .RepoDigests 0}}' ${REGISTRY_HOST}:${APP_IMAGE_ID}:${COMMON_IMAGE_VERSION} | cut -d@ -f2)
+          docker pull --quiet ${REGISTRY_HOST}/${APP_IMAGE_ID}:${COMMON_IMAGE_VERSION} > /dev/null
+          APP_IMAGE_DIGEST=$(docker inspect --format='{{index .RepoDigests 0}}' ${REGISTRY_HOST}/${APP_IMAGE_ID}:${COMMON_IMAGE_VERSION} | cut -d@ -f2)
 
           #Having digest with version provides google/k8s-digester like experience and helps to avoid common pitfalls with "latest" tag
           echo "APP_IMAGE_VERSION_WITH_DIGEST=${COMMON_IMAGE_VERSION}@${APP_IMAGE_DIGEST}" >> $GITHUB_ENV
