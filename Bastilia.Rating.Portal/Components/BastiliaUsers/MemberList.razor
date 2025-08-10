@@ -29,6 +29,6 @@
 
     GridSort<BastiliaMember> ratingSort = GridSort<BastiliaMember>
         .ByDescending(x => x.IsActiveMember)
-        .ByDescending(x => x.RatingValue);
+        .ThenDescending(x => x.RatingValue);
 }
 
