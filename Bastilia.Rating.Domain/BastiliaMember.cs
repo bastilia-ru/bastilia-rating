@@ -14,6 +14,8 @@ public record BastiliaMember(
 {
     public BastiliaFinalStatus CurrentStatus { get; } = CalculateStatus(StatusHistory, Achievements);
 
+    public bool IsActiveMember => CurrentStatus == BastiliaFinalStatus.Active;
+
     public bool IsPresident { get; } =
         StatusHistory
         .Any(bsh => bsh.StatusType == BastiliaStatusType.President && bsh.IsActive);

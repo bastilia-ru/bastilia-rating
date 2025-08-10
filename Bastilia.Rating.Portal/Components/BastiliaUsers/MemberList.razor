@@ -28,6 +28,7 @@
        .ByDescending(x => x.Username);
 
     GridSort<BastiliaMember> ratingSort = GridSort<BastiliaMember>
+        .ByDescending(x => x.IsActiveMember)
         .ByDescending(x => x.RatingValue);
 }
 
