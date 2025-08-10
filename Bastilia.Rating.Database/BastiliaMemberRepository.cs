@@ -5,13 +5,15 @@ namespace Bastilia.Rating.Database;
 
 public class BastiliaMemberRepository(AppDbContext context) : IBastiliaMemberRepository
 {
-    public Task<BastiliaMember?> GetByIdAsync(int userId) => GetMemberImpl(u => u.JoinRpgUserId == userId);
+    public async Task<BastiliaMember?> GetByIdAsync(int userId) => (await GetMemberImpl(u => u.JoinRpgUserId == userId)).FirstOrDefault();
 
-    public Task<BastiliaMember?> GetByUserNameAsync(string username) => GetMemberImpl(u => u.Username == username);
+    public async Task<BastiliaMember?> GetByUserNameAsync(string username) => (await GetMemberImpl(u => u.Username == username)).FirstOrDefault();
 
-    private async Task<BastiliaMember?> GetMemberImpl(Expression<Func<Entities.User, bool>> predicate)
+    public Task<IReadOnlyCollection<BastiliaMember>> GetAllAsync() => GetMemberImpl(u => true);
+
+    private async Task<IReadOnlyCollection<BastiliaMember>> GetMemberImpl(Expression<Func<Entities.User, bool>> predicate)
     {
-        var user = await context.Users
+        var users = await context.Users
                     .Include(u => u.BastiliaStatuses)
                     .Include(u => u.ProjectAdmins)
                         .ThenInclude(pa => pa.Project)
@@ -22,10 +24,14 @@ public class BastiliaMemberRepository(AppDbContext context) : IBastiliaMemberRep
                     .Include(u => u.Achievements)
                         .ThenInclude(a => a.RemovedByUser)
                     .AsNoTracking()
-                    .FirstOrDefaultAsync(predicate);
+                    .Where(predicate)
+                    .ToArrayAsync();
 
-        if (user == null) return null;
+        return [.. users.Select(ToMember)];
+    }
 
+    private static BastiliaMember ToMember(Entities.User user)
+    {
         return new BastiliaMember(
             JoinrpgUserId: user.JoinRpgUserId,
             Username: user.Username,
@@ -62,6 +68,4 @@ public class BastiliaMemberRepository(AppDbContext context) : IBastiliaMemberRep
                 .ToList()
                 .AsReadOnly());
     }
-
-
 }

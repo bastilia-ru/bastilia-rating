@@ -1,0 +1,17 @@
+@using Bastilia.Rating.Domain
+@using Microsoft.AspNetCore.Components.QuickGrid
+
+<QuickGrid Items="Members" Class="table table-striped" Virtualize="false">
+    <PropertyColumn Property="@(m => m.Username)" Title="Имя" />
+    <TemplateColumn Context="member" Title="Статус">
+        <CurrentStatusBadge Status="member.CurrentStatus" />
+    </TemplateColumn>
+    <PropertyColumn Property="@(m => m.RatingValue)" Title="Текущее значение рейтинга">
+    </PropertyColumn>
+</QuickGrid>
+
+@code {
+    [Parameter, EditorRequired]
+    public IQueryable<BastiliaMember> Members { get; set; }
+}
+

@@ -1,7 +1,24 @@
-﻿@page "/"
+@page "/"
+@inject IBastiliaMemberRepository Repository
 
 <PageTitle>Home</PageTitle>
 
-<h1>Hello, world!</h1>
+<h1>Бастильцы и прибастиленные</h1>
 
-Welcome to your new app.
+@if (members is null)
+{
+    <LoadingSpinner />
+}
+else
+{
+    <Bastilia.Rating.Portal.Components.BastiliaUsers.MemberList Members="members" />
+}
+
+@code
+{
+    private IQueryable<BastiliaMember>? members;
+    protected override async Task OnInitializedAsync()
+    {
+        members = (await Repository.GetAllAsync()).AsQueryable();
+    }
+}
