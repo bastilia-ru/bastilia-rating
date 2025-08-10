@@ -4,6 +4,7 @@ on:
     workflows: [Build and publish]
     types: [completed]
     branches: [master]
+  workflow_dispatch:
 
 concurrency:
   group: prod
@@ -11,9 +12,7 @@ concurrency:
 
 jobs:
   deploy:
-    if: false 
-    # Временно выключим 
-    # if: ${{ github.event.workflow_run.conclusion == 'success' && github.event.workflow_run.head_branch == 'master' }}
+    if: ${{ github.event.workflow_run.conclusion == 'success' && github.event.workflow_run.head_branch == 'master' }}
     permissions: read-all
     uses: ./.github/workflows/deploy-common.yml
     with:
