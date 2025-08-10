@@ -5,7 +5,7 @@ metadata:
     app.kubernetes.io/name: bastilia-rating
   name: bastilia-rating
 spec:
-  replicas: 2
+  replicas: 1 # Чтобы сделать две, надо решить вопрос с AspNet Data Protection
   selector:
     matchLabels:
       app.kubernetes.io/name: bastilia-rating
@@ -61,8 +61,8 @@ spec:
           protocol: TCP
         resources:
           limits:
-            cpu: 500m
-            memory: 512Mi
+            cpu: 200m
+            memory: 128Mi
           requests:
-            cpu: 500m
-            memory: 512Mi
+            cpu: 200m
+            memory: 128Mi
