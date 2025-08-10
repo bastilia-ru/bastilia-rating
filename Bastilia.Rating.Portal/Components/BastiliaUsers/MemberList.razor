@@ -8,7 +8,7 @@
     <TemplateColumn Context="member" Title="Статус">
         <CurrentStatusBadge Status="member.CurrentStatus" />
     </TemplateColumn>
-    <TemplateColumn Context="member" Title="Текущее значение рейтинга" SortBy="ratingSort">
+    <TemplateColumn Context="member" Title="Текущее значение рейтинга" SortBy="ratingSort" IsDefaultSortColumn="true">
         @if (member.ParticipateInRating)
         {
             @member.RatingValue
