@@ -1,3 +1,4 @@
+using Bastilia.Rating.Database;
 using Bastilia.Rating.Portal.Components;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -6,6 +7,8 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddRazorComponents()
     .AddInteractiveServerComponents()
     .AddInteractiveWebAssemblyComponents();
+
+builder.Services.RegisterRatingDal(builder.Configuration, builder.Environment);
 
 var app = builder.Build();
 
@@ -33,3 +36,4 @@ app.MapRazorComponents<App>()
     .AddAdditionalAssemblies(typeof(Bastilia.Rating.Portal.Client._Imports).Assembly);
 
 app.Run();
+

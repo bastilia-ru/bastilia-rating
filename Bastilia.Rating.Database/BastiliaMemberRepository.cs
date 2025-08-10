@@ -1,4 +1,4 @@
-﻿using System.Linq.Expressions;
+using System.Linq.Expressions;
 using Bastilia.Rating.Domain;
 using Microsoft.EntityFrameworkCore;
 
@@ -6,7 +6,7 @@ namespace Bastilia.Rating.Database;
 
 public class BastiliaMemberRepository(AppDbContext context) : IBastiliaMemberRepository
 {
-    public Task<BastiliaMember?> GetByIdAsync(int userId) => GetMemberImpl(u => u.JoinrpgUserId == userId);
+    public Task<BastiliaMember?> GetByIdAsync(int userId) => GetMemberImpl(u => u.JoinRpgUserId == userId);
 
     public Task<BastiliaMember?> GetByUserNameAsync(string username) => GetMemberImpl(u => u.Username == username);
 
@@ -28,7 +28,7 @@ public class BastiliaMemberRepository(AppDbContext context) : IBastiliaMemberRep
         if (user == null) return null;
 
         return new BastiliaMember(
-            JoinrpgUserId: user.JoinrpgUserId,
+            JoinrpgUserId: user.JoinRpgUserId,
             Username: user.Username,
             AvatarUrl: user.AvatarUrl,
             ParticipateInRating: user.ParticipateInRating,

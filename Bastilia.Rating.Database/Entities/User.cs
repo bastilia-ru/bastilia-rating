@@ -1,9 +1,13 @@
-﻿namespace Bastilia.Rating.Database.Entities;
+using Microsoft.EntityFrameworkCore;
 
+namespace Bastilia.Rating.Database.Entities;
+
+[PrimaryKey(nameof(JoinRpgUserId))]
 public class User
 {
-    public int JoinrpgUserId { get; set; }
-    public required string Username { get; set; } 
+
+    public int JoinRpgUserId { get; set; }
+    public required string Username { get; set; }
     public required string AvatarUrl { get; set; }
     public bool ParticipateInRating { get; set; }
 

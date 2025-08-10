@@ -1,5 +1,3 @@
-﻿using Bastilia.Rating.Domain;
-
 namespace Bastilia.Rating.Database.Entities;
 
 public class UsersBastiliaStatus
@@ -9,5 +7,6 @@ public class UsersBastiliaStatus
     public DateOnly? EndDate { get; set; }
     public BastiliaStatusType StatusType { get; set; }
 
+    [ForeignKey(nameof(JoinrpgUserId))]
     public required User User { get; set; }
 }

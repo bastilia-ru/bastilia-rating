@@ -4,6 +4,10 @@
 	  <TargetFramework>net9.0</TargetFramework>
 	  <Nullable>enable</Nullable>
 	  <ImplicitUsings>enable</ImplicitUsings>
-
+	  <GenerateDocumentationFile>true</GenerateDocumentationFile>
+	  <NoWarn>${NoWarn};CS1591</NoWarn>
   </PropertyGroup>
+	<ItemGroup>
+		<GlobalPackageReference Include="ReferenceTrimmer" Version="3.3.11" />
+	</ItemGroup>
 </Project>

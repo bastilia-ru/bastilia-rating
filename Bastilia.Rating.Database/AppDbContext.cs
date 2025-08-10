@@ -1,10 +1,10 @@
-﻿using Bastilia.Rating.Database.Entities;
+using Bastilia.Rating.Database.Entities;
 using Bastilia.Rating.Domain;
 using Microsoft.EntityFrameworkCore;
 
 namespace Bastilia.Rating.Database;
 
-public class AppDbContext : DbContext
+public class AppDbContext(DbContextOptions<AppDbContext> options) : DbContext(options)
 {
     public DbSet<BastiliaProject> BastiliaProjects { get; set; }
     public DbSet<ProjectAdmin> ProjectAdmins { get; set; }
@@ -18,7 +18,7 @@ public class AppDbContext : DbContext
         // Configure composite key for ProjectAdmin
         modelBuilder.Entity<ProjectAdmin>()
             .HasKey(pa => new { pa.ProjectId, pa.UserId });
-            
+
         // Configure composite key for UsersBastiliaStatus
         modelBuilder.Entity<UsersBastiliaStatus>()
             .HasKey(ubs => new { ubs.JoinrpgUserId, ubs.BeginDate });

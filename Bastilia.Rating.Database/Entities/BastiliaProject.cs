@@ -1,11 +1,11 @@
-﻿using Bastilia.Rating.Domain;
+using Bastilia.Rating.Domain;
 
 namespace Bastilia.Rating.Database.Entities;
 
 public class BastiliaProject
 {
-    public int ProjectId { get; set; }
-    public string ProjectName { get; set; }
+    public int BastiliaProjectId { get; set; }
+    public required string ProjectName { get; set; }
     public ProjectType ProjectType { get; set; }
     public BrandType BrandType { get; set; }
     public bool OngoingProject { get; set; }
@@ -16,6 +16,6 @@ public class BastiliaProject
     public DateTime? EndDate { get; set; }
     public bool? ProjectOfTheYear { get; set; }
 
-    public ICollection<ProjectAdmin> ProjectAdmins { get; set; }
-    public ICollection<AchievementTemplate> AchievementTemplates { get; set; }
+    public ICollection<ProjectAdmin> ProjectAdmins { get; set; } = [];
+    public ICollection<AchievementTemplate> AchievementTemplates { get; set; } = [];
 }

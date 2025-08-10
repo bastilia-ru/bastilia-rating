@@ -1,0 +1,20 @@
+services:
+  database:
+    # Должно совпадать с версией на которой прод работает
+    image: 'postgres:14.2'
+
+    ports:
+      - 5432:5432
+
+    volumes:
+        - ./scripts/postgre-docker-entrypoint-initdb:/docker-entrypoint-initdb.d
+        - rating-pg-data:/var/lib/postgresql/data/
+
+    environment:
+      POSTGRES_USER: postgres_user # The PostgreSQL user (useful to connect to the database)
+      POSTGRES_PASSWORD: qwerty # The PostgreSQL password (useful to connect to the database)
+      POSTGRES_MULTIPLE_DATABASES: BastiliaRating
+      PGDATA: '/var/lib/postgresql/data/pgdata'
+
+volumes:
+ rating-pg-data:
