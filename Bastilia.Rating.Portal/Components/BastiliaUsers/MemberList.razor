@@ -8,8 +8,16 @@
     <TemplateColumn Context="member" Title="Статус">
         <CurrentStatusBadge Status="member.CurrentStatus" />
     </TemplateColumn>
-    <PropertyColumn Property="@(m => m.RatingValue)" Title="Текущее значение рейтинга">
-    </PropertyColumn>
+    <TemplateColumn Context="member" Title="Текущее значение рейтинга" SortBy="ratingSort">
+        @if (member.ParticipateInRating)
+        {
+            @member.RatingValue
+        }
+        else
+        {
+            <span>не участвует в рейтинге</span>
+        }
+    </TemplateColumn>
 </QuickGrid>
 
 @code {
@@ -18,5 +26,8 @@
 
     GridSort<BastiliaMember> usernameSort = GridSort<BastiliaMember>
        .ByDescending(x => x.Username);
+
+    GridSort<BastiliaMember> ratingSort = GridSort<BastiliaMember>
+        .ByDescending(x => x.RatingValue);
 }
 
