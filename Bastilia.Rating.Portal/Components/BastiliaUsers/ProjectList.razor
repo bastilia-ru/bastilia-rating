@@ -20,8 +20,7 @@
     <TemplateColumn Context="project" Title="Глава/Координатор">
         @foreach (var user in project.Coordinators)
         {
-            
-            <BastiliaUserLink Member="@user" /> &nbsp;
+            <text><BastiliaUserLink Member="@user" /> &nbsp;</text>
         }
     </TemplateColumn>
     <TemplateColumn Context="project" Title="Ссылки">
