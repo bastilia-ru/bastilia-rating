@@ -12,6 +12,17 @@
             </div>
         </div>
         <p class="card-text">@Achievement.Description</p>
+        
+            <div class="text-muted" style="text-align: right; font-size: 70%">
+            @if (Achievement.ProjectLink is not null)
+            {
+                <ProjectLink Project="Achievement.ProjectLink" />
+            }
+            else
+            {
+                <BastiliaUserLink Member="Achievement.GrantedBy" />
+            }
+            </div>
     </div>
 </div>
 

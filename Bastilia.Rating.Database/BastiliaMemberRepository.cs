@@ -1,6 +1,6 @@
 namespace Bastilia.Rating.Database;
 
-public class BastiliaMemberRepository(AppDbContext context) : IBastiliaMemberRepository
+internal class BastiliaMemberRepository(AppDbContext context) : BastiliaRepositoryBase, IBastiliaMemberRepository
 {
     public async Task<BastiliaMember?> GetByIdAsync(int userId) => (await GetMemberImpl(u => u.JoinRpgUserId == userId)).FirstOrDefault();
 
@@ -16,6 +16,7 @@ public class BastiliaMemberRepository(AppDbContext context) : IBastiliaMemberRep
                         .ThenInclude(pa => pa.Project)
                     .Include(u => u.Achievements)
                         .ThenInclude(a => a.Template)
+                        .ThenInclude(a => a.Project)
                     .Include(u => u.Achievements)
                         .ThenInclude(a => a.GrantedByUser)
                     .Include(u => u.Achievements)
@@ -58,12 +59,17 @@ public class BastiliaMemberRepository(AppDbContext context) : IBastiliaMemberRep
                     new Uri(a.Template.AchievementImageUrl),
                     a.Template.AchievementRatingValue,
                     a.GrantedDate,
-                    a.GrantedByUser.Username,
+                    ToUserLink(a.GrantedByUser),
                     a.RemovedDate,
-                    a.RemovedByUser?.Username,
-                    a.ExpirationDate
+                    ToUserLink(a.RemovedByUser),
+                    a.ExpirationDate,
+                    a.Template.ProjectId is not null ?
+                    new ProjectLink(a.Template.Project.BastiliaProjectId, a.Template.Project.ProjectName)
+                    : null
                     ))
                 .ToList()
                 .AsReadOnly());
     }
+
+    private record class ProjectLink(int BastiliaProjectId, string ProjectName) : IBastiliaProjectLink;
 }

@@ -1,6 +1,6 @@
 namespace Bastilia.Rating.Database;
 
-internal class BastiliaProjectRepository(AppDbContext context) : IBastiliaProjectRepository
+internal class BastiliaProjectRepository(AppDbContext context) : BastiliaRepositoryBase, IBastiliaProjectRepository
 {
     public async Task<BastiliaProjectWithDetails?> GetByIdAsync(int projectId)
     {
@@ -28,8 +28,6 @@ internal class BastiliaProjectRepository(AppDbContext context) : IBastiliaProjec
            );
     }
 
-
-
     public Task<IReadOnlyCollection<BastiliaProject>> GetActiveProjects() => GetProjectsByPredicate(p => p.EndDate == null);
 
     public Task<IReadOnlyCollection<BastiliaProject>> GetActualProjects() => GetProjectsByPredicate(p => p.EndDate == null || p.EndDate > DateTime.UtcNow.AddYears(-2));
@@ -37,11 +35,6 @@ internal class BastiliaProjectRepository(AppDbContext context) : IBastiliaProjec
     private static ProjectMemberAchievement ToPma(Entities.Achievement a)
     {
         return new ProjectMemberAchievement(ToUserLink(a.User), a.OverrideName ?? a.Template.AchievementName, a.User.ParticipateInRating ? a.Template.AchievementRatingValue : null);
-    }
-
-    private static UserLink ToUserLink(Entities.User user)
-    {
-        return new UserLink(user.JoinRpgUserId, user.Slug, user.Username);
     }
 
     private async Task<IReadOnlyCollection<BastiliaProject>> GetProjectsByPredicate(Expression<Func<Entities.BastiliaProject, bool>> predicate)
@@ -60,22 +53,4 @@ internal class BastiliaProjectRepository(AppDbContext context) : IBastiliaProjec
                     .Where(predicate)
                     ;
     }
-
-    private static BastiliaProject ToProject(Entities.BastiliaProject project)
-    {
-        return new BastiliaProject(
-            project.BastiliaProjectId,
-            project.ProjectName,
-            project.ProjectType,
-            project.BrandType,
-            project.OngoingProject,
-            project.ProjectOfTheYear,
-            project.JoinrpgProjectId,
-            project.KogdaIgraProjectId,
-            project.ProjectUri,
-            [.. project.ProjectAdmins.Select(pa => ToUserLink(pa.User))]
-            );
-    }
-
-    private record UserLink(int JoinrpgUserId, string? Slug, string UserName) : IUserLink;
 }

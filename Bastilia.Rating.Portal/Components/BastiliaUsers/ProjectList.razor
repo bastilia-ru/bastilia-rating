@@ -3,7 +3,7 @@
 
 <QuickGrid Items="Projects" Class="table table-striped" Virtualize="false">
     <TemplateColumn Context="project" Title="Название проекта" SortBy="@projectNameSort">
-        <a href="/project/@project.BastiliaProjectId">@project.ProjectName</a>
+        <ProjectLink Project="@project" />
     </TemplateColumn>
     <TemplateColumn Context="project" Title="Тип">
         <ProjectTypeBadge Type="project.ProjectType" />

@@ -9,4 +9,4 @@ public record BastiliaProject(int BastiliaProjectId,
                               int? JoinrpgProjectId,
                               int? KogdaIgraProjectId,
                               string? ProjectUri,
-                              IReadOnlyCollection<IUserLink> Coordinators);
+                              IReadOnlyCollection<IUserLink> Coordinators) : IBastiliaProjectLink;

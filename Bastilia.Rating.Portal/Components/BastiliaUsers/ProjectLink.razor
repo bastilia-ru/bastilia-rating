@@ -1,0 +1,9 @@
+@using Bastilia.Rating.Domain
+
+<a href="/project/@Project.BastiliaProjectId">@Project.ProjectName</a>
+
+@code 
+{
+    [Parameter, EditorRequired]
+    public IBastiliaProjectLink Project { get; set; } = null!;
+}
