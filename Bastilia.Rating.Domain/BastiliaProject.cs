@@ -9,4 +9,26 @@ public record BastiliaProject(int BastiliaProjectId,
                               int? JoinrpgProjectId,
                               int? KogdaIgraProjectId,
                               string? ProjectUri,
-                              IReadOnlyCollection<IUserLink> Coordinators) : IBastiliaProjectLink;
+                              IReadOnlyCollection<IUserLink> Coordinators,
+                              DateOnly? EndDate) : IBastiliaProjectLink
+{
+    public ProjectStatus Status { get; set; } = CalculateStatus(OngoingProject, EndDate);
+
+    private static ProjectStatus CalculateStatus(bool ongoingProject, DateOnly? endDate)
+    {
+        return (ongoingProject, endDate)
+            switch
+        {
+            (_, DateOnly d) => ProjectStatus.Completed,
+            (true, _) => ProjectStatus.Ongoing,
+            (false, _) => ProjectStatus.Future,
+        };
+    }
+}
+
+public enum ProjectStatus
+{
+    Completed,
+    Future,
+    Ongoing,
+}

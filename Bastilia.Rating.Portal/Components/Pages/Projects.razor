@@ -1,22 +1,28 @@
 @page "/projects"
+@using Bastilia.Rating.Portal.Components.BastiliaUsers
 @inject IBastiliaProjectRepository Repository
-<h3>Список проектов</h3>
-
-@if (list is null)
+@if (activeList is null || completedList is null)
 {
+    <h3>Список проектов</h3>
     <LoadingSpinner />
 }
 else
 {
-    <Bastilia.Rating.Portal.Components.BastiliaUsers.ProjectList Projects="list" />
+    <h3>Активные проекты</h3>
+    <ProjectList Projects="activeList" />
+    <h3>Прошедшие проекты</h3>
+    <ProjectList Projects="completedList" ShowYear="true"/>
 }
 
 
 @code
 {
-    private IQueryable<BastiliaProject>? list;
+    private IQueryable<BastiliaProject>? activeList;
+    private IQueryable<BastiliaProject>? completedList;
     protected override async Task OnInitializedAsync()
     {
-        list = (await Repository.GetActualProjects()).AsQueryable();
+        var list = (await Repository.GetActualProjects());
+        activeList = list.AsQueryable().Where(p => p.Status != ProjectStatus.Completed);
+        completedList = list.AsQueryable().Where(p => p.Status == ProjectStatus.Completed);
     }
 }

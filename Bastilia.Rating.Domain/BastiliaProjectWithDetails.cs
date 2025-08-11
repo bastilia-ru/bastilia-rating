@@ -6,8 +6,9 @@ namespace Bastilia.Rating.Domain
                                           BrandType BrandType, bool OngoingProject, bool? ProjectOfTheYear,
                                           int? JoinrpgProjectId, int? KogdaIgraProjectId, string? ProjectUri,
                                           IReadOnlyCollection<IUserLink> Coordinators,
-                                          IReadOnlyCollection<ProjectMemberAchievement> ProjectMemberAchievements)
-            : base(BastiliaProjectId, ProjectName, ProjectType, BrandType, OngoingProject, ProjectOfTheYear, JoinrpgProjectId, KogdaIgraProjectId, ProjectUri, Coordinators)
+                                          IReadOnlyCollection<ProjectMemberAchievement> ProjectMemberAchievements,
+                                          DateOnly? endDate)
+            : base(BastiliaProjectId, ProjectName, ProjectType, BrandType, OngoingProject, ProjectOfTheYear, JoinrpgProjectId, KogdaIgraProjectId, ProjectUri, Coordinators, endDate)
         {
             this.ProjectMemberAchievements = ProjectMemberAchievements;
         }

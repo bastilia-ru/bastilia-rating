@@ -5,6 +5,12 @@
     <TemplateColumn Context="project" Title="Название проекта" SortBy="@projectNameSort">
         <ProjectLink Project="@project" />
     </TemplateColumn>
+    @if (ShowYear)
+    {
+        <TemplateColumn Context="project" IsDefaultSortColumn="true" InitialSortDirection="SortDirection.Descending" SortBy="@projectEndSort">
+            @project.EndDate?.Year
+        </TemplateColumn>
+    }
     <TemplateColumn Context="project" Title="Тип">
         <ProjectTypeBadge Type="project.ProjectType" />
     </TemplateColumn>
@@ -26,11 +32,13 @@
     [Parameter, EditorRequired]
     public IQueryable<BastiliaProject> Projects { get; set; }
 
+    [Parameter]
+    public bool ShowYear { get; set; }
+
     GridSort<BastiliaProject> projectNameSort = GridSort<BastiliaProject>
        .ByDescending(x => x.ProjectName);
 
-    GridSort<BastiliaMember> ratingSort = GridSort<BastiliaMember>
-        .ByDescending(x => x.IsActiveMember)
-        .ThenDescending(x => x.RatingValue);
+    GridSort<BastiliaProject> projectEndSort = GridSort<BastiliaProject>.ByDescending(x => x.EndDate);
+
 }
 
