@@ -31,7 +31,7 @@ internal class BastiliaProjectRepository(AppDbContext context) : BastiliaReposit
 
     public Task<IReadOnlyCollection<BastiliaProject>> GetActiveProjects() => GetProjectsByPredicate(p => p.EndDate == null);
 
-    public Task<IReadOnlyCollection<BastiliaProject>> GetActualProjects() => GetProjectsByPredicate(p => p.EndDate == null || p.EndDate > DateTime.UtcNow.AddYears(-2));
+    public Task<IReadOnlyCollection<BastiliaProject>> GetActualProjects() => GetProjectsByPredicate(p => true);
 
     private static ProjectMemberAchievement ToPma(Entities.Achievement a)
     {
