@@ -5,7 +5,7 @@
     <TemplateColumn Context="member" Title="Имя" SortBy="@usernameSort">
         <BastiliaUserLink  Member="@member"/>
     </TemplateColumn>
-    <TemplateColumn Context="member" Title="Статус">
+    <TemplateColumn Context="member" Title="Статус" SortBy="GridSort<BastiliaMember>.ByAscending(x => x.CurrentStatus)">
         <CurrentStatusBadge Status="member.CurrentStatus" />
     </TemplateColumn>
     <TemplateColumn Context="member" Title="Рейтинг" SortBy="ratingSort" IsDefaultSortColumn="true" InitialSortDirection="SortDirection.Descending">
@@ -18,7 +18,7 @@
             <Tooltip Title="Этот бастилец предпочитает не оценивать свой вклад бездушными цифрами">–</Tooltip>
         }
     </TemplateColumn>
-    <TemplateColumn Context="member" Title="Исторический" SortBy="ratingSort">
+    <TemplateColumn Context="member" Title="Исторический" SortBy="historicalRatingSort">
         @if (member.ParticipateInRating)
         {
             @member.HistoricalRatingValue
