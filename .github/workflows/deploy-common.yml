@@ -96,7 +96,7 @@ jobs:
               newTag: ${{ env.APP_IMAGE_VERSION_WITH_DIGEST }}
 
             - name: ${MIGRATOR_NAME}
-              newName: ${{ env.MIGRATOR_IMAGE_ID }}
+              newName: ${REGISTRY_HOST}/${{ env.MIGRATOR_IMAGE_ID }}
               newTag: ${{ env.MIGRATOR_IMAGE_VERSION_WITH_DIGEST }}
 
             EOF
