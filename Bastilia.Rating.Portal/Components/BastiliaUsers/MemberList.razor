@@ -8,14 +8,24 @@
     <TemplateColumn Context="member" Title="Статус">
         <CurrentStatusBadge Status="member.CurrentStatus" />
     </TemplateColumn>
-    <TemplateColumn Context="member" Title="Текущее значение рейтинга" SortBy="ratingSort" IsDefaultSortColumn="true">
+    <TemplateColumn Context="member" Title="Рейтинг" SortBy="ratingSort" IsDefaultSortColumn="true" InitialSortDirection="SortDirection.Descending">
         @if (member.ParticipateInRating)
         {
             @member.RatingValue
         }
         else
         {
-            <span>не участвует в рейтинге</span>
+            <Tooltip Title="Этот бастилец предпочитает не оценивать свой вклад бездушными цифрами">–</Tooltip>
+        }
+    </TemplateColumn>
+    <TemplateColumn Context="member" Title="Исторический" SortBy="ratingSort">
+        @if (member.ParticipateInRating)
+        {
+            @member.HistoricalRatingValue
+        }
+        else
+        {
+            <Tooltip Title="Этот бастилец предпочитает не оценивать свой вклад бездушными цифрами">–</Tooltip>
         }
     </TemplateColumn>
 </QuickGrid>
@@ -28,9 +38,15 @@
        .ByDescending(x => x.UserName);
 
     GridSort<BastiliaMember> ratingSort = GridSort<BastiliaMember>
-        .ByAscending(x => x.ParticipateInRating)
-        .ThenDescending(x => x.RatingValue)
-        .ThenDescending(x => x.IsActiveMember)
-        .ThenDescending(x => x.Achievements.Select(a => a.GrantedDate).DefaultIfEmpty(DateOnly.MinValue).Max());
+        .ByDescending(x => x.ParticipateInRating)
+        .ThenAscending(x => x.RatingValue)
+        .ThenAscending(x => x.IsActiveMember)
+        .ThenAscending(x => x.Achievements.Select(a => a.GrantedDate).DefaultIfEmpty(DateOnly.MinValue).Max());
+
+    GridSort<BastiliaMember> historicalRatingSort = GridSort<BastiliaMember>
+    .ByDescending(x => x.ParticipateInRating)
+    .ThenAscending(x => x.HistoricalRatingValue)
+    .ThenAscending(x => x.IsActiveMember)
+    .ThenAscending(x => x.Achievements.Select(a => a.GrantedDate).DefaultIfEmpty(DateOnly.MinValue).Max());
 }
 

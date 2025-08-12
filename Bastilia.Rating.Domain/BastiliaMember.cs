@@ -23,12 +23,18 @@ public record BastiliaMember(
     public DateOnly? PresidentUntil { get; } = StatusHistory.SingleOrDefault(bsh => bsh.StatusType == BastiliaStatusType.President && bsh.IsActive)?.EndDate;
 
     public int? RatingValue { get; } = ParticipateInRating ? CalculateRating(Achievements) : null;
+    public int? HistoricalRatingValue { get; } = ParticipateInRating ? CalculateHistoricalRating(Achievements) : null;
 
     public IReadOnlyCollection<ProjectAdminInfo> HisActiveProjects { get; } = [.. HisProjects.Where(p => p.IsActive)];
 
     private static int CalculateRating(IReadOnlyCollection<MemberAchievement> achievements)
     {
         return achievements.Where(a => a.NotExpired).Sum(a => a.RatingValue);
+    }
+
+    private static int CalculateHistoricalRating(IReadOnlyCollection<MemberAchievement> achievements)
+    {
+        return achievements.Sum(a => a.RatingValue);
     }
 
     private static BastiliaFinalStatus CalculateStatus(IReadOnlyCollection<BastiliaStatusHistory> statusHistory, IReadOnlyCollection<MemberAchievement> achievements)
