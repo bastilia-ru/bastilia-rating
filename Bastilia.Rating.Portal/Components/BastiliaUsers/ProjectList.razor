@@ -17,12 +17,12 @@
     <TemplateColumn Context="project" Title="Бренд">
         <BrandBadge Type="project.BrandType" />
     </TemplateColumn>
-    <TemplateColumn Context="project" Title="Вписаться?" SortBy="GridSort<BastiliaProject>.ByAscending(p => p.HelpRequired)">
-        @if (project.HelpRequired)
-        {
-            <text>ДА</text>
-        }
-    </TemplateColumn>
+    @if (Projects.Any(x => x.HelpRequired))
+    {
+        <TemplateColumn Context="project" Title="Вписаться?" SortBy="GridSort<BastiliaProject>.ByAscending(p => p.HelpRequired)">
+           <HelpRequiredBadge HowToHelp="@project.HowToHelp"/>
+        </TemplateColumn>
+    }
     <TemplateColumn Context="project" Title="Глава/Координатор">
         @foreach (var user in project.Coordinators)
         {
