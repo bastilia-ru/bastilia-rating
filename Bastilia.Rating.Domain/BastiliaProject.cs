@@ -10,16 +10,18 @@ public record BastiliaProject(int BastiliaProjectId,
                               int? KogdaIgraProjectId,
                               string? ProjectUri,
                               IReadOnlyCollection<IUserLink> Coordinators,
-                              DateOnly? EndDate) : IBastiliaProjectLink
+                              DateOnly? EndDate,
+                              string HowToHelp) : IBastiliaProjectLink
 {
-    public ProjectStatus Status { get; set; } = CalculateStatus(OngoingProject, EndDate);
+    public ProjectStatus Status { get; } = CalculateStatus(OngoingProject, EndDate);
+    public bool HelpRequired { get; } = !string.IsNullOrWhiteSpace(HowToHelp);
 
     private static ProjectStatus CalculateStatus(bool ongoingProject, DateOnly? endDate)
     {
         return (ongoingProject, endDate)
             switch
         {
-            (_, DateOnly d) => ProjectStatus.Completed,
+            (_, DateOnly) => ProjectStatus.Completed,
             (true, _) => ProjectStatus.Ongoing,
             (false, _) => ProjectStatus.Future,
         };

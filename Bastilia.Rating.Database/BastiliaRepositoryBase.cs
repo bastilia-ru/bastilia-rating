@@ -17,7 +17,8 @@ internal abstract class BastiliaRepositoryBase
             project.KogdaIgraProjectId,
             project.ProjectUri,
             [.. project.ProjectAdmins.Select(pa => ToUserLink(pa.User))],
-            project.EndDate is not null ? DateOnly.FromDateTime(project.EndDate.Value) : null
+            project.EndDate,
+            project.HowToHelp
             );
     }
 

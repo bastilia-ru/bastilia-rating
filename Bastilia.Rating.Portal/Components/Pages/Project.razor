@@ -10,20 +10,20 @@
     <LoadingSpinner />
     return;
 }
-<h3>Проект @project.ProjectName</h3>
-<p>
- <Bastilia.Rating.Portal.Components.BastiliaUsers.ProjectLinks Project="project" />
-</p>
+<ProjectCard Project="project" />
+@if (project.ProjectMemberAchievements.Count > 0)
+{
 
-<QuickGrid Items="pmaItems" Class="table table-striped" Virtualize="false">
-    <TemplateColumn Context="item" Title="Имя" SortBy="@usernameSort">
-        <BastiliaUserLink  Member="@item.User"/>
-    </TemplateColumn>
-    <PropertyColumn Property="i => i.Name" Title="Достижение">
-    </PropertyColumn>
-    <PropertyColumn Property="i => i.Value" Title="Рейтинг" IsDefaultSortColumn="true" Sortable="true" InitialSortDirection="SortDirection.Descending">
-    </PropertyColumn>
-</QuickGrid>
+    <QuickGrid Items="pmaItems" Class="table table-striped" Virtualize="false">
+        <TemplateColumn Context="item" Title="Имя" SortBy="@usernameSort">
+            <BastiliaUserLink  Member="@item.User"/>
+        </TemplateColumn>
+        <PropertyColumn Property="i => i.Name" Title="Достижение">
+        </PropertyColumn>
+        <PropertyColumn Property="i => i.Value" Title="Рейтинг" IsDefaultSortColumn="true" Sortable="true" InitialSortDirection="SortDirection.Descending">
+        </PropertyColumn>
+    </QuickGrid>
+}
 
 @code {
     [Parameter]

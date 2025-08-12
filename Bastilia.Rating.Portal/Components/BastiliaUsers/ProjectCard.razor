@@ -1,0 +1,36 @@
+@using System.Globalization
+<div class="card h-100">
+    <div class="card-body">
+        <div class="d-flex justify-content-between">
+            <div>
+                @*<img src="@Achievement.AchievementIconUri.AbsoluteUri" width="50" height="50" />*@
+                <h3 class="card-title">@Project.ProjectName</h3>
+                <p>
+                    @if (Project.Coordinators.Count > 0)
+                    {
+                        <b>Координаторы:</b>
+                        @foreach (var user in Project.Coordinators)
+                        {
+                            <text><BastiliaUserLink Member="@user" /> &nbsp;</text>
+                        } 
+                        <br />
+                    }
+                    <ProjectLinks Project="Project" />
+                </p>
+            </div>
+        </div>
+        <p class="card-text">@Project.ProjectDescription</p>
+        @if (Project.HelpRequired)
+        {
+            <h5>Чем помочь</h5>
+            <p class="card-text">
+                @Project.HowToHelp
+            </p>
+        }
+    </div>
+</div>
+
+@code {
+    [Parameter, EditorRequired]
+    public BastiliaProjectWithDetails Project { get; set; } = null!;
+}

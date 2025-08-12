@@ -25,7 +25,9 @@ internal class BastiliaProjectRepository(AppDbContext context) : BastiliaReposit
            project.ProjectUri,
            [.. project.ProjectAdmins.Select(pa => ToUserLink(pa.User))],
            [.. project.AchievementTemplates.SelectMany(a => a.Achievements).Select(ToPma)],
-           project.EndDate is not null ? DateOnly.FromDateTime(project.EndDate.Value) : null
+           project.EndDate,
+           project.HowToHelp,
+           project.ProjectDescription
            );
     }
 

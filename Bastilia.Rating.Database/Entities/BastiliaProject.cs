@@ -4,14 +4,17 @@ public class BastiliaProject
 {
     public int BastiliaProjectId { get; set; }
     public required string ProjectName { get; set; }
+
+    public string ProjectDescription { get; set; } = "";
+    public string HowToHelp { get; set; } = "";
     public ProjectType ProjectType { get; set; }
     public BrandType BrandType { get; set; }
     public bool OngoingProject { get; set; }
-    public DateTime CreateDate { get; set; }
-    public DateTime PlannedStartDate { get; set; }
-    public DateTime StartDate { get; set; }
-    public DateTime? PlannedEndDate { get; set; }
-    public DateTime? EndDate { get; set; }
+    public DateOnly CreateDate { get; set; }
+    public DateOnly PlannedStartDate { get; set; }
+    public DateOnly? StartDate { get; set; }
+    public DateOnly? PlannedEndDate { get; set; }
+    public DateOnly? EndDate { get; set; }
     public bool? ProjectOfTheYear { get; set; }
 
     public int? JoinrpgProjectId { get; set; }
