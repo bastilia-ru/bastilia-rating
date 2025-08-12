@@ -1,0 +1,10 @@
+{
+  "profiles": {
+    "Bastilia.Rating.Migrator": {
+      "commandName": "Project",
+      "environmentVariables": {
+        "DOTNET_ENVIRONMENT": "Development"
+      }
+    }
+  }
+}
