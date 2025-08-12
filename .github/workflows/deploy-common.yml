@@ -13,9 +13,11 @@ on:
         type: string
 env:
   APP_NAME: bastilia-rating
+  MIGRATOR_NAME: bastilia-rating-migrator
   APP_IMAGE_ID: "crp54lmmh2i4829mf2rc/bastilia-rating"
+  MIGRATOR_IMAGE_ID: "crp54lmmh2i4829mf2rc/bastilia-rating-migrator"
   REGISTRY_HOST: cr.yandex
-  #MIGRATOR_NAME: joinrpg-dal-migrate
+  
 
 jobs:
   deploy:
@@ -44,8 +46,14 @@ jobs:
           docker pull --quiet ${REGISTRY_HOST}/${APP_IMAGE_ID}:${COMMON_IMAGE_VERSION} > /dev/null
           APP_IMAGE_DIGEST=$(docker inspect --format='{{index .RepoDigests 0}}' ${REGISTRY_HOST}/${APP_IMAGE_ID}:${COMMON_IMAGE_VERSION} | cut -d@ -f2)
 
+          docker pull --quiet ${REGISTRY_HOST}/${MIGRATOR_IMAGE_ID}:${COMMON_IMAGE_VERSION} > /dev/null
+          MIGRATOR_IMAGE_DIGEST=$(docker inspect --format='{{index .RepoDigests 0}}' ${REGISTRY_HOST}/${MIGRATOR_IMAGE_ID}:${COMMON_IMAGE_VERSION} | cut -d@ -f2)
+
           #Having digest with version provides google/k8s-digester like experience and helps to avoid common pitfalls with "latest" tag
           echo "APP_IMAGE_VERSION_WITH_DIGEST=${COMMON_IMAGE_VERSION}@${APP_IMAGE_DIGEST}" >> $GITHUB_ENV
+
+          #Having digest with version provides google/k8s-digester like experience and helps to avoid common pitfalls with "latest" tag
+          echo "MIGRATOR_IMAGE_VERSION_WITH_DIGEST=${COMMON_IMAGE_VERSION}@${MIGRATOR_IMAGE_DIGEST}" >> $GITHUB_ENV
 
       - name: Checkout Repo
         uses: actions/checkout@v4
@@ -87,6 +95,10 @@ jobs:
               newName: ${REGISTRY_HOST}/${{ env.APP_IMAGE_ID }}
               newTag: ${{ env.APP_IMAGE_VERSION_WITH_DIGEST }}
 
+            - name: ${MIGRATOR_NAME}
+              newName: ${{ env.MIGRATOR_IMAGE_ID }}
+              newTag: ${{ env.MIGRATOR_IMAGE_VERSION_WITH_DIGEST }}
+
             EOF
             #folder must present to let kustomize generate separate files
             mkdir kustomize_output
@@ -96,45 +108,45 @@ jobs:
 #      - name: Show generated environment manifests
 #        run: cat ./kustomize_output/*
 
-    # - name: Apply DB migrations
-    # run: |
-    #     $ErrorActionPreference = 'Stop'
+      - name: Apply DB migrations
+        run: |
+          $ErrorActionPreference = 'Stop'
 
-    #     #Add new generated secret, replace old migration job
-    #     &"kubectl" "--%" "replace --force --save-config -f ./kustomize_output/v1_secret_joinrpg-main-* -f ./kustomize_output/batch_v1_job_joinrpg-dal-migrate.yaml -n $env:ENVIRONMENT"
-    #     if ($LastExitCode -ne 0) {exit $LastExitCode}
+          #Add new generated secret, replace old migration job
+          &"kubectl" "--%" "replace --force --save-config -f ./kustomize_output/v1_secret_bastilia-rating-secret-* -f ./kustomize_output/batch_v1_job_bastilia-rating-migrator.yaml -n $env:ENVIRONMENT"
+          if ($LastExitCode -ne 0) {exit $LastExitCode}
 
-    #     Write-Output "Waiting for job/joinrpg-dal-migrate to be completed or failed..."
+          Write-Output "Waiting for job/bastilia-rating-migrator to be completed or failed..."
 
-    #     #Keep waiting while job is not completed or failed
-    #     while ($true){
+          #Keep waiting while job is not completed or failed
+          while ($true){
 
-    #     $status = &"kubectl" "--%" "get job joinrpg-dal-migrate -n $env:ENVIRONMENT -o json" | ConvertFrom-Json
-    #     if ($LastExitCode -ne 0) {exit $LastExitCode}
-    #     $conditions = $status.status.conditions
-    #     if ($conditions) {
-    #         foreach ($condition in $conditions) {
-    #         if ($condition.type -eq "Complete" -and $condition.status -eq "True") {
-    #             Write-Output "✅ Job завершен успешно!"
-    #             exit 0
-    #         }
-    #         elseif ($condition.type -eq "Failed" -and $condition.status -eq "True") {
-    #             Write-Output "Migration has failed. Migration's job pod info:"
-    #             &"kubectl" "--%"  "get pods -n $env:ENVIRONMENT --selector=job-name=joinrpg-dal-migrate -o=yaml"
-    #             exit 1
-    #         }
-    #         }
-    #     }
+          $status = &"kubectl" "--%" "get job bastilia-rating-migrator -n $env:ENVIRONMENT -o json" | ConvertFrom-Json
+          if ($LastExitCode -ne 0) {exit $LastExitCode}
+          $conditions = $status.status.conditions
+          if ($conditions) {
+              foreach ($condition in $conditions) {
+              if ($condition.type -eq "Complete" -and $condition.status -eq "True") {
+                  Write-Output "✅ Job завершен успешно!"
+                  exit 0
+              }
+              elseif ($condition.type -eq "Failed" -and $condition.status -eq "True") {
+                  Write-Output "Migration has failed. Migration's job pod info:"
+                  &"kubectl" "--%"  "get pods -n $env:ENVIRONMENT --selector=job-name=bastilia-rating-migrator -o=yaml"
+                  exit 1
+              }
+              }
+          }
 
 
-    #     #Check last event for error. Must throw an error if, for instance, namespace CPU quota was exceeded
-    #     $LastEventForJob = &"kubectl" "--%" "get events -n $env:ENVIRONMENT --sort-by=.metadata.creationTimestamp --field-selector involvedObject.kind=Job,involvedObject.name=joinrpg-dal-migrate -o jsonpath='{.items[-1:].message}'"
-    #     if ($LastEventForJob -imatch "^'Error .*") { throw $LastEventForJob }
+          #Check last event for error. Must throw an error if, for instance, namespace CPU quota was exceeded
+          $LastEventForJob = &"kubectl" "--%" "get events -n $env:ENVIRONMENT --sort-by=.metadata.creationTimestamp --field-selector involvedObject.kind=Job,involvedObject.name=joinrpg-dal-migrate -o jsonpath='{.items[-1:].message}'"
+          if ($LastEventForJob -imatch "^'Error .*") { throw $LastEventForJob }
 
-    #     &"kubectl" "--%" "logs -n $env:ENVIRONMENT --follow job/joinrpg-dal-migrate"
-    #     Start-Sleep 3
-    #     }
-    # shell: pwsh
+          &"kubectl" "--%" "logs -n $env:ENVIRONMENT --follow job/bastilia-rating-migrator"
+          Start-Sleep 3
+          }
+        shell: pwsh
 
       - name: Deploy to k8s
         run: |

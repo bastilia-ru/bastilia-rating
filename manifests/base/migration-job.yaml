@@ -1,25 +1,25 @@
 apiVersion: batch/v1
 kind: Job
 metadata:
-  name: joinrpg-dal-migrate
+  name: bastilia-rating-migrator
 spec:
   backoffLimit: 0
   activeDeadlineSeconds: 300
   template:
     spec:
       containers:
-        - name: joinrpg-dal-migrate
+        - name: bastilia-rating-migrator
           envFrom:
             - secretRef:
-                name: joinrpg-main
+                name: bastilia-rating-secret
                 optional: false
-          image: joinrpg-dal-migrate
+          image: bastilia-rating-migrator
           resources:
             limits:
-              memory: 512Mi
+              memory: 128Mi
               cpu: 1000m
               ephemeral-storage: 30Mi
             requests:
-              memory: 256Mi
+              memory: 128Mi
               cpu: 250m
       restartPolicy: Never
