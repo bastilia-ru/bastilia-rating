@@ -17,7 +17,7 @@
     <TemplateColumn Context="project" Title="Бренд">
         <BrandBadge Type="project.BrandType" />
     </TemplateColumn>
-    <TemplateColumn Context="project" Title="Можно вписаться?" SortBy="GridSort<BastiliaProject>.ByAscending(p => p.HelpRequired)">
+    <TemplateColumn Context="project" Title="Вписаться?" SortBy="GridSort<BastiliaProject>.ByAscending(p => p.HelpRequired)">
         @if (project.HelpRequired)
         {
             <text>ДА</text>
