@@ -113,6 +113,7 @@ jobs:
           $ErrorActionPreference = 'Stop'
 
           #Add new generated secret, replace old migration job
+          ls ./kustomize_output/*
           &"kubectl" "--%" "replace --force --save-config -f ./kustomize_output/v1_secret_bastilia-rating-secret-* -f ./kustomize_output/batch_v1_job_bastilia-rating-migrator.yaml -n $env:ENVIRONMENT"
           if ($LastExitCode -ne 0) {exit $LastExitCode}
 
