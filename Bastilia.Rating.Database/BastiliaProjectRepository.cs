@@ -27,7 +27,8 @@ internal class BastiliaProjectRepository(AppDbContext context) : BastiliaReposit
            [.. project.AchievementTemplates.SelectMany(a => a.Achievements).Select(ToPma)],
            project.EndDate,
            project.HowToHelp,
-           project.ProjectDescription
+           project.ProjectDescription,
+           new Uri(project.ProjectIconUri)
            );
     }
 

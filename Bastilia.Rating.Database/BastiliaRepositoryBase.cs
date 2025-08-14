@@ -18,7 +18,8 @@ internal abstract class BastiliaRepositoryBase
             project.ProjectUri,
             [.. project.ProjectAdmins.Select(pa => ToUserLink(pa.User))],
             project.EndDate,
-            project.HowToHelp
+            project.HowToHelp,
+            new Uri(project.ProjectIconUri)
             );
     }
 

@@ -23,4 +23,5 @@ public class BastiliaProject
 
     public ICollection<ProjectAdmin> ProjectAdmins { get; set; } = [];
     public ICollection<AchievementTemplate> AchievementTemplates { get; set; } = [];
+    public required string ProjectIconUri { get; set; }
 }

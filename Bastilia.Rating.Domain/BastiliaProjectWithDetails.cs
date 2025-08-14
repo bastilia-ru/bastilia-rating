@@ -9,9 +9,10 @@ namespace Bastilia.Rating.Domain
                                           IReadOnlyCollection<ProjectMemberAchievement> ProjectMemberAchievements,
                                           DateOnly? endDate,
                                           string HowToHelp,
-                                          string ProjectDescription)
+                                          string ProjectDescription,
+                                          Uri ProjectIconUri)
             : base(BastiliaProjectId, ProjectName, ProjectType, BrandType, OngoingProject, ProjectOfTheYear,
-                   JoinrpgProjectId, KogdaIgraProjectId, ProjectUri, Coordinators, endDate, HowToHelp)
+                   JoinrpgProjectId, KogdaIgraProjectId, ProjectUri, Coordinators, endDate, HowToHelp, ProjectIconUri)
         {
             this.ProjectMemberAchievements = ProjectMemberAchievements;
             this.ProjectDescription = ProjectDescription;

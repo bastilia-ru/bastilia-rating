@@ -11,7 +11,9 @@ public record BastiliaProject(int BastiliaProjectId,
                               string? ProjectUri,
                               IReadOnlyCollection<IUserLink> Coordinators,
                               DateOnly? EndDate,
-                              string HowToHelp) : IBastiliaProjectLink
+                              string HowToHelp,
+                              Uri ProjectIconUri
+                              ) : IBastiliaProjectLink
 {
     public ProjectStatus Status { get; } = CalculateStatus(OngoingProject, EndDate);
     public bool HelpRequired { get; } = !string.IsNullOrWhiteSpace(HowToHelp);
