@@ -1,9 +1,10 @@
 @using System.Globalization
 <div class="card h-100">
     <div class="card-body">
-        <div class="d-flex justify-content-between">
-            <div>
-                <img src="@Achievement.AchievementIconUri.AbsoluteUri" width="50" height="50" />
+        <div style="display: flex;flex-flow:row wrap;">
+            <img src="@Achievement.AchievementIconUri.AbsoluteUri" width="50" height="50" />
+            <div style="margin-left:1em">
+
                 <h5 class="card-title">@Achievement.AchievementName</h5>
                 @if (ShowValue)
                 {

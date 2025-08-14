@@ -6,43 +6,31 @@
             </div>
 
             <div class="col">
-                <h3 class="mb-0">@Username</h3>
-                <small class="text-muted">[<a href="https://joinrpg.ru/user/@UserId">Профиль</a>]</small>
+                <h3 class="mb-0">@Username
+                    @if (Member.ParticipateInRating)
+                    {
+                        <strong class="h5">&nbsp;(+@Member.RatingValue / +@Member.HistoricalRatingValue)</strong>
+                    }
+                    else
+                    {
+                        <Tooltip Title="Этот бастилец предпочитает не оценивать свой вклад бездушными цифрами">–</Tooltip>
+                    }
+                </h3>
+                <CurrentStatusBadge Status="Member.CurrentStatus" />
+                @if (IsPresident)
+                {
+                    <text>&nbsp;</text>
+                    <span class="badge bg-warning text-dark">
+                        <i class="bi bi-award me-1"></i>Председатель до @Member.PresidentUntil
+                        </span>
+                }
+                <small class="text-muted"> [<a href="https://joinrpg.ru/user/@UserId">Профиль</a>]</small>
             </div>
 
         </div>
     </div>
 
     <div class="card-body">
-        <div class="mb-4">
-    <h5 class="d-flex align-items-center" >
-        <i class="bi bi-person-badge me-2"></i>Статус
-    </h5>
-    
-    <CurrentStatusBadge Status="Member.CurrentStatus" />
-
-    @if (IsPresident)
-    {
-        <div class="col-auto">
-            <span class="badge bg-warning text-dark">
-                <i class="bi bi-award me-1"></i>Председатель до @Member.PresidentUntil
-            </span>
-        </div>
-    }
-    
-    <div class="mt-2">
-        <i class="bi bi-graph-up me-1"></i>Рейтинг: 
-        @if (Member.RatingValue is not null)
-                {
-                    <strong>+@Member.RatingValue / +@Member.HistoricalRatingValue</strong>
-                }
-                else
-                {
-                    <i> Не участвует в рейтинге</i>
-                }
-
-    </div>
-</div>
        
 
 @*

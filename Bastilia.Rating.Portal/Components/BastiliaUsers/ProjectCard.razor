@@ -1,9 +1,10 @@
 @using System.Globalization
 <div class="card h-100">
     <div class="card-body">
-        <div class="d-flex justify-content-between">
-            <div>
-                <img src="@Project.ProjectIconUri.AbsoluteUri" width="50" height="50" />
+        <div style="display: flex;flex-flow:row wrap;">
+            
+                <img src="@Project.ProjectIconUri.AbsoluteUri" width="150" height="150" />
+            <div style="margin-left:1em">
                 <h3 class="card-title">@Project.ProjectName</h3>
                 <p>
                     @if (Project.Coordinators.Count > 0)
