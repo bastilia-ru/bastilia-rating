@@ -1,12 +1,22 @@
 @using Bastilia.Rating.Domain
 @using Microsoft.AspNetCore.Components.QuickGrid
+@using System.Globalization
 
 <QuickGrid Items="Members" Class="table table-striped" Virtualize="false">
     <TemplateColumn Context="member" Title="Имя" SortBy="@usernameSort">
         <BastiliaUserLink  Member="@member"/>
     </TemplateColumn>
     <TemplateColumn Context="member" Title="Статус" SortBy="GridSort<BastiliaMember>.ByAscending(x => x.CurrentStatus)">
-        <CurrentStatusBadge Status="member.CurrentStatus" />
+        @if (member.IsPresident)
+        {
+            <span class="badge bg-warning text-dark">
+                <i class="bi bi-award me-1"></i>Комендант до @member.PresidentUntil!.Value.ToString(CultureInfo.GetCultureInfo("ru-RU"))
+            </span>
+        }
+        else
+        {
+            <CurrentStatusBadge Status="member.CurrentStatus" />
+        }
     </TemplateColumn>
     <TemplateColumn Context="member" Title="Рейтинг" SortBy="ratingSort" IsDefaultSortColumn="true" InitialSortDirection="SortDirection.Descending">
         @if (member.ParticipateInRating)
