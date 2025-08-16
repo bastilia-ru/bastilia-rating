@@ -38,7 +38,7 @@ internal class BastiliaProjectRepository(AppDbContext context) : BastiliaReposit
 
     private static ProjectMemberAchievement ToPma(Entities.Achievement a)
     {
-        return new ProjectMemberAchievement(ToUserLink(a.User), a.OverrideName ?? a.Template.AchievementName, a.User.ParticipateInRating ? a.Template.AchievementRatingValue : null);
+        return new ProjectMemberAchievement(ToUserLink(a.User), GetAchievementName(a), a.User.ParticipateInRating ? a.Template.AchievementRatingValue : null);
     }
 
     private async Task<IReadOnlyCollection<BastiliaProject>> GetProjectsByPredicate(Expression<Func<Entities.BastiliaProject, bool>> predicate)

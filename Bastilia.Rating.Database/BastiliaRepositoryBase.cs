@@ -4,6 +4,19 @@ namespace Bastilia.Rating.Database;
 
 internal abstract class BastiliaRepositoryBase
 {
+
+    protected static string GetAchievementName(Entities.Achievement a)
+    {
+        if (a.OverrideName is not null)
+        {
+            return a.OverrideName;
+        }
+        if (a.Template.YearlyAchievement)
+        {
+            return a.Template.AchievementName + " " + a.GrantedDate.Year;
+        }
+        return a.Template.AchievementName;
+    }
     protected static BastiliaProject ToProject(Entities.BastiliaProject project)
     {
         return new BastiliaProject(

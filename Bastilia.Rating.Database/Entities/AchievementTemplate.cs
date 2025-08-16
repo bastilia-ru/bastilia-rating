@@ -14,5 +14,7 @@ public class AchievementTemplate
 
     public required BastiliaProject Project { get; set; }
     public required User Owner { get; set; }
+
+    public required bool YearlyAchievement { get; set; } = false;
     public ICollection<Achievement> Achievements { get; set; } = [];
 }

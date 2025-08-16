@@ -54,7 +54,7 @@ internal class BastiliaMemberRepository(AppDbContext context) : BastiliaReposito
             Achievements: user.Achievements
                 .Where(a => a.RemovedDate == null)
                 .Select(a => new MemberAchievement(
-                    a.OverrideName ?? a.Template.AchievementName,
+                    GetAchievementName(a),
                     a.Template.AchievementDescription,
                     new Uri(a.Template.AchievementImageUrl),
                     a.Template.AchievementRatingValue,
