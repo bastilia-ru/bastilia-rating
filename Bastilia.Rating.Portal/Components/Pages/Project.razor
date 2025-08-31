@@ -20,20 +20,26 @@
         <h2>Достижения</h2>
         foreach (var pma in project.ProjectMemberAchievements)
         {
-            <ProjectAchievementCard Achievement="pma" />
+            <div class="col-md-6">
+                <ProjectAchievementCard Achievement="pma" />
+            </div>
         }
     }
     else {
             <h2>Участники</h2>
             foreach (var pma in activePma)
             {
-                <ProjectAchievementCard Achievement="pma" />
+                <div class="col-md-6">
+                    <ProjectAchievementCard Achievement="pma" />
+                </div>
             }
     
             <h2>Былые достижения</h2>
-        foreach (var pma in expiredPma)
+            foreach (var pma in expiredPma)
             {
-                <ProjectAchievementCard Achievement="pma" />
+                <div class="col-md-6">
+                    <ProjectAchievementCard Achievement="pma" />
+                </div>
             }
     }
 }
