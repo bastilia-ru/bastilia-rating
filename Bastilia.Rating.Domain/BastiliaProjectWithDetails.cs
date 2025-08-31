@@ -23,5 +23,8 @@ namespace Bastilia.Rating.Domain
         public string ProjectDescription { get; }
     }
 
-    public record class ProjectMemberAchievement(IUserLink User, string Name, int? Value, DateOnly? Expired, Uri UserAvatar, string Description);
+    public record class ProjectMemberAchievement(IUserLink User, string Name, int? RatingValue, DateOnly? ExpiredDate, Uri UserAvatar, string Description)
+    {
+        public bool IsExpired => ExpiredDate != null;
+    }
 }

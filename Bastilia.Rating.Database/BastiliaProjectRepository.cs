@@ -17,7 +17,7 @@ internal class BastiliaProjectRepository(AppDbContext context) : BastiliaReposit
             ToUserLink(a.User),
             GetAchievementName(a),
             a.User.ParticipateInRating ? a.Template.AchievementRatingValue : null,
-            Expired: (a.ExpirationDate is null || a.ExpirationDate > DateOnly.FromDateTime(DateTime.Now)) ? null : a.ExpirationDate,
+            ExpiredDate: (a.ExpirationDate is null || a.ExpirationDate > DateOnly.FromDateTime(DateTime.Now)) ? null : a.ExpirationDate,
             new Uri(a.User.AvatarUrl),
             a.Template.AchievementDescription
             );

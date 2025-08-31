@@ -5,7 +5,7 @@
 @inject IBastiliaProjectRepository Repository
 @inject NavigationManager NavigationManager
 <PageTitle>Проект @project?.ProjectName</PageTitle>
-@if (project is null || pmaItems is null)
+@if (project is null)
 {
     <LoadingSpinner />
     return;
@@ -13,17 +13,29 @@
 <ProjectCard Project="project" />
 @if (project.ProjectMemberAchievements.Count > 0)
 {
-
-    <QuickGrid Items="pmaItems" Class="table table-striped" Virtualize="false">
-        <TemplateColumn Context="item" Title="Имя" SortBy="@usernameSort">
-            <BastiliaUserLink  Member="@item.User"/>
-        </TemplateColumn>
-        <PropertyColumn Property="i => i.Name" Title="Достижение">
-        </PropertyColumn>
-        <PropertyColumn Property="i => i.Value" Title="Рейтинг" IsDefaultSortColumn="true" Sortable="true" InitialSortDirection="SortDirection.Descending">
-        </PropertyColumn>
-        <PropertyColumn Property="i =>i.Expired" Title="Истекло" />
-    </QuickGrid>
+    var activePma = project.ProjectMemberAchievements.Where(p => !p.IsExpired).ToList();
+    var expiredPma = project.ProjectMemberAchievements.Where(p => p.IsExpired).ToList();
+    if(activePma.Count == 0 || expiredPma.Count == 0)
+    {
+        <h2>Достижения</h2>
+        foreach (var pma in project.ProjectMemberAchievements)
+        {
+            <ProjectAchievementCard Achievement="pma" />
+        }
+    }
+    else {
+            <h2>Участники</h2>
+            foreach (var pma in activePma)
+            {
+                <ProjectAchievementCard Achievement="pma" />
+            }
+    
+            <h2>Былые достижения</h2>
+        foreach (var pma in expiredPma)
+            {
+                <ProjectAchievementCard Achievement="pma" />
+            }
+    }
 }
 
 @code {
@@ -31,9 +43,6 @@
     public string? ProjectId { get; set; }
 
     private BastiliaProjectWithDetails? project;
-    private IQueryable<ProjectMemberAchievement>? pmaItems;
-
-    private GridSort<ProjectMemberAchievement> usernameSort = GridSort<ProjectMemberAchievement>.ByDescending(x => x.User.UserName);
 
     protected override async Task OnParametersSetAsync()
     {
@@ -49,9 +58,6 @@
         if (project is null)
         {
             NavigationManager.NavigateTo("/404");
-        }
-        else {
-            pmaItems = project.ProjectMemberAchievements.AsQueryable();
         }
     }
 }
