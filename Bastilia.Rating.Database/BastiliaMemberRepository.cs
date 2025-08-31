@@ -64,12 +64,12 @@ internal class BastiliaMemberRepository(AppDbContext context) : BastiliaReposito
                     ToUserLink(a.RemovedByUser),
                     a.ExpirationDate,
                     a.Template.ProjectId is not null ?
-                    new ProjectLink(a.Template.Project.BastiliaProjectId, a.Template.Project.ProjectName)
+                    new ProjectLink(a.Template.Project.BastiliaProjectId, a.Template.Project.ProjectName, a.Template.Project.Slug)
                     : null
                     ))
                 .ToList()
                 .AsReadOnly());
     }
 
-    private record class ProjectLink(int BastiliaProjectId, string ProjectName) : IBastiliaProjectLink;
+    private record class ProjectLink(int BastiliaProjectId, string ProjectName, string? Slug) : IBastiliaProjectLink;
 }

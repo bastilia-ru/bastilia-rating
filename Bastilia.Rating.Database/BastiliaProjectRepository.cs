@@ -2,35 +2,10 @@ namespace Bastilia.Rating.Database;
 
 internal class BastiliaProjectRepository(AppDbContext context) : BastiliaRepositoryBase, IBastiliaProjectRepository
 {
-    public async Task<BastiliaProjectWithDetails?> GetByIdAsync(int projectId)
-    {
-        var project = await Query(p => p.BastiliaProjectId == projectId)
-            .Include(p => p.AchievementTemplates)
-            .ThenInclude(p => p.Achievements)
-            .ThenInclude(p => p.User)
-            .FirstOrDefaultAsync();
+    public Task<BastiliaProjectWithDetails?> GetByIdAsync(int projectId) => GetOneProjectByPredicate(p => p.BastiliaProjectId == projectId);
 
-        if (project == null) { return null; }
+    public Task<BastiliaProjectWithDetails?> GetBySlugAsync(string slug) => GetOneProjectByPredicate(p => p.Slug == slug);
 
-
-        return new BastiliaProjectWithDetails(
-           project.BastiliaProjectId,
-           project.ProjectName,
-           project.ProjectType,
-           project.BrandType,
-           project.OngoingProject,
-           project.ProjectOfTheYear,
-           project.JoinrpgProjectId,
-           project.KogdaIgraProjectId,
-           project.ProjectUri,
-           [.. project.ProjectAdmins.Select(pa => ToUserLink(pa.User))],
-           [.. project.AchievementTemplates.SelectMany(a => a.Achievements).Select(ToPma)],
-           project.EndDate,
-           project.HowToHelp,
-           project.ProjectDescription,
-           new Uri(project.ProjectIconUri)
-           );
-    }
 
     public Task<IReadOnlyCollection<BastiliaProject>> GetActiveProjects() => GetProjectsByPredicate(p => p.EndDate == null);
 
@@ -57,4 +32,38 @@ internal class BastiliaProjectRepository(AppDbContext context) : BastiliaReposit
                     .Where(predicate)
                     ;
     }
+
+
+    private async Task<BastiliaProjectWithDetails?> GetOneProjectByPredicate(Expression<Func<Entities.BastiliaProject, bool>> predicate)
+    {
+        var project = await Query(predicate)
+                    .Include(p => p.AchievementTemplates)
+                    .ThenInclude(p => p.Achievements)
+                    .ThenInclude(p => p.User)
+                    .FirstOrDefaultAsync();
+
+        if (project == null) { return null; }
+
+
+        return new BastiliaProjectWithDetails(
+           project.BastiliaProjectId,
+           project.ProjectName,
+           project.ProjectType,
+           project.BrandType,
+           project.OngoingProject,
+           project.ProjectOfTheYear,
+           project.JoinrpgProjectId,
+           project.KogdaIgraProjectId,
+           project.ProjectUri,
+           [.. project.ProjectAdmins.Select(pa => ToUserLink(pa.User))],
+           [.. project.AchievementTemplates.SelectMany(a => a.Achievements).Select(ToPma)],
+           project.EndDate,
+           project.HowToHelp,
+           project.ProjectDescription,
+           new Uri(project.ProjectIconUri),
+           project.Slug
+           );
+    }
+
+
 }

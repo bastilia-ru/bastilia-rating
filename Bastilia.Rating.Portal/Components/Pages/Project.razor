@@ -1,4 +1,4 @@
-@page "/project/{projectId:int}"
+@page "/project/{projectId}"
 @using Bastilia.Rating.Portal.Components.BastiliaUsers
 @using Microsoft.AspNetCore.Components.QuickGrid
 
@@ -27,7 +27,7 @@
 
 @code {
     [Parameter]
-    public int ProjectId { get; set; }
+    public string? ProjectId { get; set; }
 
     private BastiliaProjectWithDetails? project;
     private IQueryable<ProjectMemberAchievement>? pmaItems;
@@ -36,8 +36,14 @@
 
     protected override async Task OnParametersSetAsync()
     {
-        project = await Repository.GetByIdAsync(ProjectId);
-
+        if (int.TryParse(ProjectId, out var projectId))
+        {
+            project = await Repository.GetByIdAsync(projectId);
+        }
+        else
+        {
+            project = await Repository.GetBySlugAsync(ProjectId);
+        }
 
         if (project is null)
         {

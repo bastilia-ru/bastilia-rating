@@ -10,9 +10,10 @@ namespace Bastilia.Rating.Domain
                                           DateOnly? endDate,
                                           string HowToHelp,
                                           string ProjectDescription,
-                                          Uri ProjectIconUri)
+                                          Uri ProjectIconUri,
+                                          string? slug)
             : base(BastiliaProjectId, ProjectName, ProjectType, BrandType, OngoingProject, ProjectOfTheYear,
-                   JoinrpgProjectId, KogdaIgraProjectId, ProjectUri, Coordinators, endDate, HowToHelp, ProjectIconUri)
+                   JoinrpgProjectId, KogdaIgraProjectId, ProjectUri, Coordinators, endDate, HowToHelp, ProjectIconUri, slug)
         {
             this.ProjectMemberAchievements = ProjectMemberAchievements;
             this.ProjectDescription = ProjectDescription;

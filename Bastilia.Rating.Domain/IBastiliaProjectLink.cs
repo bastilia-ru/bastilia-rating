@@ -4,5 +4,6 @@ namespace Bastilia.Rating.Domain
     {
         int BastiliaProjectId { get; }
         string ProjectName { get; }
+        string? Slug { get; }
     }
 }

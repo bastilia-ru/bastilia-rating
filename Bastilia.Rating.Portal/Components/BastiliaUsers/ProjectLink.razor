@@ -1,6 +1,15 @@
 @using Bastilia.Rating.Domain
 
-<a href="/project/@Project.BastiliaProjectId">@Project.ProjectName</a>
+@if (Project.Slug is null)
+{
+    <a href="/project/@Project.BastiliaProjectId">@Project.ProjectName</a>
+}
+else
+{
+    <a href="/project/@Project.Slug">@Project.ProjectName</a>
+}
+
+
 
 @code 
 {

@@ -11,6 +11,7 @@ public interface IBastiliaMemberRepository
 public interface IBastiliaProjectRepository
 {
     Task<BastiliaProjectWithDetails?> GetByIdAsync(int projectId);
+    Task<BastiliaProjectWithDetails?> GetBySlugAsync(string slug);
     Task<IReadOnlyCollection<BastiliaProject>> GetActiveProjects();
     Task<IReadOnlyCollection<BastiliaProject>> GetActualProjects();
 }
