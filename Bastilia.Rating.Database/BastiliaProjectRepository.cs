@@ -13,7 +13,14 @@ internal class BastiliaProjectRepository(AppDbContext context) : BastiliaReposit
 
     private static ProjectMemberAchievement ToPma(Entities.Achievement a)
     {
-        return new ProjectMemberAchievement(ToUserLink(a.User), GetAchievementName(a), a.User.ParticipateInRating ? a.Template.AchievementRatingValue : null);
+        return new ProjectMemberAchievement(
+            ToUserLink(a.User),
+            GetAchievementName(a),
+            a.User.ParticipateInRating ? a.Template.AchievementRatingValue : null,
+            Expired: (a.ExpirationDate is null || a.ExpirationDate > DateOnly.FromDateTime(DateTime.Now)) ? null : a.ExpirationDate,
+            new Uri(a.User.AvatarUrl),
+            a.Template.AchievementDescription
+            );
     }
 
     private async Task<IReadOnlyCollection<BastiliaProject>> GetProjectsByPredicate(Expression<Func<Entities.BastiliaProject, bool>> predicate)
