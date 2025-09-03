@@ -12,6 +12,7 @@ builder.Services.AddRazorComponents()
 builder.Services.AddHealthChecks();
 
 builder.Services.RegisterRatingDal(builder.Configuration, builder.Environment);
+builder.Services.AddLocalization();
 
 var app = builder.Build();
 
@@ -26,6 +27,8 @@ else
 }
 
 app.UseAntiforgery();
+
+app.UseRequestLocalization("ru-RU");
 
 app.MapStaticAssets();
 app.MapRazorComponents<App>()
