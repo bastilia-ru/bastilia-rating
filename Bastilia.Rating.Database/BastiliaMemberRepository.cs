@@ -30,6 +30,7 @@ internal class BastiliaMemberRepository(AppDbContext context) : BastiliaReposito
 
     private static BastiliaMember ToMember(Entities.User user)
     {
+        IUserLink userAsLink = ToUserLink(user);
         return new BastiliaMember(
             JoinrpgUserId: user.JoinRpgUserId,
             UserName: user.Username,
@@ -53,23 +54,8 @@ internal class BastiliaMemberRepository(AppDbContext context) : BastiliaReposito
                 .AsReadOnly(),
             Achievements: user.Achievements
                 .Where(a => a.RemovedDate == null)
-                .Select(a => new MemberAchievement(
-                    GetAchievementName(a),
-                    a.Template.AchievementDescription,
-                    new Uri(a.Template.AchievementImageUrl),
-                    a.Template.AchievementRatingValue,
-                    a.GrantedDate,
-                    ToUserLink(a.GrantedByUser),
-                    a.RemovedDate,
-                    ToUserLink(a.RemovedByUser),
-                    a.ExpirationDate,
-                    a.Template.ProjectId is not null ?
-                    new ProjectLink(a.Template.Project.BastiliaProjectId, a.Template.Project.ProjectName, a.Template.Project.Slug)
-                    : null
-                    ))
+                .Select(a => ToMemberAchievement(a))
                 .ToList()
                 .AsReadOnly());
     }
-
-    private record class ProjectLink(int BastiliaProjectId, string ProjectName, string? Slug) : IBastiliaProjectLink;
 }

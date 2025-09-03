@@ -4,7 +4,6 @@ namespace Bastilia.Rating.Database;
 
 internal abstract class BastiliaRepositoryBase
 {
-
     protected static string GetAchievementName(Entities.Achievement a)
     {
         if (a.OverrideName is not null)
@@ -44,5 +43,28 @@ internal abstract class BastiliaRepositoryBase
         return new UserLink(user.JoinRpgUserId, user.Slug, user.Username);
     }
 
-    private record UserLink(int JoinrpgUserId, string? Slug, string UserName) : IUserLink;
+    protected static MemberAchievement ToMemberAchievement(Entities.Achievement a)
+    {
+        return new MemberAchievement(
+                            GetAchievementName(a),
+                            a.Template.AchievementDescription,
+                            new Uri(a.Template.AchievementImageUrl),
+                            a.Template.AchievementRatingValue,
+                            a.GrantedDate,
+                            ToUserLink(a.GrantedByUser),
+                            a.RemovedDate,
+                            ToUserLink(a.RemovedByUser),
+                            a.ExpirationDate,
+                            a.Template.ProjectId is not null ?
+                            new ProjectLink(a.Template.Project.BastiliaProjectId, a.Template.Project.ProjectName, a.Template.Project.Slug)
+                            : null,
+                            a.User.ParticipateInRating,
+                            ToUserLink(a.User),
+                            new Uri(a.User.AvatarUrl)
+                            );
+    }
+
+    private record class ProjectLink(int BastiliaProjectId, string ProjectName, string? Slug) : IBastiliaProjectLink;
+
+    private record class UserLink(int JoinrpgUserId, string? Slug, string UserName) : IUserLink;
 }

@@ -6,7 +6,7 @@ namespace Bastilia.Rating.Domain
                                           BrandType BrandType, bool OngoingProject, bool? ProjectOfTheYear,
                                           int? JoinrpgProjectId, int? KogdaIgraProjectId, string? ProjectUri,
                                           IReadOnlyCollection<IUserLink> Coordinators,
-                                          IReadOnlyCollection<ProjectMemberAchievement> ProjectMemberAchievements,
+                                          IReadOnlyCollection<MemberAchievement> ProjectMemberAchievements,
                                           DateOnly? endDate,
                                           string HowToHelp,
                                           string ProjectDescription,
@@ -19,12 +19,8 @@ namespace Bastilia.Rating.Domain
             this.ProjectDescription = ProjectDescription;
         }
 
-        public IReadOnlyCollection<ProjectMemberAchievement> ProjectMemberAchievements { get; }
+        public IReadOnlyCollection<MemberAchievement> ProjectMemberAchievements { get; }
         public string ProjectDescription { get; }
     }
 
-    public record class ProjectMemberAchievement(IUserLink User, string Name, int? RatingValue, DateOnly? ExpiredDate, Uri UserAvatar, string Description)
-    {
-        public bool IsExpired => ExpiredDate != null;
-    }
 }

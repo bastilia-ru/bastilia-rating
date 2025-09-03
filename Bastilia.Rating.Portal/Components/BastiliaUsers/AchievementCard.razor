@@ -1,29 +1,46 @@
 @using System.Globalization
-<div class="card h-100">
+<div class="card h-100" style="margin:0.5em; width:30em">
     <div class="card-body">
         <div style="display: flex;flex-flow:row wrap;">
-            <img src="@Achievement.AchievementIconUri.AbsoluteUri" width="50" height="50" />
+            <img src="@avatar" width="70" height="70" />
             <div style="margin-left:1em">
 
-                <h5 class="card-title">@Achievement.AchievementName</h5>
-                @if (ShowValue)
-                {
-                    <h6 class="card-subtitle mb-2 text-muted">+@CountHelper.DisplayCount(Achievement.RatingValue, "очко", "очка", "очков")</h6>
-                }
+                <h5>
+                    @if (ShowAsProject)
+                    {
+                        <BastiliaUserLink Member="@Achievement.User" />
+                    }
+                    else
+                    {
+                        @Achievement.AchievementName
+                    }
+                    @if (Achievement.RatingForDisplay is not null)
+                    {
+                        <span class="text-muted"> (+@CountHelper.DisplayCount(Achievement.RatingForDisplay.Value, "очко", "очка", "очков"))</span>
+                    }
+                    </h5>
             </div>
         </div>
         <p class="card-text">@Achievement.Description</p>
         
             <div class="text-muted" style="text-align: right; font-size: 70%">
-            @if (Achievement.ProjectLink is not null)
+            @if (Achievement.ProjectLink is not null && !ShowAsProject)
             {
                 <ProjectLink Project="Achievement.ProjectLink" />
             }
             else
             {
-                <BastiliaUserLink Member="Achievement.GrantedBy" />
+                <span>Выдал <BastiliaUserLink Member="Achievement.GrantedBy" /></span>
             }
             </div>
+
+        @if (Achievement.IsExpired)
+        {
+
+            <div class="text-muted" style="text-align: right; font-size: 70%">
+                Истекло @Achievement.ExpirationDate!.Value.ToShortDateString()
+            </div>
+        }
     </div>
 </div>
 
@@ -33,7 +50,15 @@
 
     [Parameter]
     public bool ShowValue {get;set;} = false;
+    [Parameter]
+    public bool ShowAsProject { get; set; }
 
     private string GrantedDate =>
         Achievement.GrantedDate.ToString("d MMM yyyy", CultureInfo.GetCultureInfo("ru-RU"));
+
+    private string avatar => ShowAsProject ? Achievement.UserAvatar.AbsoluteUri : Achievement.AchievementIconUri.AbsoluteUri;
+
+
+
+
 }

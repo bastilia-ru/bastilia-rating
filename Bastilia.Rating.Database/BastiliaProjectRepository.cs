@@ -11,18 +11,6 @@ internal class BastiliaProjectRepository(AppDbContext context) : BastiliaReposit
 
     public Task<IReadOnlyCollection<BastiliaProject>> GetActualProjects() => GetProjectsByPredicate(p => true);
 
-    private static ProjectMemberAchievement ToPma(Entities.Achievement a)
-    {
-        return new ProjectMemberAchievement(
-            ToUserLink(a.User),
-            GetAchievementName(a),
-            a.User.ParticipateInRating ? a.Template.AchievementRatingValue : null,
-            ExpiredDate: (a.ExpirationDate is null || a.ExpirationDate > DateOnly.FromDateTime(DateTime.Now)) ? null : a.ExpirationDate,
-            new Uri(a.User.AvatarUrl),
-            a.Template.AchievementDescription
-            );
-    }
-
     private async Task<IReadOnlyCollection<BastiliaProject>> GetProjectsByPredicate(Expression<Func<Entities.BastiliaProject, bool>> predicate)
     {
         var projects = await Query(predicate).ToListAsync();
@@ -47,6 +35,8 @@ internal class BastiliaProjectRepository(AppDbContext context) : BastiliaReposit
                     .Include(p => p.AchievementTemplates)
                     .ThenInclude(p => p.Achievements)
                     .ThenInclude(p => p.User)
+                    .Include(p => p.AchievementTemplates).ThenInclude(at => at.Achievements).ThenInclude(a => a.GrantedByUser)
+                    .Include(p => p.AchievementTemplates).ThenInclude(at => at.Achievements).ThenInclude(a => a.RemovedByUser)
                     .FirstOrDefaultAsync();
 
         if (project == null) { return null; }
@@ -63,7 +53,7 @@ internal class BastiliaProjectRepository(AppDbContext context) : BastiliaReposit
            project.KogdaIgraProjectId,
            project.ProjectUri,
            [.. project.ProjectAdmins.Select(pa => ToUserLink(pa.User))],
-           [.. project.AchievementTemplates.SelectMany(a => a.Achievements).Select(ToPma)],
+           [.. project.AchievementTemplates.SelectMany(a => a.Achievements).Select(ToMemberAchievement)],
            project.EndDate,
            project.HowToHelp,
            project.ProjectDescription,

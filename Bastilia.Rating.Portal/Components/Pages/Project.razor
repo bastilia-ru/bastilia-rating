@@ -18,35 +18,35 @@
     if(activePma.Count == 0 || expiredPma.Count == 0)
     {
         <h2>Достижения</h2>
-        foreach (var pma in project.ProjectMemberAchievements)
-        {
-            <div class="col-md-6">
-                <ProjectAchievementCard Achievement="pma" />
-            </div>
-        }
+        <div style="display: flex; flex-flow: row wrap" >
+            @foreach (var pma in project.ProjectMemberAchievements.OrderByDescending(x => x.RatingValue))
+            {
+                    <AchievementCard Achievement="pma" ShowAsProject="true"/>
+            }
+        </div>
     }
     else {
             <h2>Участники</h2>
-            foreach (var pma in activePma)
+            <div style="display: flex; flex-flow: row wrap" >
+            @foreach (var pma in activePma.OrderByDescending(x => x.RatingValue))
             {
-                <div class="col-md-6">
-                    <ProjectAchievementCard Achievement="pma" />
-                </div>
+                <AchievementCard Achievement="pma" ShowAsProject="true" />
             }
+            </div>
     
             <h2>Былые достижения</h2>
-            foreach (var pma in expiredPma)
+            <div style="display: flex; flex-flow: row wrap" >
+            @foreach (var pma in expiredPma.OrderByDescending(x => x.RatingValue))
             {
-                <div class="col-md-6">
-                    <ProjectAchievementCard Achievement="pma" />
-                </div>
+                <AchievementCard Achievement="pma" ShowAsProject="true" />
             }
+            </div>
     }
 }
 
 @code {
     [Parameter]
-    public string? ProjectId { get; set; }
+    public string ProjectId { get; set; } = null!;
 
     private BastiliaProjectWithDetails? project;
 
