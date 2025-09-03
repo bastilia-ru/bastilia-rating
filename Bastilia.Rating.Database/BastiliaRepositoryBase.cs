@@ -56,12 +56,17 @@ internal abstract class BastiliaRepositoryBase
                             ToUserLink(a.RemovedByUser),
                             a.ExpirationDate,
                             a.Template.ProjectId is not null ?
-                            new ProjectLink(a.Template.Project.BastiliaProjectId, a.Template.Project.ProjectName, a.Template.Project.Slug)
+                            ToProjectLink(a.Template.Project)
                             : null,
                             a.User.ParticipateInRating,
                             ToUserLink(a.User),
                             new Uri(a.User.AvatarUrl)
                             );
+    }
+
+    protected static IBastiliaProjectLink ToProjectLink(Entities.BastiliaProject project)
+    {
+        return new ProjectLink(project.BastiliaProjectId, project.ProjectName, project.Slug);
     }
 
     private record class ProjectLink(int BastiliaProjectId, string ProjectName, string? Slug) : IBastiliaProjectLink;

@@ -11,6 +11,7 @@ namespace Bastilia.Rating.Database
             services.AddJoinEfCoreDbContext<AppDbContext>(configuration, environment, "BastiliaRating");
             services.AddTransient<IBastiliaMemberRepository, BastiliaMemberRepository>();
             services.AddTransient<IBastiliaProjectRepository, BastiliaProjectRepository>();
+            services.AddTransient<IBastiliaTemplateRepository, BastiliaTemplateRepository>();
         }
     }
 }

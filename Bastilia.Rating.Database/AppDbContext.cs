@@ -1,4 +1,5 @@
 using Bastilia.Rating.Database.Entities;
+using AchievementTemplate = Bastilia.Rating.Database.Entities.AchievementTemplate;
 using BastiliaProject = Bastilia.Rating.Database.Entities.BastiliaProject;
 
 namespace Bastilia.Rating.Database;

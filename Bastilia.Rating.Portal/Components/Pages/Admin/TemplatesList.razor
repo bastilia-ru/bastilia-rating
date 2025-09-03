@@ -1,0 +1,28 @@
+@page "/admin/templates"
+@using Bastilia.Rating.Portal.Components.BastiliaUsers
+@using Microsoft.AspNetCore.Components.QuickGrid
+@inject IBastiliaTemplateRepository Repository
+
+<PageTitle>Шаблоны достижений</PageTitle>
+
+<h2>Шаблоны достижений</h2>
+<QuickGrid Items="templates" Class="table table-striped" Virtualize="false">
+    <PropertyColumn Property="@(t => t.Name)" Title="Название"/>
+    <TemplateColumn Context="template" Title="Проект" SortBy="@(GridSort<AchievementTemplate>.ByAscending(x => x.Project == null ? null : x.Project.ProjectName))" IsDefaultSortColumn="true">
+        <ProjectLink Project="@template.Project" />
+    </TemplateColumn>
+    <PropertyColumn Property="@(t => t.Description)" Title="Описание"/>
+    <PropertyColumn Property="@(t => t.RatingValue)" Title="Стоимость"/>
+
+    <PropertyColumn Property="@(t => t.DefaultUri)" Title="Нет картинки" />
+    <PropertyColumn Property="@(t => t.YearlyAchievement)" Title="Годовое" />
+</QuickGrid>
+
+@code
+{
+    private IQueryable<AchievementTemplate>? templates;
+    protected override async Task OnInitializedAsync()
+    {
+        templates = (await Repository.GetAchievementTemplates()).AsQueryable();
+    }
+}

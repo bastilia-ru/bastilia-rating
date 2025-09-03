@@ -17,3 +17,8 @@ public interface IBastiliaProjectRepository
     Task<IReadOnlyCollection<BastiliaProject>> GetActiveProjects();
     Task<IReadOnlyCollection<BastiliaProject>> GetActualProjects();
 }
+
+public interface IBastiliaTemplateRepository
+{
+    Task<IReadOnlyCollection<AchievementTemplate>> GetAchievementTemplates();
+}
