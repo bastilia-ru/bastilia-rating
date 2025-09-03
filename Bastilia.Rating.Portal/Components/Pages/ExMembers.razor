@@ -15,11 +15,11 @@ else
 {
     
     <QuickGrid Items="members" Class="table table-striped" Virtualize="false">
-    <TemplateColumn Context="member" Title="Имя" SortBy="@(GridSort<MemberHistoryItem>.ByAscending(x => x.Since).ThenAscending(x => x.Until))">
+    <TemplateColumn Context="member" Title="Имя" SortBy="@(GridSort<MemberHistoryItem>.ByAscending(x => x.Since).ThenAscending(x => x.Until))" IsDefaultSortColumn="true">
         <BastiliaUserLink  Member="@member.User"/>
     </TemplateColumn>
     <PropertyColumn Property="@(m => m.Since.ToShortDateString())" Title="C" />
-    <PropertyColumn Property="@(m => m.Until.ToShortDateString())" Title="По"/>
+    <PropertyColumn Property="@(m => m.Until == null ? null : m.Until.Value.ToShortDateString())" Title="По"/>
    
 </QuickGrid>
     <Alert>К сожалению, у Йорика нет аккаунта на joinrpg.ru поэтому его нет в этом списке</Alert>
