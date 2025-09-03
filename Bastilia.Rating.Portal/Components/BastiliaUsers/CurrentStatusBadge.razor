@@ -6,19 +6,20 @@
         </span>
         break;
     case BastiliaFinalStatus.Retired:
+        <Tooltip Title="Бывший бастилец">
         <span class="badge bg-secondary">
             Досрочно-освобожденный
         </span>
+        </Tooltip>
         break;
     case BastiliaFinalStatus.Mate:
-        <span class="badge bg-info">
-            Прибастиленный
-        </span>
+        <Tooltip Title="Есть хотя бы 1 активное достижение">
+            <span class="badge bg-info" title="Есть ">
+                Прибастиленный
+            </span>
+        </Tooltip>
         break;
     default:
-        <span class="badge bg-light text-dark">
-            Не определен
-        </span>
         break;
 }
 

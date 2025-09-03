@@ -47,7 +47,7 @@ public record BastiliaMember(
         {
             return BastiliaFinalStatus.Retired;
         }
-        if (achievements.Count != 0)
+        if (achievements.Any(a => !a.IsExpired))
         {
             return BastiliaFinalStatus.Mate;
         }
