@@ -1,0 +1,9 @@
+<div class="alert alert-warning mt-2 mb-0">
+    @ChildContent
+</div>
+
+@code {
+    [Parameter]
+    [EditorRequired]
+    public RenderFragment ChildContent { get; set; }
+}

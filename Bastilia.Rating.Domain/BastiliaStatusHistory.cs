@@ -9,3 +9,5 @@ public record BastiliaStatusHistory(
         BeginDate.ToDateTime(TimeOnly.MinValue) < DateTime.Now
         && (EndDate is null || EndDate.Value.ToDateTime(TimeOnly.MinValue) > DateTime.Now);
 }
+
+public record class MemberHistoryItem(IUserLink User, DateOnly Since, DateOnly? Until);

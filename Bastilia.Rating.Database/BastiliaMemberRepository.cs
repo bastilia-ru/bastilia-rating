@@ -8,6 +8,15 @@ internal class BastiliaMemberRepository(AppDbContext context) : BastiliaReposito
 
     public Task<IReadOnlyCollection<BastiliaMember>> GetAllAsync() => GetMemberImpl(u => true);
 
+    public async Task<IReadOnlyCollection<MemberHistoryItem>> GetMembersHistory()
+    {
+        var users = await context.UsersBastiliaStatuses
+                    .Include(s => s.User)
+
+                    .ToArrayAsync();
+        return [.. users.Where(s => s.StatusType == BastiliaStatusType.Member).Select(s => new MemberHistoryItem(ToUserLink(s.User), s.BeginDate, s.EndDate))];
+    }
+
     private async Task<IReadOnlyCollection<BastiliaMember>> GetMemberImpl(Expression<Func<Entities.User, bool>> predicate)
     {
         var users = await context.Users

@@ -6,6 +6,8 @@ public interface IBastiliaMemberRepository
     Task<BastiliaMember?> GetBySlugAsync(string slug);
 
     Task<IReadOnlyCollection<BastiliaMember>> GetAllAsync();
+
+    Task<IReadOnlyCollection<MemberHistoryItem>> GetMembersHistory();
 }
 
 public interface IBastiliaProjectRepository

@@ -1,4 +1,6 @@
 @page "/members-history"
+@using Bastilia.Rating.Portal.Components.BastiliaUsers
+@using Microsoft.AspNetCore.Components.QuickGrid
 @inject IBastiliaMemberRepository Repository
 
 <PageTitle>Бастильцы и бывшие бастильцы</PageTitle>
@@ -11,7 +13,16 @@
 }
 else
 {
-    <Bastilia.Rating.Portal.Components.BastiliaUsers.MemberList Members="members" />
+    
+    <QuickGrid Items="members" Class="table table-striped" Virtualize="false">
+    <TemplateColumn Context="member" Title="Имя" SortBy="@(GridSort<MemberHistoryItem>.ByDescending(x => x.User.UserName))">
+        <BastiliaUserLink  Member="@member.User"/>
+    </TemplateColumn>
+    <PropertyColumn Property="@(m => m.Since)" />
+    <PropertyColumn Property="@(m => m.Until)" />
+   
+</QuickGrid>
+    <Alert>К сожалению, у Йорика нет аккаунта на joinrpg.ru поэтому его нет в этом списке</Alert>
    
 }
 
@@ -19,9 +30,11 @@ else
 
 @code
 {
-    private IQueryable<BastiliaMember>? members;
+    private IQueryable<MemberHistoryItem>? members;
     protected override async Task OnInitializedAsync()
     {
-        members = (await Repository.GetAllAsync()).Where(m => m.CurrentStatus == BastiliaFinalStatus.Retired || m.CurrentStatus == BastiliaFinalStatus.Mate).AsQueryable();
+        members = (await Repository.GetMembersHistory()).AsQueryable();
     }
+
+
 }
