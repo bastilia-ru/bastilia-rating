@@ -29,6 +29,12 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".github", ".github", "{02EA
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Bastilia.Rating.Migrator", "Bastilia.Rating.Migrator\Bastilia.Rating.Migrator.csproj", "{61D46E8E-01D8-4383-A9E0-994B871707F3}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "scripts", "scripts", "{B6686E00-163E-4AEA-BC9C-E20A2C2C2B2A}"
+	ProjectSection(SolutionItems) = preProject
+		scripts\pgloader.ps1 = scripts\pgloader.ps1
+		scripts\migrate-prod-to-localhost.ps1 = scripts\migrate-prod-to-localhost.ps1
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -61,6 +67,7 @@ Global
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
 		{02EA681E-C7D8-13C7-8484-4AC65E1B71E8} = {8EC462FD-D22E-90A8-E5CE-7E832BA40C5D}
+		{B6686E00-163E-4AEA-BC9C-E20A2C2C2B2A} = {8EC462FD-D22E-90A8-E5CE-7E832BA40C5D}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {AC83803D-6324-4754-AFEC-3F606362202C}
