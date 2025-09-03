@@ -1,0 +1,27 @@
+@page "/members-history"
+@inject IBastiliaMemberRepository Repository
+
+<PageTitle>Бастильцы и бывшие бастильцы</PageTitle>
+
+<h2>Бастильцы и бывшие бастильцы</h2>
+
+@if (members is null)
+{
+    <LoadingSpinner />
+}
+else
+{
+    <Bastilia.Rating.Portal.Components.BastiliaUsers.MemberList Members="members" />
+   
+}
+
+@* Добавить сюда колонки с тем, когда пришел и ушел*@
+
+@code
+{
+    private IQueryable<BastiliaMember>? members;
+    protected override async Task OnInitializedAsync()
+    {
+        members = (await Repository.GetAllAsync()).Where(m => m.CurrentStatus == BastiliaFinalStatus.Retired || m.CurrentStatus == BastiliaFinalStatus.Mate).AsQueryable();
+    }
+}
