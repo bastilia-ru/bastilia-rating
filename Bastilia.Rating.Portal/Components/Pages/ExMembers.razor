@@ -16,13 +16,20 @@ else
     
     <QuickGrid Items="members" Class="table table-striped" Virtualize="false">
     <TemplateColumn Context="member" Title="Имя" SortBy="@(GridSort<MemberHistoryItem>.ByAscending(x => x.Since).ThenAscending(x => x.Until))" IsDefaultSortColumn="true">
-        <BastiliaUserLink  Member="@member.User"/>
-    </TemplateColumn>
+        @if (member.User.JoinrpgUserId > 0)
+            {
+                <BastiliaUserLink  Member="@member.User"/>
+            }
+            else
+            {
+                @member.User.UserName
+            }
+        </TemplateColumn>
     <PropertyColumn Property="@(m => m.Since.ToShortDateString())" Title="C" />
     <PropertyColumn Property="@(m => m.Until == null ? null : m.Until.Value.ToShortDateString())" Title="По"/>
    
 </QuickGrid>
-    <Alert>К сожалению, у Йорика нет аккаунта на joinrpg.ru поэтому его нет в этом списке</Alert>
+    
    
 }
 
@@ -33,8 +40,16 @@ else
     private IQueryable<MemberHistoryItem>? members;
     protected override async Task OnInitializedAsync()
     {
-        members = (await Repository.GetMembersHistory()).AsQueryable();
+        var list = ( await Repository.GetMembersHistory()).ToList();
+        list.Add(new MemberHistoryItem(new PseudoLink("Йорик"), new DateOnly(2003, 10, 22), new DateOnly(2006, 09, 01)));
+        list.Add(new MemberHistoryItem(new PseudoLink("Рианон"), new DateOnly(2008, 06, 01), new DateOnly(2012, 03, 29)));
+        members = list.AsQueryable();
     }
 
+    private record class PseudoLink(string UserName) : IUserLink
+    {
+        public int JoinrpgUserId => -1;
 
+        public string? Slug => null;
+    }
 }
