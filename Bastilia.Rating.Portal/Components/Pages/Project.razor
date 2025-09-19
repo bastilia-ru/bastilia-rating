@@ -40,8 +40,11 @@
             {
                 <AchievementCard Achievement="pma" ShowAsProject="true" />
             }
-            </div>
+        </div>
     }
+} else if (project.EndDate is not null)
+{
+    <Alert>Здесь нет ни одной ачивки. Скорее всего данные об этом проекте еще восстанавливаются с архивов.</Alert>
 }
 
 @code {
