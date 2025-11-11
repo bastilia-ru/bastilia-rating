@@ -22,5 +22,5 @@ load database
 function pgloader {
     $cur_dir = (Get-Item .).FullName
     Write-Output $mount_arg
-    docker run --rm --name pgloader --mount "type=bind,source=$cur_dir,target=/tmp/cmd" dimitri/pgloader:v3.6.7 pgloader $args
+    docker run --rm --name pgloader --mount "type=bind,source=$cur_dir,target=/tmp/cmd" -v "${env:APPDATA}\postgresql\pgpass.conf:/tmp/.pgpass:ro" -e PGPASSFILE=/tmp/.pgpass dimitri/pgloader:v3.6.7 pgloader $args
 }
