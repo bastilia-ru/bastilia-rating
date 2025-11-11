@@ -1,0 +1,24 @@
+@page "/members/actual"
+@inject IBastiliaMemberRepository Repository
+
+<PageTitle>Список Узников</PageTitle>
+
+<h2>Список Узников</h2>
+
+@if (members is null)
+{
+    <LoadingSpinner />
+}
+else
+{
+    <Bastilia.Rating.Portal.Components.BastiliaUsers.MemberList Members="members" ShowBirthday="true"/>
+}
+
+@code
+{
+    private IQueryable<BastiliaMember>? members;
+    protected override async Task OnInitializedAsync()
+    {
+        members = (await Repository.GetActualAsync()).AsQueryable();
+    }
+}

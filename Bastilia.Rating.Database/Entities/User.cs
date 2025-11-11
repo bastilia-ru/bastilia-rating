@@ -1,5 +1,3 @@
-using Microsoft.EntityFrameworkCore;
-
 namespace Bastilia.Rating.Database.Entities;
 
 [PrimaryKey(nameof(JoinRpgUserId))]
@@ -12,6 +10,8 @@ public class User
     public bool ParticipateInRating { get; set; }
 
     public string? Slug { get; set; }
+
+    public DateOnly? BirthDay { get; set; }
 
     public ICollection<ProjectAdmin> ProjectAdmins { get; set; } = [];
     public ICollection<AchievementTemplate> OwnedAchievementTemplates { get; set; } = [];

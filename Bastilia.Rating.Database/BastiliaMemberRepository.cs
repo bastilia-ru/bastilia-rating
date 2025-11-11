@@ -8,6 +8,8 @@ internal class BastiliaMemberRepository(AppDbContext context) : BastiliaReposito
 
     public Task<IReadOnlyCollection<BastiliaMember>> GetAllAsync() => GetMemberImpl(u => true);
 
+    public async Task<IReadOnlyCollection<BastiliaMember>> GetActualAsync() => (await GetMemberImpl(u => true)).Where(x => x.CurrentStatus == BastiliaFinalStatus.Active).ToList();
+
     public async Task<IReadOnlyCollection<MemberHistoryItem>> GetMembersHistory()
     {
         var users = await context.UsersBastiliaStatuses
@@ -65,6 +67,7 @@ internal class BastiliaMemberRepository(AppDbContext context) : BastiliaReposito
                 .Where(a => a.RemovedDate == null)
                 .Select(a => ToMemberAchievement(a))
                 .ToList()
-                .AsReadOnly());
+                .AsReadOnly(),
+            BirthDay: user.BirthDay);
     }
 }

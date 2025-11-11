@@ -30,6 +30,10 @@
                     <CurrentStatusBadge Status="Member.CurrentStatus" />
                 }
                 <small class="text-muted"> [<a href="https://joinrpg.ru/user/@UserId">Профиль</a>]</small>
+                @if (Member.BirthDay is not null)
+                {
+                    <span>ДР: @Member.BirthDay.Value.ToString("dd/MMM");</span>
+                }
             </div>
 
         </div>

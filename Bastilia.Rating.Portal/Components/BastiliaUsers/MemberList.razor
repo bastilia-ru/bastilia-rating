@@ -38,11 +38,20 @@
             <Tooltip Title="Этот бастилец предпочитает не оценивать свой вклад бездушными цифрами">–</Tooltip>
         }
     </TemplateColumn>
+    @if (ShowBirthday)
+    {
+        <TemplateColumn Context="member" Title="ДР">
+            @member.BirthDay?.ToString("dd/MMM")
+        </TemplateColumn>
+    }
 </QuickGrid>
 
 @code {
     [Parameter, EditorRequired]
     public IQueryable<BastiliaMember> Members { get; set; }
+
+    [Parameter]
+    public bool ShowBirthday { get; set; }
 
     GridSort<BastiliaMember> usernameSort = GridSort<BastiliaMember>
        .ByDescending(x => x.UserName);

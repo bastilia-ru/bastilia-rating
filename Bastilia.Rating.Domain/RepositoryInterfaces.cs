@@ -7,6 +7,8 @@ public interface IBastiliaMemberRepository
 
     Task<IReadOnlyCollection<BastiliaMember>> GetAllAsync();
 
+    Task<IReadOnlyCollection<BastiliaMember>> GetActualAsync();
+
     Task<IReadOnlyCollection<MemberHistoryItem>> GetMembersHistory();
 }
 

@@ -10,7 +10,7 @@ public record BastiliaMember(
     bool ParticipateInRating,
     IReadOnlyCollection<BastiliaStatusHistory> StatusHistory,
     IReadOnlyCollection<ProjectAdminInfo> HisProjects,
-    IReadOnlyCollection<MemberAchievement> Achievements) : IUserLink
+    IReadOnlyCollection<MemberAchievement> Achievements, DateOnly? BirthDay) : IUserLink
 {
     public BastiliaFinalStatus CurrentStatus { get; } = CalculateStatus(StatusHistory, Achievements);
 
