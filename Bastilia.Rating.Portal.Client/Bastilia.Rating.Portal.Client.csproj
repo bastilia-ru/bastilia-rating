@@ -9,4 +9,15 @@
     <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly" />
   </ItemGroup>
 
+  <ItemGroup>
+    <PackageVersion Update="ReferenceTrimmer" Version="3.3.12" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Update="ReferenceTrimmer">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers</IncludeAssets>
+    </PackageReference>
+  </ItemGroup>
+
 </Project>
