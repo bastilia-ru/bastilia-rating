@@ -1,6 +1,8 @@
+using Microsoft.Extensions.Options;
+
 namespace Bastilia.Rating.Database;
 
-internal class BastiliaProjectRepository(AppDbContext context) : BastiliaRepositoryBase, IBastiliaProjectRepository
+internal class BastiliaProjectRepository(AppDbContext context, IOptions<PasswordOptions> passwordOptions) : BastiliaRepositoryBase, IBastiliaProjectRepository
 {
     public Task<BastiliaProjectWithDetails?> GetByIdAsync(int projectId) => GetOneProjectByPredicate(p => p.BastiliaProjectId == projectId);
 
@@ -58,7 +60,8 @@ internal class BastiliaProjectRepository(AppDbContext context) : BastiliaReposit
            project.HowToHelp,
            project.ProjectDescription,
            new Uri(project.ProjectIconUri),
-           project.Slug
+           project.Slug,
+           passwordOptions.Value.ProjectPassword
            );
     }
 

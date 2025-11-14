@@ -1,4 +1,5 @@
 using Bastilia.Rating.Database;
+using Bastilia.Rating.Domain;
 using Bastilia.Rating.Portal.Common;
 using Bastilia.Rating.Portal.Components;
 
@@ -13,6 +14,8 @@ builder.Services.AddHealthChecks();
 
 builder.Services.RegisterRatingDal(builder.Configuration, builder.Environment);
 builder.Services.AddLocalization();
+
+builder.Services.AddOptions<PasswordOptions>().BindConfiguration("PasswordOptions");
 
 var app = builder.Build();
 

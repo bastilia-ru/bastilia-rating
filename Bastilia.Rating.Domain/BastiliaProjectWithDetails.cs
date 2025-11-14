@@ -11,16 +11,19 @@ namespace Bastilia.Rating.Domain
                                           string HowToHelp,
                                           string ProjectDescription,
                                           Uri ProjectIconUri,
-                                          string? slug)
+                                          string? slug,
+                                          string password)
             : base(BastiliaProjectId, ProjectName, ProjectType, BrandType, OngoingProject, ProjectOfTheYear,
                    JoinrpgProjectId, KogdaIgraProjectId, ProjectUri, Coordinators, endDate, HowToHelp, ProjectIconUri, slug)
         {
             this.ProjectMemberAchievements = ProjectMemberAchievements;
             this.ProjectDescription = ProjectDescription;
+            this.ProjectPassword = password;
         }
 
         public IReadOnlyCollection<MemberAchievement> ProjectMemberAchievements { get; }
         public string ProjectDescription { get; }
+        public string ProjectPassword { get; }
     }
 
 }

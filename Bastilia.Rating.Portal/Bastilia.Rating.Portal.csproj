@@ -5,6 +5,7 @@
 	  <ContainerRegistry>cr.yandex</ContainerRegistry>
 	  <ContainerRepository>crp54lmmh2i4829mf2rc/bastilia-rating</ContainerRepository>
 	  <RuntimeIdentifiers>linux-x64</RuntimeIdentifiers>
+	  <UserSecretsId>763c5644-5459-415e-bc3a-37ce53120f08</UserSecretsId>
   </PropertyGroup>
 
   <ItemGroup>
