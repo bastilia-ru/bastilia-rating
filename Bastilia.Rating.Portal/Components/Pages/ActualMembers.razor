@@ -1,4 +1,5 @@
 @page "/members/actual"
+@using Bastilia.Rating.Portal.Client.Components.BastiliaUsers
 @inject IBastiliaMemberRepository Repository
 
 <PageTitle>Список Узников</PageTitle>
@@ -11,14 +12,14 @@
 }
 else
 {
-    <Bastilia.Rating.Portal.Components.BastiliaUsers.MemberList Members="members" ShowBirthday="true"/>
+    <MemberList Members="members" ShowBirthday="true"/>
 }
 
 @code
 {
-    private IQueryable<BastiliaMember>? members;
+    private IReadOnlyCollection<BastiliaMember> members;
     protected override async Task OnInitializedAsync()
     {
-        members = (await Repository.GetActualAsync()).AsQueryable();
+        members = await Repository.GetActualAsync();
     }
 }

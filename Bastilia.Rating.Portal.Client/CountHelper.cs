@@ -1,4 +1,4 @@
-namespace Bastilia.Rating.Portal.Common;
+namespace Bastilia.Rating.Portal.Client;
 
 public static class CountHelper
 {
