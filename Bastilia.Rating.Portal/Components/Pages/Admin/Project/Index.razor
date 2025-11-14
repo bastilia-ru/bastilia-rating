@@ -1,0 +1,27 @@
+﻿@page "/admin/project/{ProjectId}/{Password}/index"
+@using Bastilia.Rating.Portal.Client.Components.Projects
+@inject ProjectNavigateHelper projectNavigateHelper
+
+<PageTitle>Админка проекта @project?.ProjectName</PageTitle>
+
+@if (project is null)
+{
+    <LoadingSpinner />
+    return;
+}
+<ProjectCard Project="project" />
+
+@code {
+	[Parameter]
+	public string? Password { get; set; }
+
+	[Parameter]
+	public string? ProjectId { get; set; }
+
+	private BastiliaProjectWithDetails? project;
+
+	protected override async Task OnParametersSetAsync()
+	{
+		project = await projectNavigateHelper.LoadProjectAdminWithCheck(ProjectId, Password);
+	}
+}

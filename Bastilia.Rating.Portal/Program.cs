@@ -16,6 +16,7 @@ builder.Services.RegisterRatingDal(builder.Configuration, builder.Environment);
 builder.Services.AddLocalization();
 
 builder.Services.AddOptions<PasswordOptions>().BindConfiguration("PasswordOptions");
+builder.Services.AddTransient<ProjectNavigateHelper>();
 
 var app = builder.Build();
 
