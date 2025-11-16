@@ -1,6 +1,9 @@
 ﻿@page "/admin/project/{ProjectId}/{Password}/index"
+@using Bastilia.Rating.Portal.Client.Components.Achievements
 @using Bastilia.Rating.Portal.Client.Components.Projects
 @inject ProjectNavigateHelper projectNavigateHelper
+@inject IAchievementService achievementService
+@inject IBastiliaMemberRepository bastiliaMemberRepository
 
 <PageTitle>Админка проекта @project?.ProjectName</PageTitle>
 
@@ -11,17 +14,101 @@
 }
 <ProjectCard Project="project" />
 
+@if (addedSuccess)
+{
+    <Alert>Успешно добавлена ачивка</Alert>
+}
+
+<Card>
+    <Header>Добавление ачивки</Header>
+    <Body>
+        <EditForm FormName="AddAchievemntForm" Model="AddModel" OnValidSubmit="Add">
+            <div>
+                <label>
+                    Пользователь:
+                    <InputText @bind-Value="AddModel!.UserId" class="form-control" /> <InfoIcon Title="Можно указать Id пользователя или его короткий ник из адресной строки (1 или leotsarev)"/>
+                </label>
+            </div>
+            <div>
+                <label>
+                    Ачивка:
+                    <InputSelect @bind-Value="AddModel!.TemplateId" class="form-select">
+                        @foreach (var template in project.Templates)
+                        {
+                            <option value="@template.TemplateId">@template.Name</option>
+                        }
+                    </InputSelect>
+                </label>
+            </div>
+            <div>
+                <label>
+                    От имени:
+                    <InputSelect @bind-Value="AddModel!.GrantedId" class="form-select">
+                        @foreach (var coord in project.Coordinators)
+                        {
+                            <option value="@coord.JoinrpgUserId">@coord.UserName</option>
+                        }
+                    </InputSelect>
+                </label>
+            </div>
+            <div>
+                <input type="submit" value="Добавить" class="btn btn-success" />
+            </div>
+        </EditForm>
+    </Body>
+</Card>
+
+@if (project.ProjectMemberAchievements.Count > 0)
+{
+    <AchievementList Project="project" />
+}
+else if (project.EndDate is not null)
+{
+    <Alert>Здесь нет ни одной ачивки. Скорее всего данные об этом проекте еще восстанавливаются с архивов.</Alert>
+}
+
 @code {
-	[Parameter]
-	public string? Password { get; set; }
+    [Parameter]
+    public string? Password { get; set; }
 
-	[Parameter]
-	public string? ProjectId { get; set; }
+    [Parameter]
+    public string? ProjectId { get; set; }
 
-	private BastiliaProjectWithDetails? project;
+    [SupplyParameterFromForm]
+    private AddViewModel? AddModel { get; set; }
 
-	protected override async Task OnParametersSetAsync()
-	{
-		project = await projectNavigateHelper.LoadProjectAdminWithCheck(ProjectId, Password);
-	}
+    private BastiliaProjectWithDetails? project;
+    private bool addedSuccess = false;
+
+    protected override async Task OnParametersSetAsync()
+    {
+        project = await projectNavigateHelper.LoadProjectAdminWithCheck(ProjectId, Password);
+    }
+
+    protected override void OnInitialized()
+    {
+        AddModel ??= new AddViewModel();
+        base.OnInitialized();
+    }
+
+    private async Task Add()
+    {
+        project = await projectNavigateHelper.LoadProjectAdminWithCheck(ProjectId, Password);
+        if (project != null)
+        {
+            if (!int.TryParse(AddModel!.UserId, out var userId))
+            {
+                userId = (await bastiliaMemberRepository.GetBySlugAsync(AddModel.UserId.Trim()))?.JoinrpgUserId ?? throw new InvalidOperationException();
+            }
+            await achievementService.GrantAchivement(project.BastiliaProjectId, userId, AddModel.TemplateId, AddModel.GrantedId, null);
+        }
+        project = await projectNavigateHelper.LoadProjectAdminWithCheck(ProjectId, Password);
+    }
+
+    private class AddViewModel
+    {
+        public string UserId { get; set; } = "";
+        public int TemplateId { get; set; }
+        public int GrantedId { get; set; }
+    }
 }

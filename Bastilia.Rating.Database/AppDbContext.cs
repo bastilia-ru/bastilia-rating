@@ -1,4 +1,4 @@
-using Bastilia.Rating.Database.Entities;
+﻿using Bastilia.Rating.Database.Entities;
 using AchievementTemplate = Bastilia.Rating.Database.Entities.AchievementTemplate;
 using BastiliaProject = Bastilia.Rating.Database.Entities.BastiliaProject;
 
@@ -15,6 +15,8 @@ public class AppDbContext(DbContextOptions<AppDbContext> options) : DbContext(op
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
+        var entity = modelBuilder.Model.FindEntityType(typeof(Achievement));
+
         // Configure composite key for ProjectAdmin
         modelBuilder.Entity<ProjectAdmin>()
             .HasKey(pa => new { pa.ProjectId, pa.UserId });
@@ -24,17 +26,24 @@ public class AppDbContext(DbContextOptions<AppDbContext> options) : DbContext(op
             .HasKey(ubs => new { ubs.JoinrpgUserId, ubs.BeginDate });
 
         // Configure relationships for Achievement
-        modelBuilder.Entity<Achievement>()
-            .HasOne(a => a.GrantedByUser)
-            .WithMany()
-            .HasForeignKey(a => a.GrantedBy)
-            .OnDelete(DeleteBehavior.Restrict);
+        modelBuilder.Entity<Achievement>(entity =>
+        {
+            entity.HasKey(a => a.AchievementId);
 
-        modelBuilder.Entity<Achievement>()
-            .HasOne(a => a.RemovedByUser)
-            .WithMany()
-            .HasForeignKey(a => a.RemovedBy)
-            .OnDelete(DeleteBehavior.Restrict);
+            entity.Property(a => a.AchievementId)
+                .UseIdentityByDefaultColumn()  // ← ключевое
+                .ValueGeneratedOnAdd();
+
+            entity.HasOne(a => a.GrantedByUser)
+                .WithMany()
+                .HasForeignKey(a => a.GrantedBy)
+                .OnDelete(DeleteBehavior.Restrict);
+
+            entity.HasOne(a => a.RemovedByUser)
+                .WithMany()
+                .HasForeignKey(a => a.RemovedBy)
+                .OnDelete(DeleteBehavior.Restrict);
+        });
 
         // Configure enum conversions
         modelBuilder.Entity<BastiliaProject>()

@@ -1,8 +1,6 @@
-using Microsoft.Extensions.Options;
-
 namespace Bastilia.Rating.Database;
 
-internal class BastiliaProjectRepository(AppDbContext context, IOptions<PasswordOptions> passwordOptions) : BastiliaRepositoryBase, IBastiliaProjectRepository
+internal class BastiliaProjectRepository(AppDbContext context) : BastiliaRepositoryBase, IBastiliaProjectRepository
 {
     public Task<BastiliaProjectWithDetails?> GetByIdAsync(int projectId) => GetOneProjectByPredicate(p => p.BastiliaProjectId == projectId);
 
@@ -10,6 +8,8 @@ internal class BastiliaProjectRepository(AppDbContext context, IOptions<Password
 
 
     public Task<IReadOnlyCollection<BastiliaProject>> GetActiveProjects() => GetProjectsByPredicate(p => p.EndDate == null);
+
+    public Task<IReadOnlyCollection<BastiliaProject>> GetProjectsWithoutPasswords() => GetProjectsByPredicate(p => p.Password == null);
 
     public Task<IReadOnlyCollection<BastiliaProject>> GetActualProjects() => GetProjectsByPredicate(p => true);
 
@@ -56,12 +56,13 @@ internal class BastiliaProjectRepository(AppDbContext context, IOptions<Password
            project.ProjectUri,
            [.. project.ProjectAdmins.Select(pa => ToUserLink(pa.User))],
            [.. project.AchievementTemplates.SelectMany(a => a.Achievements).Select(ToMemberAchievement)],
+           [.. project.AchievementTemplates.Select(ToTemplate)],
            project.EndDate,
            project.HowToHelp,
            project.ProjectDescription,
            new Uri(project.ProjectIconUri),
            project.Slug,
-           passwordOptions.Value.ProjectPassword
+           project.Password
            );
     }
 

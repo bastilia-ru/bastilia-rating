@@ -28,14 +28,19 @@ namespace Bastilia.Rating.Portal.Common
             }
         }
 
-        public async Task<BastiliaProjectWithDetails?> LoadProjectAdminWithCheck(string projectIdOrSlug, string password)
+        public async Task<BastiliaProjectWithDetails?> LoadProjectAdminWithCheck(string? projectIdOrSlug, string? password)
         {
+            if (projectIdOrSlug is null || password is null)
+            {
+                navigationManager.NavigateTo("/404");
+                return null;
+            }
             var project = await LoadProjectWithCheck(projectIdOrSlug);
             if (project is null)
             {
                 return null;
             }
-            if (project.ProjectPassword == password)
+            if (project.Password == password)
             {
                 return project;
             }

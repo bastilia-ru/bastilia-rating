@@ -18,6 +18,7 @@ public interface IBastiliaProjectRepository
     Task<BastiliaProjectWithDetails?> GetBySlugAsync(string slug);
     Task<IReadOnlyCollection<BastiliaProject>> GetActiveProjects();
     Task<IReadOnlyCollection<BastiliaProject>> GetActualProjects();
+    Task<IReadOnlyCollection<BastiliaProject>> GetProjectsWithoutPasswords();
 }
 
 public interface IBastiliaTemplateRepository

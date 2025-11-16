@@ -1,4 +1,5 @@
 @page "/project/{projectId}"
+@using Bastilia.Rating.Portal.Client.Components.Achievements
 @using Bastilia.Rating.Portal.Client.Components.BastiliaUsers
 @using Bastilia.Rating.Portal.Client.Components.Projects
 @using Microsoft.AspNetCore.Components.QuickGrid
@@ -11,53 +12,14 @@
     return;
 }
 <ProjectCard Project="project" />
-@*
-<Card>
-    <Header>Управление проектом</Header>
-    <Body>
-        <form method="get" action="/admin/project-password-redirect">
-            <label for="pass">Пароль проекта:</label>
-            <input type="password" name="password" id="pass"/>
-            <input type="hidden" name="projectId" value="@ProjectId" />
-            <input type="submit" value="Перейти"/>
-        </form>
-    </Body>
-</Card>
-*@
+
 @if (project.ProjectMemberAchievements.Count > 0)
 {
-    var activePma = project.ProjectMemberAchievements.Where(p => !p.IsExpired).ToList();
-    var expiredPma = project.ProjectMemberAchievements.Where(p => p.IsExpired).ToList();
-    if(activePma.Count == 0 || expiredPma.Count == 0)
-    {
-        <h2>Достижения</h2>
-        <div style="display: flex; flex-flow: row wrap" >
-            @foreach (var pma in project.ProjectMemberAchievements.OrderByDescending(x => x.RatingValue))
-            {
-                    <AchievementCard Achievement="pma" ShowAsProject="true"/>
-            }
-        </div>
-    }
-    else {
-            <h2>Участники</h2>
-            <div style="display: flex; flex-flow: row wrap" >
-            @foreach (var pma in activePma.OrderByDescending(x => x.RatingValue))
-            {
-                <AchievementCard Achievement="pma" ShowAsProject="true" />
-            }
-            </div>
-    
-            <h2>Былые достижения</h2>
-            <div style="display: flex; flex-flow: row wrap" >
-            @foreach (var pma in expiredPma.OrderByDescending(x => x.RatingValue))
-            {
-                <AchievementCard Achievement="pma" ShowAsProject="true" />
-            }
-        </div>
-    }
+    <AchievementList Project="project" />
+}
 } else if (project.EndDate is not null)
 {
-    <Alert>Здесь нет ни одной ачивки. Скорее всего данные об этом проекте еще восстанавливаются с архивов.</Alert>
+<Alert>Здесь нет ни одной ачивки. Скорее всего данные об этом проекте еще восстанавливаются с архивов.</Alert>
 }
 
 @code {
