@@ -16,5 +16,5 @@ public class Achievement
     public required AchievementTemplate Template { get; set; }
     public required User User { get; set; }
     public required User GrantedByUser { get; set; }
-    public required User RemovedByUser { get; set; }
+    public required User? RemovedByUser { get; set; }
 }

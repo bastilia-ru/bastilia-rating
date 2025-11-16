@@ -17,7 +17,7 @@ else
 
 @code
 {
-    private IReadOnlyCollection<BastiliaMember> members;
+    private IReadOnlyCollection<BastiliaMember>? members;
     protected override async Task OnInitializedAsync()
     {
         members = await Repository.GetActualAsync();

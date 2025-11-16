@@ -1,0 +1,45 @@
+﻿@using Bastilia.Rating.Portal.Client.Components.BastiliaUsers
+
+@if (activePma.Count == 0 || expiredPma.Count == 0)
+{
+    <h2>Достижения</h2>
+    <div style="display: flex; flex-flow: row wrap">
+        @foreach (var pma in Project.ProjectMemberAchievements.OrderByDescending(x => x.RatingValue))
+        {
+            <AchievementCard Achievement="pma" ShowAsProject="true" />
+        }
+    </div>
+}
+else
+{
+    <h2>Участники</h2>
+    <div style="display: flex; flex-flow: row wrap">
+        @foreach (var pma in activePma.OrderByDescending(x => x.RatingValue))
+        {
+            <AchievementCard Achievement="pma" ShowAsProject="true" />
+        }
+    </div>
+
+    <h2>Былые достижения</h2>
+    <div style="display: flex; flex-flow: row wrap">
+        @foreach (var pma in expiredPma.OrderByDescending(x => x.RatingValue))
+        {
+            <AchievementCard Achievement="pma" ShowAsProject="true" />
+        }
+    </div>
+}
+
+@code {
+    [Parameter, EditorRequired]
+    public BastiliaProjectWithDetails Project { get; set; } = null!;
+
+    private IReadOnlyCollection<MemberAchievement> activePma = [];
+    private IReadOnlyCollection<MemberAchievement> expiredPma = [];
+
+    protected override void OnParametersSet()
+    {
+        activePma = Project.ProjectMemberAchievements.Where(p => !p.IsExpired).ToList();
+        expiredPma = Project.ProjectMemberAchievements.Where(p => p.IsExpired).ToList();
+        base.OnParametersSet();
+    }
+}

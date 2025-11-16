@@ -32,7 +32,8 @@ internal abstract class BastiliaRepositoryBase
             project.EndDate,
             project.HowToHelp,
             new Uri(project.ProjectIconUri),
-            project.Slug
+            project.Slug,
+            project.Password
             );
     }
 
@@ -67,6 +68,12 @@ internal abstract class BastiliaRepositoryBase
     protected static IBastiliaProjectLink ToProjectLink(Entities.BastiliaProject project)
     {
         return new ProjectLink(project.BastiliaProjectId, project.ProjectName, project.Slug);
+    }
+
+    protected static AchievementTemplate ToTemplate(Entities.AchievementTemplate x)
+    {
+        return new AchievementTemplate(ToProjectLink(x.Project), x.AchievementName, x.AchievementDescription,
+                        x.AchievementImageUrl is null || x.AchievementImageUrl == "https://bastilia.ru/images/logo-low.jpg", x.AchievementRatingValue, x.YearlyAchievement, x.AchievementTemplateId);
     }
 
     private record class ProjectLink(int BastiliaProjectId, string ProjectName, string? Slug) : IBastiliaProjectLink;

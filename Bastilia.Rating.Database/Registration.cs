@@ -1,3 +1,4 @@
+using Bastilia.Rating.Database.DbServices;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
@@ -12,6 +13,9 @@ namespace Bastilia.Rating.Database
             services.AddTransient<IBastiliaMemberRepository, BastiliaMemberRepository>();
             services.AddTransient<IBastiliaProjectRepository, BastiliaProjectRepository>();
             services.AddTransient<IBastiliaTemplateRepository, BastiliaTemplateRepository>();
+
+            services.AddTransient<IProjectService, ProjectService>();
+            services.AddTransient<IAchievementService, AchievementService>();
         }
     }
 }

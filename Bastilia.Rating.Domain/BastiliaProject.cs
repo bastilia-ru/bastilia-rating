@@ -13,7 +13,8 @@ public record BastiliaProject(int BastiliaProjectId,
                               DateOnly? EndDate,
                               string HowToHelp,
                               Uri ProjectIconUri,
-                              string? Slug
+                              string? Slug,
+                              string? Password
                               ) : IBastiliaProjectLink
 {
     public ProjectStatus Status { get; } = CalculateStatus(OngoingProject, EndDate);
