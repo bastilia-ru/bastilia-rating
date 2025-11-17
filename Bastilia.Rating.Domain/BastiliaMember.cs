@@ -29,7 +29,7 @@ public record BastiliaMember(
 
     private static int CalculateRating(IReadOnlyCollection<MemberAchievement> achievements)
     {
-        return achievements.Where(a => a.NotExpired).Sum(a => a.RatingValue);
+        return achievements.Where(a => a.Active).Sum(a => a.RatingValue);
     }
 
     private static int CalculateHistoricalRating(IReadOnlyCollection<MemberAchievement> achievements)

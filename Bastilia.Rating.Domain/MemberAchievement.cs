@@ -15,7 +15,7 @@ public record MemberAchievement(
     IUserLink User,
     Uri UserAvatar)
 {
-    public bool NotExpired { get; } = RemoveDate is null && (ExpirationDate is null || ExpirationDate.Value.ToDateTime(TimeOnly.MinValue) > DateTime.Now);
+    public bool Active => RemoveDate is null && !IsExpired;
     public int? RatingForDisplay => ParticipateInRating ? RatingValue : null;
-    public bool IsExpired => !NotExpired;
+    public bool IsExpired { get; } = ExpirationDate is not null && ExpirationDate.Value.ToDateTime(TimeOnly.MinValue) > DateTime.Now;
 }
