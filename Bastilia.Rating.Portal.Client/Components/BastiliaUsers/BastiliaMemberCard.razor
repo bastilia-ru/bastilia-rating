@@ -77,7 +77,7 @@
             @if (Member.Achievements.Any() == true)
             {
                 <div style="display: flex; flex-flow: row wrap">
-                    @foreach (var achievement in Member.Achievements.OrderByDescending(a => a.NotExpired).ThenByDescending(a => a.RatingValue).ThenByDescending(a => a.GrantedDate))
+                    @foreach (var achievement in Member.Achievements.OrderByDescending(a => a.Active).ThenByDescending(a => a.RatingValue).ThenByDescending(a => a.GrantedDate))
                     {
                             <AchievementCard Achievement="achievement" ShowValue=@Member.ParticipateInRating/>
                     }

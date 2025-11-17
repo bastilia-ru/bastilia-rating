@@ -9,7 +9,7 @@ namespace Bastilia.Rating.Portal.Common
         public async Task<BastiliaMember?> LoadUserWithCheck(string userIdOrSlug)
         {
             BastiliaMember? user;
-            userIdOrSlug = userIdOrSlug.TrimStart("https://joinrpg.ru/user/").TrimStart("https://rating.bastilia.ru/member/").ToString();
+
             if (int.TryParse(userIdOrSlug, out var userId))
             {
                 user = await bastiliaMemberRepository.GetByIdAsync(userId);

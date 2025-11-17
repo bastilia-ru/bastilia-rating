@@ -38,7 +38,7 @@ else
 
     protected override void OnParametersSet()
     {
-        activePma = Project.ProjectMemberAchievements.Where(p => !p.IsExpired).ToList();
+        activePma = Project.ProjectMemberAchievements.Where(p => p.Active).ToList();
         expiredPma = Project.ProjectMemberAchievements.Where(p => p.IsExpired).ToList();
         base.OnParametersSet();
     }

@@ -27,7 +27,11 @@
             <div>
                 <label>
                     Пользователь:
-                    <InputText @bind-Value="AddModel!.UserId" class="form-control" /> <InfoIcon Title="Можно указать Id пользователя или его короткий ник из адресной строки (1 или leotsarev)"/>
+                    <InputTextArea @bind-Value="AddModel!.UserId" class="form-control"  /> 
+                    <p>
+                        Можно указать Id пользователя или его короткий ник из адресной строки (1 или leotsarev). 
+                        Можно кинуть ссылку на профиль пользователя в джойне или тут. 1 пользователь = 1 строка.
+                    </p>
                 </label>
             </div>
             <div>
@@ -97,13 +101,37 @@ else if (project.EndDate is not null)
         project = await projectNavigateHelper.LoadProjectAdminWithCheck(ProjectId, Password);
         if (project != null)
         {
-            var user = await userLoaderHelper.LoadUserWithCheck(AddModel!.UserId);
-            if (user != null)
+            var text = AddModel!.UserId;
+            foreach (var r in text.Split("\n"))
             {
-                await achievementService.GrantAchivement(project.BastiliaProjectId, user!.JoinrpgUserId, AddModel.TemplateId, AddModel.GrantedId, null);
+                var userId = r;
+                userId = Unprefix(userId, "https://joinrpg.ru/user/");
+                userId = Unprefix(userId, "https://rating.bastilia.ru/member/");
+                userId = userId.Trim();
+                if (string.IsNullOrWhiteSpace(userId))
+                {
+                    continue;
+                }
+                var user = await userLoaderHelper.LoadUserWithCheck(userId);
+                if (user != null)
+                {
+                    await achievementService.GrantAchivement(project.BastiliaProjectId, user!.JoinrpgUserId, AddModel.TemplateId, AddModel.GrantedId, null);
+                }
             }
+           
         }
         project = await projectNavigateHelper.LoadProjectAdminWithCheck(ProjectId, Password);
+
+        static string Unprefix(string userIdOrSlug, string prefix)
+        {
+            if (userIdOrSlug.StartsWith(prefix))
+            {
+                userIdOrSlug = userIdOrSlug[prefix.Length..];
+            }
+
+            return userIdOrSlug;
+        }
+
     }
 
     private class AddViewModel
