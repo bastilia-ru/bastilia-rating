@@ -4,6 +4,7 @@
 @inject ProjectNavigateHelper projectNavigateHelper
 @inject IAchievementService achievementService
 @inject IBastiliaMemberRepository bastiliaMemberRepository
+@inject UserLoaderHelper userLoaderHelper
 
 <PageTitle>Админка проекта @project?.ProjectName</PageTitle>
 
@@ -96,11 +97,11 @@ else if (project.EndDate is not null)
         project = await projectNavigateHelper.LoadProjectAdminWithCheck(ProjectId, Password);
         if (project != null)
         {
-            if (!int.TryParse(AddModel!.UserId, out var userId))
+            var user = await userLoaderHelper.LoadUserWithCheck(AddModel!.UserId);
+            if (user != null)
             {
-                userId = (await bastiliaMemberRepository.GetBySlugAsync(AddModel.UserId.Trim()))?.JoinrpgUserId ?? throw new InvalidOperationException();
+                await achievementService.GrantAchivement(project.BastiliaProjectId, user!.JoinrpgUserId, AddModel.TemplateId, AddModel.GrantedId, null);
             }
-            await achievementService.GrantAchivement(project.BastiliaProjectId, userId, AddModel.TemplateId, AddModel.GrantedId, null);
         }
         project = await projectNavigateHelper.LoadProjectAdminWithCheck(ProjectId, Password);
     }

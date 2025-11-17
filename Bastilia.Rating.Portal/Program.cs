@@ -1,7 +1,9 @@
 using Bastilia.Rating.Database;
 using Bastilia.Rating.Domain;
+using Bastilia.Rating.Domain.DomainServices;
 using Bastilia.Rating.Portal.Common;
 using Bastilia.Rating.Portal.Components;
+using JoinRpg.Client;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -16,7 +18,14 @@ builder.Services.RegisterRatingDal(builder.Configuration, builder.Environment);
 builder.Services.AddLocalization();
 
 builder.Services.AddOptions<PasswordOptions>().BindConfiguration("PasswordOptions");
+builder.Services.AddOptions<JoinConnectOptions>().BindConfiguration("JoinConnectOptions");
 builder.Services.AddTransient<ProjectNavigateHelper>();
+builder.Services.AddTransient<UserLoaderHelper>();
+
+builder.Services.AddTransient<UserImportService>();
+
+
+builder.Services.AddHttpClient<JoinUserInfoClient>();
 
 var app = builder.Build();
 

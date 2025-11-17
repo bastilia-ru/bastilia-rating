@@ -1,6 +1,6 @@
 @page "/member/{UserIdentificator}"
 @using Bastilia.Rating.Portal.Client.Components.BastiliaUsers
-@inject IBastiliaMemberRepository Repository
+@inject UserLoaderHelper Repository
 @inject NavigationManager NavigationManager
 
 <PageTitle>Профиль участника @member?.UserName</PageTitle>
@@ -22,18 +22,6 @@ else
 
     protected override async Task OnParametersSetAsync()
     {
-        if (int.TryParse(UserIdentificator, out var userId))
-        {
-            member = await Repository.GetByIdAsync(userId);
-        }
-        else
-        {
-            member = await Repository.GetBySlugAsync(UserIdentificator);
-        }
-
-        if (member is null)
-        {
-            NavigationManager.NavigateTo("/404");
-        }
+        member = await Repository.LoadUserWithCheck(UserIdentificator);
     }
 }
