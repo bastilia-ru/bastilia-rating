@@ -34,7 +34,13 @@
             }
             </div>
 
-        @if (Achievement.IsExpired)
+        @if (Achievement.RemoveDate is not null)
+        {
+            <div class="text-muted" style="text-align: right; font-size: 70%">
+                Удалено
+            </div>
+        }
+        else if (Achievement.IsExpired)
         {
 
             <div class="text-muted" style="text-align: right; font-size: 70%">
