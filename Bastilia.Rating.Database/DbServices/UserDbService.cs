@@ -8,7 +8,8 @@
             {
                 AvatarUrl = avatarUrl,
                 Username = nickName,
-                JoinRpgUserId = playerId
+                JoinRpgUserId = playerId,
+                ParticipateInRating = true,
             };
             await appDbContext.Set<Entities.User>().AddAsync(user);
             await appDbContext.SaveChangesAsync();
