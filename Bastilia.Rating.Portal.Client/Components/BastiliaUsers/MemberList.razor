@@ -67,6 +67,7 @@
     GridSort<BastiliaMember> ratingSort = GridSort<BastiliaMember>
         .ByDescending(x => x.ParticipateInRating)
         .ThenAscending(x => x.RatingValue)
+        .ThenAscending(x => x.HistoricalRatingValue)
         .ThenAscending(x => x.IsActiveMember)
         .ThenAscending(x => x.Achievements.Select(a => a.GrantedDate).DefaultIfEmpty(DateOnly.MinValue).Max());
 
