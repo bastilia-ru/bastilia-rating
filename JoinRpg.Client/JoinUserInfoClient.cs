@@ -10,7 +10,7 @@ namespace JoinRpg.Client
 {
     public class JoinUserInfoClient(HttpClient httpClient, IOptions<JoinConnectOptions> options, ILogger<JoinUserInfoClient> logger)
     {
-        private readonly string host = options.Value.Host;
+        private readonly string host = options.Value.Host.TrimEnd('/');
         private readonly string username = options.Value.UserName;
         private readonly string password = options.Value.Password;
 
@@ -20,6 +20,7 @@ namespace JoinRpg.Client
         {
             accessToken ??= await AuthenticateAsync();
             httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", accessToken);
+            httpClient.DefaultRequestHeaders.UserAgent.ParseAdd("Mozilla/5.0 (compatible; RatingbastiliaRu/1.0)");
             var response = await httpClient.GetAsync(new Uri($"{host}/x-api/users/{userId}"));
             response.EnsureSuccessStatusCode();
             return await response.Content.ReadFromJsonAsync<PlayerInfo>();
