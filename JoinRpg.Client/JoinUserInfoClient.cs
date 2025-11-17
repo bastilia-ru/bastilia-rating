@@ -18,7 +18,6 @@ namespace JoinRpg.Client
 
         public async Task<PlayerInfo?> GetUserInfo(int userId)
         {
-            return null;
             accessToken ??= await AuthenticateAsync();
             httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", accessToken);
             var response = await httpClient.GetAsync(new Uri($"{host}/x-api/users/{userId}"));
