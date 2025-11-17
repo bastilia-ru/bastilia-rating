@@ -17,5 +17,5 @@ public record MemberAchievement(
 {
     public bool Active => RemoveDate is null && !IsExpired;
     public int? RatingForDisplay => ParticipateInRating ? RatingValue : null;
-    public bool IsExpired { get; } = ExpirationDate is not null && ExpirationDate.Value.ToDateTime(TimeOnly.MinValue) > DateTime.Now;
+    public bool IsExpired { get; } = ExpirationDate is not null && ExpirationDate.Value.ToDateTime(TimeOnly.MinValue) < DateTime.Now;
 }
