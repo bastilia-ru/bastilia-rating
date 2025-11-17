@@ -1,7 +1,5 @@
 ﻿using System.Net.Http.Headers;
 using System.Net.Http.Json;
-using System.Text;
-using System.Text.Json;
 using JoinRpg.XGameApi.Contract;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
@@ -30,18 +28,14 @@ namespace JoinRpg.Client
         {
             try
             {
-                var request = new
+                var formData = new Dictionary<string, string>
                 {
-                    username,
-                    password,
-                    grant_type = "password"
+                    { "username", username },
+                    { "password", password },
+                    { "grant_type", "password" }
                 };
 
-                var content = new StringContent(
-                    JsonSerializer.Serialize(request),
-                    Encoding.UTF8,
-                    "multipart/form-data"
-                );
+                var content = new FormUrlEncodedContent(formData);
 
                 var response = await httpClient.PostAsync($"{host}/x-api/token", content);
 
