@@ -1,0 +1,26 @@
+<Solution>
+  <Folder Name="/Solution Items/">
+    <File Path="Directory.Build.props" />
+    <File Path="Directory.Packages.props" />
+    <File Path="docker-compose.yml" />
+    <File Path="global.json" />
+    <File Path="nuget.config" />
+  </Folder>
+  <Folder Name="/Solution Items/.github/">
+    <File Path=".github/dependabot.yml" />
+    <File Path=".github/workflows/build_and_publish.yml" />
+    <File Path=".github/workflows/deploy-common.yml" />
+  </Folder>
+  <Folder Name="/Solution Items/scripts/">
+    <File Path="scripts/migrate-prod-to-localhost.ps1" />
+    <File Path="scripts/pgloader.ps1" />
+  </Folder>
+  <Project Path="Bastilia.Rating.Database/Bastilia.Rating.Database.csproj" />
+  <Project Path="Bastilia.Rating.Domain/Bastilia.Rating.Domain.csproj" />
+  <Project Path="Bastilia.Rating.Migrator/Bastilia.Rating.Migrator.csproj" />
+  <Project Path="Bastilia.Rating.Portal.Client/Bastilia.Rating.Portal.Client.csproj" />
+  <Project Path="Bastilia.Rating.Portal/Bastilia.Rating.Portal.csproj" />
+  <Project Path="Bastilia.Rating.Tests/Bastilia.Rating.Tests.csproj" />
+  <Project Path="JoinRpg.Client/JoinRpg.Client.csproj" />
+  <Project Path="JoinRpg.XGameApi.Contract/JoinRpg.XGameApi.Contract.csproj" />
+</Solution>
