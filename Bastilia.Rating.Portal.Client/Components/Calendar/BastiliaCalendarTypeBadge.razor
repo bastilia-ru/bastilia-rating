@@ -1,0 +1,29 @@
+﻿@switch (Type)
+{
+    case BastiliaCalendarItemType.Unknown:
+        <span class="badge bg-danger">
+            ???
+        </span>
+        break;
+    case BastiliaCalendarItemType.Birthday:
+    case BastiliaCalendarItemType.BirthdayParty:
+        <Tooltip Title="День рождения">
+            <span class="badge bg-secondary">
+                ДР
+            </span>
+        </Tooltip>
+        break;
+    case BastiliaCalendarItemType.Project:
+            <span class="badge bg-info">
+                Проект
+            </span>
+        break;
+    default:
+        break;
+}
+
+@code {
+    [Parameter]
+    [EditorRequired]
+    public BastiliaCalendarItemType Type{ get; set; }
+}
