@@ -12,6 +12,7 @@ public class AppDbContext(DbContextOptions<AppDbContext> options) : DbContext(op
     public DbSet<Achievement> Achievements { get; set; }
     public DbSet<User> Users { get; set; }
     public DbSet<UsersBastiliaStatus> UsersBastiliaStatuses { get; set; }
+    public DbSet<UserBirthdayParty> UserBirthdayParties { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -61,6 +62,15 @@ public class AppDbContext(DbContextOptions<AppDbContext> options) : DbContext(op
         modelBuilder.Entity<UsersBastiliaStatus>()
             .Property(ubs => ubs.StatusType)
             .HasConversion<string>();
+
+        modelBuilder.Entity<User>(
+            entity =>
+            {
+                entity
+                .HasMany(e => e.UserBirthdayParties)
+                .WithOne(ubp => ubp.User)
+                .HasForeignKey(ubp => ubp.JoinrpgUserId);
+            });
     }
 
     protected override void ConfigureConventions(ModelConfigurationBuilder configurationBuilder)

@@ -5,6 +5,7 @@
 
 	<ItemGroup>
 		<PackageReference Include="EntityFrameworkCore.Exceptions.PostgreSQL" />
+		<PackageReference Include="LinqKit.Microsoft.EntityFrameworkCore" />
 		<PackageReference Include="Microsoft.Extensions.Hosting.Abstractions" />
 		<PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" />
 	</ItemGroup>
