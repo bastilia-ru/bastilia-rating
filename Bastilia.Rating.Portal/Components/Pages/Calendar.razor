@@ -1,4 +1,5 @@
 ﻿@page "/calendar/{yearParam:int?}"
+@using Bastilia.Rating.Portal.Client.Components.Calendar
 @inject IBastiliaMemberRepository bastiliaMemberRepository
 @inject IBastiliaProjectRepository bastiliaProjectRepository
 <h3>Календарь на @Year</h3>
@@ -19,7 +20,7 @@
             <ul>
                 @foreach(var item in month.Items)
                 {
-                    <li>@item.Name @DateHelper.DisplayRange(item.StartDate, item.EndDate)</li>
+                    <li><BastiliaCalendarTypeBadge Type="item.Type" /> @item.Name  <DateRangeDisplay Start="item.StartDate" End="item.EndDate" /></li>
                 }
             </ul>
         </Body>
