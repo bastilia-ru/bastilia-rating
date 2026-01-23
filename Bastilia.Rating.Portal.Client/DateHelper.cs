@@ -1,5 +1,6 @@
 namespace Bastilia.Rating.Portal.Client;
 
+// Русский язык, чтобы быть убежденным, что тут UTF-8
 public static class DateHelper
 {
     public static string DisplayRange(DateOnly start, DateOnly end)
