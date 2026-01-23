@@ -4,6 +4,24 @@ updates:
     directory: "/" 
     schedule:
       interval: "daily"
+    groups:
+      net: #I like to merge this groups, but it will cause dependabot to timeout
+        patterns:
+          - "Microsoft.Extensions.*"
+          - "System.Text.Json"
+          - "System.Net.Http.Json"
+          - "Microsoft.AspNetCore.*"
+          - "Microsoft.EntityFrameworkCore*"
+          - "dotnet-ef"
+        update-types:
+          - "minor"
+          - "patch"
+      xunit:
+        patterns:
+          - "xunit*"
+      serilog:
+        patterns:
+          - "Serilog*"
   - package-ecosystem: "github-actions" 
     directory: "/" 
     schedule:
