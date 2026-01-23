@@ -1,3 +1,5 @@
+using LinqKit;
+
 namespace Bastilia.Rating.Database;
 
 internal class BastiliaMemberRepository(AppDbContext context) : BastiliaRepositoryBase, IBastiliaMemberRepository
@@ -8,7 +10,16 @@ internal class BastiliaMemberRepository(AppDbContext context) : BastiliaReposito
 
     public Task<IReadOnlyCollection<BastiliaMember>> GetAllAsync() => GetMemberImpl(u => true);
 
-    public async Task<IReadOnlyCollection<BastiliaMember>> GetActualAsync() => (await GetMemberImpl(u => true)).Where(x => x.CurrentStatus == BastiliaFinalStatus.Active).ToList();
+    public async Task<IReadOnlyCollection<BastiliaMember>> GetActualAsync()
+    {
+        var actualStatusPredicate = GetActualStatusPredicate();
+        var users = await MemberQuery()
+                    .AsNoTracking()
+                    .Where(u => actualStatusPredicate.Invoke(u))
+                    .ToArrayAsync();
+
+        return [.. users.Select(ToMember).Where(x => x.CurrentStatus == BastiliaFinalStatus.Active)];
+    }
 
     public async Task<IReadOnlyCollection<MemberHistoryItem>> GetMembersHistory()
     {
@@ -19,24 +30,61 @@ internal class BastiliaMemberRepository(AppDbContext context) : BastiliaReposito
         return [.. users.Select(s => new MemberHistoryItem(ToUserLink(s.User), s.BeginDate, s.EndDate))];
     }
 
+    public async Task<IReadOnlyCollection<BastiliaCalendarItem>> GetMemberCalendarFor(int year)
+    {
+        var actualStatusPredicate = GetActualStatusPredicate();
+        var birthdays = await MemberQuery()
+            .AsNoTracking()
+            .Where(u => actualStatusPredicate.Invoke(u))
+            .Where(u => u.BirthDay != null)
+            .Select(u => new { u.Username, BirthDay = u.BirthDay!.Value })
+            .ToArrayAsync();
+
+        var parties = await MemberQuery()
+            .SelectMany(m => m.UserBirthdayParties)
+            .Select(mbp => new { mbp.User.Username, mbp.PartyDate })
+            .Where(p => p.PartyDate.Year == year)
+            .ToArrayAsync();
+
+        return [
+            ..birthdays.Select(b=> new BastiliaCalendarItem(BastiliaCalendarItemType.Birthday, new DateOnly(year, b.BirthDay.Month, b.BirthDay.Day),  b.Username)),
+            ..parties.Select(b => new BastiliaCalendarItem(BastiliaCalendarItemType.BirthdayParty, b.PartyDate, b.Username))
+            ];
+    }
+
     private async Task<IReadOnlyCollection<BastiliaMember>> GetMemberImpl(Expression<Func<Entities.User, bool>> predicate)
     {
-        var users = await context.Users
-                    .Include(u => u.BastiliaStatuses)
-                    .Include(u => u.ProjectAdmins)
-                        .ThenInclude(pa => pa.Project)
-                    .Include(u => u.Achievements)
-                        .ThenInclude(a => a.Template)
-                        .ThenInclude(a => a.Project)
-                    .Include(u => u.Achievements)
-                        .ThenInclude(a => a.GrantedByUser)
-                    .Include(u => u.Achievements)
-                        .ThenInclude(a => a.RemovedByUser)
+
+        var actualStatusPredicate = GetActualStatusPredicate();
+        var users = await MemberQuery()
                     .AsNoTracking()
-                    .Where(predicate)
+                    .Select(u => new { User = u, CurrentStatus = actualStatusPredicate.Invoke(u) })
+                    .Where(u => predicate.Invoke(u.User))
                     .ToArrayAsync();
 
-        return [.. users.Select(ToMember)];
+        return [.. users.Select(u => ToMember(u.User))];
+    }
+
+    private static Expression<Func<Entities.User, bool>> GetActualStatusPredicate()
+    {
+        var today = DateOnly.FromDateTime(DateTime.Today);
+        return u => u.BastiliaStatuses.Where(s => s.EndDate == null || s.EndDate > today).Where(s => s.BeginDate < today).OrderBy(s => s.BeginDate).Any();
+    }
+
+    private IQueryable<Entities.User> MemberQuery()
+    {
+        return context.Users
+                            .AsExpandable()
+                            .Include(u => u.BastiliaStatuses)
+                            .Include(u => u.ProjectAdmins)
+                                .ThenInclude(pa => pa.Project)
+                            .Include(u => u.Achievements)
+                                .ThenInclude(a => a.Template)
+                                .ThenInclude(a => a.Project)
+                            .Include(u => u.Achievements)
+                                .ThenInclude(a => a.GrantedByUser)
+                            .Include(u => u.Achievements)
+                                .ThenInclude(a => a.RemovedByUser);
     }
 
     private static BastiliaMember ToMember(Entities.User user)

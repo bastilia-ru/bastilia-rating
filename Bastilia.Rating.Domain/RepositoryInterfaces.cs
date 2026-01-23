@@ -10,6 +10,7 @@ public interface IBastiliaMemberRepository
     Task<IReadOnlyCollection<BastiliaMember>> GetActualAsync();
 
     Task<IReadOnlyCollection<MemberHistoryItem>> GetMembersHistory();
+    Task<IReadOnlyCollection<BastiliaCalendarItem>> GetMemberCalendarFor(int year);
 }
 
 public interface IBastiliaProjectRepository
@@ -19,6 +20,7 @@ public interface IBastiliaProjectRepository
     Task<IReadOnlyCollection<BastiliaProject>> GetActiveProjects();
     Task<IReadOnlyCollection<BastiliaProject>> GetActualProjects();
     Task<IReadOnlyCollection<BastiliaProject>> GetProjectsWithoutPasswords();
+    Task<IReadOnlyCollection<BastiliaCalendarItem>> GetProjectCalendarFor(int year);
 }
 
 public interface IBastiliaTemplateRepository

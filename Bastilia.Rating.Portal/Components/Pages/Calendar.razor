@@ -1,0 +1,53 @@
+﻿@page "/calendar/{yearParam:int?}"
+@inject IBastiliaMemberRepository bastiliaMemberRepository
+@inject IBastiliaProjectRepository bastiliaProjectRepository
+<h3>Календарь на @Year</h3>
+<p>
+    [<a href="/calendar/@(Year - 1)">@(Year - 1)</a>] [@Year] [<a href="/calendar/@(Year + 1)">@(Year + 1)</a>]
+</p>
+
+@if (calendar is null)
+{
+    <LoadingSpinner />
+    return;
+}
+@foreach (var month in calendar)
+{
+    <Card>
+        <Header>@month.MonthName</Header>
+        <Body>
+            <ul>
+                @foreach(var item in month.Items)
+                {
+                    <li>@item.Name @DateHelper.DisplayRange(item.StartDate, item.EndDate)</li>
+                }
+            </ul>
+        </Body>
+    </Card>
+}
+
+@code {
+    [Parameter]
+    public int? YearParam { get; set; }
+
+    private int Year => YearParam ?? DateTime.Now.Year;
+
+    private IReadOnlyCollection<MonthCalendar>? calendar;
+    protected override async Task OnParametersSetAsync()
+    {
+        var memberEvents = await bastiliaMemberRepository.GetMemberCalendarFor(Year);
+        var projectEvents = await bastiliaProjectRepository.GetProjectCalendarFor(Year);
+        calendar = memberEvents.Union(projectEvents).OrderBy(e => e.StartDate).GroupBy(e => e.StartDate.Month).Select(g => new MonthCalendar(g)).ToList();
+    }
+
+    private record MonthCalendar(int Month, string MonthName, IReadOnlyCollection<BastiliaCalendarItem> Items)
+    {
+        public MonthCalendar(IEnumerable<BastiliaCalendarItem> items) : this(items.First().StartDate.Month, 
+        System.Threading.Thread.CurrentThread.CurrentCulture.TextInfo.ToTitleCase(items.First().StartDate.ToString("MMMM")), 
+        [.. items])
+        {
+            
+        }
+    }
+
+}

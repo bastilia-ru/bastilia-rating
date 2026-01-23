@@ -13,6 +13,13 @@ internal class BastiliaProjectRepository(AppDbContext context) : BastiliaReposit
 
     public Task<IReadOnlyCollection<BastiliaProject>> GetActualProjects() => GetProjectsByPredicate(p => true);
 
+    public async Task<IReadOnlyCollection<BastiliaCalendarItem>> GetProjectCalendarFor(int year)
+    {
+        return [..Query(x => x.PlannedEndDate!.Value.Year == year || x.PlannedStartDate.Year == year).
+            Select(x =>
+            new BastiliaCalendarItem(BastiliaCalendarItemType.Project, x.PlannedStartDate, x.PlannedEndDate ?? x.PlannedStartDate, x.ProjectName))];
+    }
+
     private async Task<IReadOnlyCollection<BastiliaProject>> GetProjectsByPredicate(Expression<Func<Entities.BastiliaProject, bool>> predicate)
     {
         var projects = await Query(predicate).ToListAsync();
@@ -65,6 +72,4 @@ internal class BastiliaProjectRepository(AppDbContext context) : BastiliaReposit
            project.Password
            );
     }
-
-
 }

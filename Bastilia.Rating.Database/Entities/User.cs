@@ -17,4 +17,6 @@ public class User
     public ICollection<AchievementTemplate> OwnedAchievementTemplates { get; set; } = [];
     public ICollection<Achievement> Achievements { get; set; } = [];
     public ICollection<UsersBastiliaStatus> BastiliaStatuses { get; set; } = [];
+
+    public ICollection<UserBirthdayParty> UserBirthdayParties { get; set; } = [];
 }
