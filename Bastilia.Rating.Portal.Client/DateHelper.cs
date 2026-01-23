@@ -11,8 +11,8 @@ public static class DateHelper
         }
         if (start.Month == end.Month)
         {
-            return $"{start.Day}–" + end.ToString("d MMMM");
+            return $"{start.Day}&#x2013;" + end.ToString("d MMMM");
         }
-        return $"{start.ToShortDateString}–{end.ToShortDateString()}";
+        return $"{start:d}&#x2013;{end:d}";
     }
 }
