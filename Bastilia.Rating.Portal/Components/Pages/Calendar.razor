@@ -1,7 +1,7 @@
 ﻿@page "/calendar/{yearParam:int?}"
+@using Bastilia.Rating.Domain.DomainServices
 @using Bastilia.Rating.Portal.Client.Components.Calendar
-@inject IBastiliaMemberRepository bastiliaMemberRepository
-@inject IBastiliaProjectRepository bastiliaProjectRepository
+@inject CalendarService calendarService
 <h3>Календарь на @Year</h3>
 <p>
     [<a href="/calendar/@(Year - 1)">@(Year - 1)</a>] [@Year] [<a href="/calendar/@(Year + 1)">@(Year + 1)</a>]
@@ -36,9 +36,8 @@
     private IReadOnlyCollection<MonthCalendar>? calendar;
     protected override async Task OnParametersSetAsync()
     {
-        var memberEvents = await bastiliaMemberRepository.GetMemberCalendarFor(Year);
-        var projectEvents = await bastiliaProjectRepository.GetProjectCalendarFor(Year);
-        calendar = memberEvents.Union(projectEvents).OrderBy(e => e.StartDate).GroupBy(e => e.StartDate.Month).Select(g => new MonthCalendar(g)).ToList();
+        var events = await calendarService.GetCalendarForYear(Year);
+        calendar = events.OrderBy(e => e.StartDate).GroupBy(e => e.StartDate.Month).Select(g => new MonthCalendar(g)).ToList();
     }
 
     private record MonthCalendar(int Month, string MonthName, IReadOnlyCollection<BastiliaCalendarItem> Items)

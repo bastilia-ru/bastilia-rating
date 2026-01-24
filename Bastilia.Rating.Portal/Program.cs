@@ -23,6 +23,7 @@ builder.Services.AddTransient<ProjectNavigateHelper>();
 builder.Services.AddTransient<UserLoaderHelper>();
 
 builder.Services.AddTransient<UserImportService>();
+builder.Services.AddTransient<CalendarService>();
 
 
 builder.Services.AddHttpClient<JoinUserInfoClient>();
