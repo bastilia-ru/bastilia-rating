@@ -13,6 +13,7 @@
     <ProjectReference Include="..\Bastilia.Rating.Domain\Bastilia.Rating.Domain.csproj" />
     <ProjectReference Include="..\Bastilia.Rating.Portal.Client\Bastilia.Rating.Portal.Client.csproj" />
     <ProjectReference Include="..\JoinRpg.Client\JoinRpg.Client.csproj" />
+    <PackageReference Include="Ical.Net" />
     <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly.Server" />
 	<PackageReference Include="Microsoft.EntityFrameworkCore.Design">
 		<PrivateAssets>all</PrivateAssets>
