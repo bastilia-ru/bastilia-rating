@@ -1,8 +1,8 @@
 ﻿namespace Bastilia.Rating.Domain;
 
-public record class BastiliaCalendarItem(BastiliaCalendarItemType Type, DateOnly StartDate, DateOnly EndDate, string Name)
+public record class BastiliaCalendarItem(BastiliaCalendarItemType Type, DateOnly StartDate, DateOnly EndDate, string Name, int Id)
 {
-    public BastiliaCalendarItem(BastiliaCalendarItemType Type, DateOnly StartDate, string Name) : this(Type, StartDate, StartDate, Name) { }
+    public BastiliaCalendarItem(BastiliaCalendarItemType Type, DateOnly StartDate, string Name, int Id) : this(Type, StartDate, StartDate, Name, Id) { }
 }
 
 public enum BastiliaCalendarItemType

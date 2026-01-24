@@ -17,9 +17,10 @@ internal class BastiliaProjectRepository(AppDbContext context) : BastiliaReposit
     {
         return [..Query()
             .Where(x => x.PlannedEndDate!.Value.Year == year || x.PlannedStartDate.Year == year)
+            .Where(x => !x.OngoingProject)
             .Where(x => x.DeletedAt == null)
             .Select(x =>
-            new BastiliaCalendarItem(BastiliaCalendarItemType.Project, x.PlannedStartDate, x.PlannedEndDate ?? x.PlannedStartDate, x.ProjectName))];
+            new BastiliaCalendarItem(BastiliaCalendarItemType.Project, x.StartDate ?? x.PlannedStartDate, x.EndDate ?? x.PlannedEndDate ?? x.PlannedStartDate, x.ProjectName, x.BastiliaProjectId))];
     }
 
     private async Task<IReadOnlyCollection<BastiliaProject>> GetProjectsByPredicate(Expression<Func<Entities.BastiliaProject, bool>> predicate)

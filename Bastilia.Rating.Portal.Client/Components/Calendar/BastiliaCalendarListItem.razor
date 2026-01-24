@@ -1,4 +1,4 @@
-﻿@switch (Type)
+﻿@switch (Item.Type)
 {
     case BastiliaCalendarItemType.Unknown:
         <span class="badge bg-danger">
@@ -6,24 +6,35 @@
         </span>
         break;
     case BastiliaCalendarItemType.Birthday:
-    case BastiliaCalendarItemType.BirthdayParty:
         <Tooltip Title="День рождения">
             <span class="badge bg-secondary">
                 ДР
             </span>
         </Tooltip>
+        <a href="/member/@Item.Id">@Item.Name</a>
+        break;
+    case BastiliaCalendarItemType.BirthdayParty:
+        <Tooltip Title="Празднование ДР">
+            <span class="badge bg-secondary">
+                Вечеринка
+            </span>
+        </Tooltip>
+        <a href="/member/@Item.Id">@Item.Name</a>
         break;
     case BastiliaCalendarItemType.Project:
             <span class="badge bg-info">
                 Проект
             </span>
+        <a href="/project/@Item.Id">@Item.Name</a>
         break;
     default:
         break;
 }
 
+<text> </text><DateRangeDisplay Start="Item.StartDate" End="Item.EndDate" />
+
 @code {
     [Parameter]
     [EditorRequired]
-    public BastiliaCalendarItemType Type{ get; set; }
+    public BastiliaCalendarItem Item { get; set; }
 }
