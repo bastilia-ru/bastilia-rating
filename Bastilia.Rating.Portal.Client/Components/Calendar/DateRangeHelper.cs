@@ -12,6 +12,10 @@ internal class DateRangeHelper
         {
             return $"{start.Day}—{end:d MMMM}";
         }
+        else if (start.Month != end.Month && start.Year == end.Year)
+        {
+            return $"{start:d MMMM}—{end:d MMMM}";
+        }
         else
         {
             return $"{start.ToShortDateString()}—{end.ToShortDateString()}";
