@@ -69,7 +69,7 @@ public class AppDbContext(DbContextOptions<AppDbContext> options) : DbContext(op
                 entity
                 .HasMany(e => e.UserBirthdayParties)
                 .WithOne(ubp => ubp.User)
-                .HasForeignKey(ubp => ubp.JoinrpgUserId);
+                .HasForeignKey(ubp => ubp.JoinRpgUserId);
             });
     }
 

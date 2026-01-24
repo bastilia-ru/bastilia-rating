@@ -37,18 +37,18 @@ internal class BastiliaMemberRepository(AppDbContext context) : BastiliaReposito
             .AsNoTracking()
             .Where(u => actualStatusPredicate.Invoke(u))
             .Where(u => u.BirthDay != null)
-            .Select(u => new { u.Username, BirthDay = u.BirthDay!.Value })
+            .Select(u => new { u.Username, BirthDay = u.BirthDay!.Value, u.JoinRpgUserId })
             .ToArrayAsync();
 
         var parties = await MemberQuery()
             .SelectMany(m => m.UserBirthdayParties)
-            .Select(mbp => new { mbp.User.Username, mbp.PartyDate })
+            .Select(mbp => new { mbp.User.Username, mbp.PartyDate, mbp.JoinRpgUserId, mbp.Length })
             .Where(p => p.PartyDate.Year == year)
             .ToArrayAsync();
 
         return [
-            ..birthdays.Select(b=> new BastiliaCalendarItem(BastiliaCalendarItemType.Birthday, new DateOnly(year, b.BirthDay.Month, b.BirthDay.Day),  b.Username)),
-            ..parties.Select(b => new BastiliaCalendarItem(BastiliaCalendarItemType.BirthdayParty, b.PartyDate, b.Username))
+            ..birthdays.Select(b=> new BastiliaCalendarItem(BastiliaCalendarItemType.Birthday, new DateOnly(year, b.BirthDay.Month, b.BirthDay.Day),  b.Username, b.JoinRpgUserId)),
+            ..parties.Select(b => new BastiliaCalendarItem(BastiliaCalendarItemType.BirthdayParty, b.PartyDate, b.PartyDate.AddDays(b.Length - 1), b.Username, b.JoinRpgUserId))
             ];
     }
 
