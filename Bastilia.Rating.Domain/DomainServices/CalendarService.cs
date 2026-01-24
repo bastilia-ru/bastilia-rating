@@ -1,14 +1,17 @@
 ﻿namespace Bastilia.Rating.Domain.DomainServices;
 
-public class CalendarService(IBastiliaMemberRepository bastiliaMemberRepository, IBastiliaProjectRepository bastiliaProjectRepository)
+public class CalendarService(IBastiliaMemberRepository bastiliaMemberRepository,
+    IBastiliaProjectRepository bastiliaProjectRepository,
+    IBastiliaKograIgraRepository bastiliaKograIgraRepository)
 {
     public async Task<IReadOnlyCollection<BastiliaCalendarItem>> GetCalendarForYear(int year)
     {
         var memberQuery = await bastiliaMemberRepository.GetMemberCalendarFor(year);
         var projectEvents = await bastiliaProjectRepository.GetProjectCalendarFor(year);
+        var gameEvents = await bastiliaKograIgraRepository.GetGameCalendarFor(year);
 
         var memberEvents = RemoveNotRequired(LinkRelatedEvents(memberQuery));
-        return [.. memberEvents.Union(projectEvents)];
+        return [.. memberEvents.Union(projectEvents).Union(gameEvents)];
     }
 
     private IEnumerable<BastiliaCalendarItem> RemoveNotRequired(IReadOnlyCollection<BastiliaCalendarItem> bastiliaCalendarItems)

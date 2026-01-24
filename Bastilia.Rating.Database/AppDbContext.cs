@@ -13,6 +13,7 @@ public class AppDbContext(DbContextOptions<AppDbContext> options) : DbContext(op
     public DbSet<User> Users { get; set; }
     public DbSet<UsersBastiliaStatus> UsersBastiliaStatuses { get; set; }
     public DbSet<UserBirthdayParty> UserBirthdayParties { get; set; }
+    public DbSet<KogdaIgraGame> KogdaIgraGames { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
