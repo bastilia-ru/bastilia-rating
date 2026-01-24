@@ -20,7 +20,7 @@
             <ul>
                 @foreach(var item in month.Items)
                 {
-                    <li><BastiliaCalendarTypeBadge Type="item.Type" /> @item.Name  <DateRangeDisplay Start="item.StartDate" End="item.EndDate" /></li>
+                    <li><BastiliaCalendarListItem Item="item" /></li>
                 }
             </ul>
         </Body>
