@@ -27,3 +27,8 @@ public interface IBastiliaTemplateRepository
 {
     Task<IReadOnlyCollection<AchievementTemplate>> GetAchievementTemplates();
 }
+
+public interface IBastiliaKograIgraRepository
+{
+    Task<IReadOnlyCollection<BastiliaCalendarItem>> GetGameCalendarFor(int year);
+}

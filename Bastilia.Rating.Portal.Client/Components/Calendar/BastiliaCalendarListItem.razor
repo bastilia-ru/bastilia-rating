@@ -43,6 +43,13 @@
         <a href="/project/@Item.Id">@Item.Name</a>
         <DateRangeDisplay Start="Item.StartDate" End="Item.EndDate" />
         break;
+    case BastiliaCalendarItemType.Game:
+        <span class="badge bg-success">
+            Игра
+        </span>
+        <a href="https://kogda-igra.ru/game/@Item.Id">@Item.Name</a>
+        <DateRangeDisplay Start="Item.StartDate" End="Item.EndDate" />
+        break;
     default:
         break;
 }
