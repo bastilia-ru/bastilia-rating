@@ -18,7 +18,7 @@ public interface IBastiliaProjectRepository
     Task<BastiliaProjectWithDetails?> GetByIdAsync(int projectId);
     Task<BastiliaProjectWithDetails?> GetBySlugAsync(string slug);
     Task<IReadOnlyCollection<BastiliaProject>> GetActiveProjects();
-    Task<IReadOnlyCollection<BastiliaProject>> GetActualProjects();
+    Task<IReadOnlyCollection<BastiliaProject>> GetAllProjects();
     Task<IReadOnlyCollection<BastiliaProject>> GetProjectsWithoutPasswords();
     Task<IReadOnlyCollection<BastiliaCalendarItem>> GetProjectCalendarFor(int year);
 }

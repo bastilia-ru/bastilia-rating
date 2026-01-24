@@ -14,6 +14,12 @@ else
     <ProjectList Projects="completedList" ShowYear="true"/>
 }
 
+<Card>
+    <Body>
+        <a href="/projects/deleted">Удаленные проекты</a>
+    </Body>
+</Card>
+
 
 @code
 {
@@ -21,7 +27,7 @@ else
     private IQueryable<BastiliaProject>? completedList;
     protected override async Task OnInitializedAsync()
     {
-        var list = (await Repository.GetActualProjects());
+        var list = (await Repository.GetAllProjects());
         activeList = list.AsQueryable().Where(p => p.Status != ProjectStatus.Completed);
         completedList = list.AsQueryable().Where(p => p.Status == ProjectStatus.Completed);
     }

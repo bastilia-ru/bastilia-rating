@@ -4,7 +4,7 @@ services:
     image: 'postgres:14.2'
 
     ports:
-      - 5432:5432
+      - 6432:5432
 
     volumes:
         - ./scripts/postgre-docker-entrypoint-initdb:/docker-entrypoint-initdb.d
