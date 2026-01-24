@@ -7,6 +7,12 @@
     [<a href="/calendar/@(Year - 1)">@(Year - 1)</a>] [@Year] [<a href="/calendar/@(Year + 1)">@(Year + 1)</a>]
 </p>
 
+<Card>
+    <Body>
+    Добавь ссылку на календарь в своем любимом приложении: <a href="/api/calendar/ical">https://rating.bastilia.ru/api/calendar/ical</a>
+    </Body>
+</Card>
+
 @if (calendar is null)
 {
     <LoadingSpinner />
