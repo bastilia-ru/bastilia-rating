@@ -14,6 +14,12 @@
             <text>@Start.Day&#x2013;@End.ToString("d MMMM")</text>
         </Tooltip>
     }
+    else if (Start.Year == End.Year)
+    {
+        <Tooltip Title="@rangeWeekDay">
+            <text>@Start.ToString("d MMMM")&#x2013;@End.ToString("d MMMM")</text>
+        </Tooltip>
+    }
     else
     {
         <Tooltip Title="@rangeWeekDay">
