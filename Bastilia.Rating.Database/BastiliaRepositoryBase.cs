@@ -33,7 +33,9 @@ internal abstract class BastiliaRepositoryBase
             project.HowToHelp,
             new Uri(project.ProjectIconUri),
             project.Slug,
-            project.Password
+            project.Password,
+            project.DeletedAt,
+            project.LastUpdatedAt
             );
     }
 

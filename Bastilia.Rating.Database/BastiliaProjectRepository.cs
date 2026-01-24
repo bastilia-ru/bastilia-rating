@@ -11,36 +11,38 @@ internal class BastiliaProjectRepository(AppDbContext context) : BastiliaReposit
 
     public Task<IReadOnlyCollection<BastiliaProject>> GetProjectsWithoutPasswords() => GetProjectsByPredicate(p => p.Password == null);
 
-    public Task<IReadOnlyCollection<BastiliaProject>> GetActualProjects() => GetProjectsByPredicate(p => true);
+    public Task<IReadOnlyCollection<BastiliaProject>> GetAllProjects() => GetProjectsByPredicate(p => true);
 
     public async Task<IReadOnlyCollection<BastiliaCalendarItem>> GetProjectCalendarFor(int year)
     {
-        return [..Query(x => x.PlannedEndDate!.Value.Year == year || x.PlannedStartDate.Year == year).
-            Select(x =>
+        return [..Query()
+            .Where(x => x.PlannedEndDate!.Value.Year == year || x.PlannedStartDate.Year == year)
+            .Where(x => x.DeletedAt == null)
+            .Select(x =>
             new BastiliaCalendarItem(BastiliaCalendarItemType.Project, x.PlannedStartDate, x.PlannedEndDate ?? x.PlannedStartDate, x.ProjectName))];
     }
 
     private async Task<IReadOnlyCollection<BastiliaProject>> GetProjectsByPredicate(Expression<Func<Entities.BastiliaProject, bool>> predicate)
     {
-        var projects = await Query(predicate).ToListAsync();
+        var projects = await Query().Where(predicate).ToListAsync();
 
         return [.. projects.Select(ToProject)];
     }
 
-    private IQueryable<Entities.BastiliaProject> Query(Expression<Func<Entities.BastiliaProject, bool>> predicate)
+    private IQueryable<Entities.BastiliaProject> Query()
     {
         return context.BastiliaProjects
                     .Include(bp => bp.ProjectAdmins)
                     .ThenInclude(pa => pa.User)
                     .AsNoTracking()
-                    .Where(predicate)
                     ;
     }
 
 
     private async Task<BastiliaProjectWithDetails?> GetOneProjectByPredicate(Expression<Func<Entities.BastiliaProject, bool>> predicate)
     {
-        var project = await Query(predicate)
+        var project = await Query()
+                    .Where(predicate)
                     .Include(p => p.AchievementTemplates)
                     .ThenInclude(p => p.Achievements)
                     .ThenInclude(p => p.User)
@@ -69,7 +71,9 @@ internal class BastiliaProjectRepository(AppDbContext context) : BastiliaReposit
            project.ProjectDescription,
            new Uri(project.ProjectIconUri),
            project.Slug,
-           project.Password
+           project.Password,
+           project.DeletedAt,
+           project.LastUpdatedAt
            );
     }
 }

@@ -1,0 +1,24 @@
+﻿@page "/projects/deleted"
+@using Bastilia.Rating.Portal.Client.Components.Projects
+@inject IBastiliaProjectRepository Repository
+<h3>Удаленные проекты</h3>
+@if (deletedList is null)
+{
+    
+    <LoadingSpinner />
+}
+else
+{
+    <ProjectList Projects="deletedList" ShowYear="true"  />
+}
+
+
+@code
+{
+    private IQueryable<BastiliaProject>? deletedList;
+    protected override async Task OnInitializedAsync()
+    {
+        var list = (await Repository.GetAllProjects());
+        deletedList = list.AsQueryable().Where(p => p.Status == ProjectStatus.Deleted);
+    }
+}
