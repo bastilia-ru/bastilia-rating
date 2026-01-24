@@ -4,6 +4,7 @@
         <span class="badge bg-danger">
             ???
         </span>
+        <DateRangeDisplay Start="Item.StartDate" End="Item.EndDate" />
         break;
     case BastiliaCalendarItemType.Birthday:
         <Tooltip Title="День рождения">
@@ -12,26 +13,39 @@
             </span>
         </Tooltip>
         <a href="/member/@Item.Id">@Item.Name</a>
+        <DateRangeDisplay Start="Item.StartDate" End="Item.EndDate" />
+        if (Item.LinkedItem is BastiliaCalendarItem related)
+        {
+            var str = "Празднование " + DateRangeHelper.GetRangeString(related.StartDate, related.EndDate);
+            <InfoIcon Title=@str></InfoIcon>
+        }
+
         break;
     case BastiliaCalendarItemType.BirthdayParty:
         <Tooltip Title="Празднование ДР">
             <span class="badge bg-secondary">
-                Вечеринка
+                ДР
             </span>
         </Tooltip>
         <a href="/member/@Item.Id">@Item.Name</a>
+        <DateRangeDisplay Start="Item.StartDate" End="Item.EndDate" />
+        if (Item.LinkedItem is BastiliaCalendarItem related1)
+        {
+            var str = "День рождения " + DateRangeHelper.GetRangeString(related1.StartDate, related1.EndDate);
+            <InfoIcon Title=@str />
+        }
+
         break;
     case BastiliaCalendarItemType.Project:
             <span class="badge bg-info">
                 Проект
             </span>
         <a href="/project/@Item.Id">@Item.Name</a>
+        <DateRangeDisplay Start="Item.StartDate" End="Item.EndDate" />
         break;
     default:
         break;
 }
-
-<text> </text><DateRangeDisplay Start="Item.StartDate" End="Item.EndDate" />
 
 @code {
     [Parameter]
