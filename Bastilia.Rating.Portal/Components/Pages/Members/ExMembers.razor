@@ -3,9 +3,10 @@
 @using Microsoft.AspNetCore.Components.QuickGrid
 @inject IBastiliaMemberRepository Repository
 
-<PageTitle>Бастильцы и бывшие бастильцы</PageTitle>
+<PageTitle>Летопись Узников</PageTitle>
 
-<h2>Бастильцы и бывшие бастильцы</h2>
+<h2>Летопись Узников</h2>
+<MemberNavLinks />
 
 @if (members is null)
 {

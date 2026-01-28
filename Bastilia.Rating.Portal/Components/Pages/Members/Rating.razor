@@ -1,10 +1,11 @@
-@page "/members"
+@page "/members/rating"
 @using Bastilia.Rating.Portal.Client.Components.BastiliaUsers
 @inject IBastiliaMemberRepository Repository
 
-<PageTitle>Список Узников</PageTitle>
+<PageTitle>Рейтинг Узников</PageTitle>
 
-<h2>Список Узников</h2>
+<h2>Рейтинг Узников</h2>
+<MemberNavLinks />
 
 @if (members is null)
 {
@@ -20,6 +21,6 @@ else
     private IReadOnlyCollection<BastiliaMember>? members;
     protected override async Task OnInitializedAsync()
     {
-        members = await Repository.GetAllAsync();
+        members = (await Repository.GetAllAsync()).Where(x => x.ParticipateInRating && x.HistoricalRatingValue > 0).ToList();
     }
 }
