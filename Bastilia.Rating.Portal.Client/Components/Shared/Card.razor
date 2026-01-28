@@ -1,4 +1,4 @@
-﻿<div class="card" style="margin:1em">
+﻿<div class="card" style="margin:1em@(WidthCss)">
     @if (Header is not null)
     {
         <div class="card-header">@Header</div>
@@ -18,5 +18,9 @@
     [Parameter] public RenderFragment? Header { get; set; }
     [Parameter] public RenderFragment? Body { get; set; }
     [Parameter] public RenderFragment? Footer { get; set; }
+
+    [Parameter] public string? Width { get; set; }
+
+    private string WidthCss => Width is null ? "" : $";width: {Width}";
 
 }
