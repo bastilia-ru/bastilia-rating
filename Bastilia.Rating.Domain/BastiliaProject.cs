@@ -19,8 +19,10 @@ public record BastiliaProject(int BastiliaProjectId,
                               DateTimeOffset? LastUpdatedAt
                               ) : IBastiliaProjectLink
 {
+
+    public bool IsActive => Status != ProjectStatus.Completed && Status != ProjectStatus.Deleted;
     public ProjectStatus Status { get; } = CalculateStatus(OngoingProject, EndDate, DeletedAt);
-    public bool HelpRequired { get; } = !string.IsNullOrWhiteSpace(HowToHelp);
+    public bool HelpRequired => !string.IsNullOrWhiteSpace(HowToHelp) && IsActive;
 
     private static ProjectStatus CalculateStatus(bool ongoingProject, DateOnly? endDate, DateTimeOffset? deletedAt)
     {
