@@ -28,7 +28,7 @@ else
     protected override async Task OnInitializedAsync()
     {
         var list = (await Repository.GetAllProjects());
-        activeList = list.AsQueryable().Where(p => p.Status != ProjectStatus.Completed);
+        activeList = list.AsQueryable().Where(p => p.IsActive);
         completedList = list.AsQueryable().Where(p => p.Status == ProjectStatus.Completed);
     }
 }
