@@ -9,7 +9,7 @@
 
             <div class="col">
                 <h3 class="mb-0">
-                    @Username
+                    <BastiliaUserLink Member="Member" />
                     @if (Member.ParticipateInRating)
                     {
                         <strong class="h5">&nbsp;(+@Member.RatingValue / +@Member.HistoricalRatingValue)</strong>
@@ -31,7 +31,7 @@
                 {
                     <CurrentStatusBadge Status="Member.CurrentStatus" />
                 }
-                <small class="text-muted"> [<a href="https://joinrpg.ru/user/@UserId">Профиль</a>]</small>
+                <small class="text-muted"> [<a href="https://joinrpg.ru/user/@UserId">JoinRpg</a>]</small>
                 @if (Member.BirthDay is not null)
                 {
                     <span> ДР: @Member.BirthDay.Value.ToString("dd MMMM")</span>

@@ -1,50 +1,7 @@
 @using System.Globalization
 @using Bastilia.Rating.Portal.Client.Components.Achievements
-<div class="card mb-4">
-    <div class="card-header bg-light">
-        <div class="row align-items-center g-2">
-            <div class="col-auto">
-                <img src="@AvatarUrl" class="rounded-circle" style="width: 80px; height: 80px" alt="Avatar" />
-            </div>
-
-            <div class="col">
-                <h3 class="mb-0">
-                    @Username
-                    @if (Member.ParticipateInRating)
-                    {
-                        <strong class="h5">&nbsp;(+@Member.RatingValue / +@Member.HistoricalRatingValue)</strong>
-                    }
-                    else
-                    {
-                        <Tooltip Title="Этот бастилец предпочитает не оценивать свой вклад бездушными цифрами">&nbsp;–</Tooltip>
-                    }
-                </h3>
-
-                @if (IsPresident)
-                {
-                    <text>&nbsp;</text>
-                    <span class="badge bg-warning text-dark">
-                        <i class="bi bi-award me-1"></i>Комендант до @Member.PresidentUntil!.Value.ToString(CultureInfo.GetCultureInfo("ru-RU"))
-                    </span>
-                }
-                else
-                {
-                    <CurrentStatusBadge Status="Member.CurrentStatus" />
-                }
-                <small class="text-muted"> [<a href="https://joinrpg.ru/user/@UserId">Профиль</a>]</small>
-                @if (Member.BirthDay is not null)
-                {
-                    <span> ДР: @Member.BirthDay.Value.ToString("dd/MMM")</span>
-                }
-            </div>
-
-        </div>
-    </div>
-
-    <div class="card-body">
-
-
-        @*
+<BastiliaMemberCard Member="Member" />
+@*
 @if (Member.HisActiveProjects?.Any() == true)
     {
             <div class="mb-4">
@@ -70,30 +27,28 @@
     }
 
     *@
-        <div>
-            <h5 class="d-flex align-items-center">
-                <i class="bi bi-trophy me-2"></i>Достижения
-            </h5>
+<div>
+    <h5 class="d-flex align-items-center">
+        <i class="bi bi-trophy me-2"></i>Достижения
+    </h5>
 
-            @if (Member.Achievements.Any() == true)
+    @if (Member.Achievements.Any() == true)
+    {
+        <div style="display: flex; flex-flow: row wrap">
+            @foreach (var achievement in Member.Achievements.OrderByDescending(a => a.Active).ThenByDescending(a => a.RatingValue).ThenByDescending(a => a.GrantedDate))
             {
-                <div style="display: flex; flex-flow: row wrap">
-                    @foreach (var achievement in Member.Achievements.OrderByDescending(a => a.Active).ThenByDescending(a => a.RatingValue).ThenByDescending(a => a.GrantedDate))
-                    {
-                        <AchievementCard Achievement="achievement" ShowValue=@Member.ParticipateInRating />
-                    }
-                </div>
-            }
-            else
-            {
-                <div class="alert alert-warning mt-2 mb-0">
-                    Пока нет достижений
-                </div>
+                <AchievementCard Achievement="achievement" ShowValue=@Member.ParticipateInRating />
             }
         </div>
-
-    </div>
+    }
+    else
+    {
+        <div class="alert alert-warning mt-2 mb-0">
+            Пока нет достижений
+        </div>
+    }
 </div>
+
 
 @code {
     [Parameter, EditorRequired]
