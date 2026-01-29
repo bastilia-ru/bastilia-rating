@@ -7,7 +7,7 @@ namespace Bastilia.Rating.Database
 {
     public static class Registration
     {
-        public static void RegisterRatingDal(this IServiceCollection services, IConfiguration configuration, IHostEnvironment environment)
+        public static void AddRatingDal(this IServiceCollection services, IConfiguration configuration, IHostEnvironment environment)
         {
             services.AddJoinEfCoreDbContext<AppDbContext>(configuration, environment, "BastiliaRating");
             services.AddTransient<IBastiliaMemberRepository, BastiliaMemberRepository>();
@@ -18,6 +18,7 @@ namespace Bastilia.Rating.Database
             services.AddTransient<IProjectService, ProjectService>();
             services.AddTransient<IAchievementService, AchievementService>();
             services.AddTransient<IUserDbService, UserDbService>();
+            services.AddTransient<IKiDbService, KiDbService>();
         }
     }
 }

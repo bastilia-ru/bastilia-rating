@@ -5,6 +5,7 @@ using Bastilia.Rating.Portal.AppServices;
 using Bastilia.Rating.Portal.Common;
 using Bastilia.Rating.Portal.Components;
 using JoinRpg.Client;
+using JoinRpg.Common.KogdaIgraClient;
 using Microsoft.AspNetCore.Mvc;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -16,11 +17,12 @@ builder.Services.AddRazorComponents()
 
 builder.Services.AddHealthChecks();
 
-builder.Services.RegisterRatingDal(builder.Configuration, builder.Environment);
+builder.Services.AddRatingDal(builder.Configuration, builder.Environment);
 builder.Services.AddLocalization();
 
 builder.Services.AddOptions<PasswordOptions>().BindConfiguration("PasswordOptions");
 builder.Services.AddOptions<JoinConnectOptions>().BindConfiguration("JoinConnectOptions");
+builder.Services.AddOptions<KogdaIgraOptions>().BindConfiguration("KogdaIgra");
 builder.Services.AddTransient<ProjectNavigateHelper>();
 builder.Services.AddTransient<UserLoaderHelper>();
 
@@ -28,9 +30,11 @@ builder.Services.AddTransient<UserImportService>();
 builder.Services.AddTransient<CalendarService>();
 
 builder.Services.AddTransient<ICalService>();
+builder.Services.AddTransient<KiAddService>();
 
 
 builder.Services.AddHttpClient<JoinUserInfoClient>();
+builder.Services.AddKogdaIgraClient();
 
 var app = builder.Build();
 
@@ -55,6 +59,13 @@ app.MapRazorComponents<App>()
     .AddAdditionalAssemblies(typeof(Bastilia.Rating.Portal.Client._Imports).Assembly);
 
 app.MapGet("/api/calendar/ical", async ([FromServices] ICalService calendarService) => TypedResults.File(await calendarService.GetCurrentIcalCalendar(), "text/calendar"));
+
+// TODO Ёта апишка без авторизации, но самое что может случитьс€ Ч мы просто зальем к нам всю базу  ».
+app.MapGet("/api/kogda-igra/add/{id}", async (int id, [FromServices] KiAddService kiAddService) =>
+{
+    await kiAddService.AddKogdaIgraGame(id);
+    return TypedResults.Ok();
+});
 
 app.MapBrHealthChecks();
 
