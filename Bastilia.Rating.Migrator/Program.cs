@@ -9,7 +9,7 @@ internal class Program
     private static void Main(string[] args)
     {
         HostApplicationBuilder builder = Host.CreateApplicationBuilder(args);
-        builder.Services.RegisterRatingDal(builder.Configuration, builder.Environment);
+        builder.Services.AddRatingDal(builder.Configuration, builder.Environment);
         builder.Services.AddHostedService<MigrationsLauncher>();
         builder.Services.AddScoped<IMigratorService, MigrateEfCoreHostService<AppDbContext>>();
 

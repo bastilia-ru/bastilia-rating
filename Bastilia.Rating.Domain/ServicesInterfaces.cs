@@ -14,4 +14,9 @@
     {
         Task<BastiliaMember> AddUser(int playerId, string nickName, string avatarUrl);
     }
+
+    public interface IKiDbService
+    {
+        Task AddKogdaIgraGame(int kogdaIgraId, string name, DateOnly begin, DateOnly end, DateTimeOffset lastUpdatedAt);
+    }
 }
