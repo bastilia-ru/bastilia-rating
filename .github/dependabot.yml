@@ -13,9 +13,6 @@ updates:
           - "Microsoft.AspNetCore.*"
           - "Microsoft.EntityFrameworkCore*"
           - "dotnet-ef"
-        update-types:
-          - "minor"
-          - "patch"
       xunit:
         patterns:
           - "xunit*"
