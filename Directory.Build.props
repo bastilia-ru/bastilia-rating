@@ -17,6 +17,6 @@
 
   </PropertyGroup>
 	<ItemGroup>
-		<GlobalPackageReference Include="ReferenceTrimmer" Version="3.3.11" />
+		<GlobalPackageReference Include="ReferenceTrimmer" Version="3.4.0" />
 	</ItemGroup>
 </Project>
