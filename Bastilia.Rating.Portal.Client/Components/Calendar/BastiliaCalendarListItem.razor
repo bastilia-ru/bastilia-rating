@@ -4,7 +4,7 @@
         <span class="badge bg-danger">
             ???
         </span>
-        <DateRangeDisplay Start="Item.StartDate" End="Item.EndDate" />
+        <DateRangeDisplay Start="Item.StartDate" End="Item.EndDate" HideCurrentYear="true" />
         break;
     case BastiliaCalendarItemType.Birthday:
         <Tooltip Title="День рождения">
@@ -13,7 +13,7 @@
             </span>
         </Tooltip>
         <a href="/member/@Item.Id">@Item.Name</a>
-        <DateRangeDisplay Start="Item.StartDate" End="Item.EndDate" />
+        <DateRangeDisplay Start="Item.StartDate" End="Item.EndDate" HideCurrentYear="true" />
         if (Item.LinkedItem is BastiliaCalendarItem related)
         {
             var str = "Празднование " + DateRangeHelper.GetRangeString(related.StartDate, related.EndDate);
@@ -28,7 +28,7 @@
             </span>
         </Tooltip>
         <a href="/member/@Item.Id">@Item.Name</a>
-        <DateRangeDisplay Start="Item.StartDate" End="Item.EndDate" />
+        <DateRangeDisplay Start="Item.StartDate" End="Item.EndDate" HideCurrentYear="true" />
         if (Item.LinkedItem is BastiliaCalendarItem related1)
         {
             var str = "День рождения " + DateRangeHelper.GetRangeString(related1.StartDate, related1.EndDate);
@@ -41,14 +41,14 @@
                 Проект
             </span>
         <a href="/project/@Item.Id">@Item.Name</a>
-        <DateRangeDisplay Start="Item.StartDate" End="Item.EndDate" />
+        <DateRangeDisplay Start="Item.StartDate" End="Item.EndDate" HideCurrentYear="true" />
         break;
     case BastiliaCalendarItemType.Game:
         <span class="badge bg-success">
             Игра
         </span>
         <a href="https://kogda-igra.ru/game/@Item.Id">@Item.Name</a>
-        <DateRangeDisplay Start="Item.StartDate" End="Item.EndDate" />
+        <DateRangeDisplay Start="Item.StartDate" End="Item.EndDate" HideCurrentYear="true" />
         break;
     default:
         break;
