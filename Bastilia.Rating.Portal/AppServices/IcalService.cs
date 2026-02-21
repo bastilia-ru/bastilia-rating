@@ -20,6 +20,7 @@ namespace Bastilia.Rating.Portal.AppServices
                 ];
 
             var calendar = new Calendar();
+            calendar.AddTimeZone(mskTimeZone);
             calendar.Events.AddRange(items.Select(i => BuildIcalEvent(i, mskTimeZone)));
 
             var serializer = new CalendarSerializer();
