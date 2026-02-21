@@ -82,12 +82,19 @@ else if (project.EndDate is not null)
     [SupplyParameterFromForm]
     private AddViewModel? AddModel { get; set; }
 
+    private record class LeoLink(int JoinrpgUserId, string Slug, string UserName) : IUserLink;
+
     private BastiliaProjectWithDetails? project;
     private bool addedSuccess = false;
 
     protected override async Task OnParametersSetAsync()
     {
         project = await projectNavigateHelper.LoadProjectAdminWithCheck(ProjectId, Password);
+        if (project is not null && !project.Coordinators.Any(x => x.JoinrpgUserId == 1))
+        {
+            IUserLink leo = new LeoLink(1, "leotsarev", "#Лео");
+            project = project with { Coordinators = [.. project.Coordinators.Union([leo])] };
+        }
     }
 
     protected override void OnInitialized()
