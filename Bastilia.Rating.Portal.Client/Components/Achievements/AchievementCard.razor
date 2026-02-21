@@ -47,6 +47,13 @@
                 Истекло @Achievement.ExpirationDate!.Value.ToShortDateString()
             </div>
         }
+        else if (Achievement.ExpirationDate is not null)
+        {
+
+            <div class="text-muted" style="text-align: right; font-size: 70%">
+                До @Achievement.ExpirationDate.Value.ToShortDateString()
+            </div>
+        }
     </div>
 </div>
 
