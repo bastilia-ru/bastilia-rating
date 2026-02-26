@@ -11,7 +11,7 @@ namespace Bastilia.Rating.Database.DbServices
                 .Include(x => x.ProjectAdmins).ThenInclude(x => x.User)
                 .FirstOrDefaultAsync(x => x.BastiliaProjectId == projectId) ?? throw new InvalidOperationException();
 
-            var grantDate = entity.EndDate ?? DateOnly.FromDateTime(DateTime.UtcNow);
+            var grantDate = entity.EndDate ?? entity.PlannedEndDate ?? DateOnly.FromDateTime(DateTime.UtcNow);
 
 
             var template = entity.AchievementTemplates.First(x => x.AchievementTemplateId == templateId);
