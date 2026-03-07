@@ -40,15 +40,15 @@ internal class BastiliaMemberRepository(AppDbContext context) : BastiliaReposito
             .Select(u => new { u.Username, BirthDay = u.BirthDay!.Value, u.JoinRpgUserId })
             .ToArrayAsync();
 
-        var parties = await MemberQuery()
-            .SelectMany(m => m.UserBirthdayParties)
-            .Select(mbp => new { mbp.User.Username, mbp.PartyDate, mbp.JoinRpgUserId, mbp.Length })
-            .Where(p => p.PartyDate.Year == year)
+        var clubEvents = await context.ClubEvents
+            .Where(ce => ce.EventDate.Year == year)
+            .Include(ce => ce.User)
+            .Include(ce => ce.Project)
             .ToArrayAsync();
 
         return [
-            ..birthdays.Select(b=> new BastiliaCalendarItem(BastiliaCalendarItemType.Birthday, new DateOnly(year, b.BirthDay.Month, b.BirthDay.Day),  b.Username, b.JoinRpgUserId)),
-            ..parties.Select(b => new BastiliaCalendarItem(BastiliaCalendarItemType.BirthdayParty, b.PartyDate, b.PartyDate.AddDays(b.Length - 1), b.Username, b.JoinRpgUserId))
+            ..birthdays.Select(b => new BastiliaCalendarItem(BastiliaCalendarItemType.Birthday, new DateOnly(year, b.BirthDay.Month, b.BirthDay.Day), b.Username, b.JoinRpgUserId)),
+            ..clubEvents.Select(ToCalendarItem)
             ];
     }
 
@@ -85,6 +85,24 @@ internal class BastiliaMemberRepository(AppDbContext context) : BastiliaReposito
                                 .ThenInclude(a => a.GrantedByUser)
                             .Include(u => u.Achievements)
                                 .ThenInclude(a => a.RemovedByUser);
+    }
+
+    internal static BastiliaCalendarItem ToCalendarItem(Entities.ClubEvent e)
+    {
+        var endDate = e.EventDate.AddDays(e.Length - 1);
+        return e.EventType switch
+        {
+            BastiliaCalendarItemType.BirthdayParty => new BastiliaCalendarItem(
+                BastiliaCalendarItemType.BirthdayParty, e.EventDate, endDate, e.User!.Username, e.JoinRpgUserId!.Value),
+            BastiliaCalendarItemType.ProjectGathering => new BastiliaCalendarItem(
+                BastiliaCalendarItemType.ProjectGathering, e.EventDate, endDate, e.Title ?? "", e.ProjectId!.Value),
+            BastiliaCalendarItemType.BastiliaDinner => new BastiliaCalendarItem(
+                BastiliaCalendarItemType.BastiliaDinner, e.EventDate, endDate, e.Title ?? "", e.ClubEventId),
+            BastiliaCalendarItemType.PartyEvent => new BastiliaCalendarItem(
+                BastiliaCalendarItemType.PartyEvent, e.EventDate, endDate, e.Title ?? "", e.ClubEventId),
+            _ => new BastiliaCalendarItem(
+                BastiliaCalendarItemType.Unknown, e.EventDate, endDate, e.Title ?? "", e.ClubEventId),
+        };
     }
 
     private static BastiliaMember ToMember(Entities.User user)

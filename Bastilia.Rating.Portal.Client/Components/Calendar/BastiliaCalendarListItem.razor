@@ -50,6 +50,27 @@
         <a href="https://kogda-igra.ru/game/@Item.Id">@Item.Name</a>
         <DateRangeDisplay Start="Item.StartDate" End="Item.EndDate" HideCurrentYear="true" />
         break;
+    case BastiliaCalendarItemType.BastiliaDinner:
+        <span class="badge bg-secondary">
+            Ужин
+        </span>
+        @Item.Name
+        <DateRangeDisplay Start="Item.StartDate" End="Item.EndDate" HideCurrentYear="true" />
+        break;
+    case BastiliaCalendarItemType.ProjectGathering:
+        <span class="badge bg-info">
+            Сбор
+        </span>
+        <a href="/project/@Item.Id">@Item.Name</a>
+        <DateRangeDisplay Start="Item.StartDate" End="Item.EndDate" HideCurrentYear="true" />
+        break;
+    case BastiliaCalendarItemType.PartyEvent:
+        <span class="badge bg-secondary">
+            Вечеринка
+        </span>
+        @Item.Name
+        <DateRangeDisplay Start="Item.StartDate" End="Item.EndDate" HideCurrentYear="true" />
+        break;
     default:
         break;
 }
