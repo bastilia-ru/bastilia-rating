@@ -12,7 +12,7 @@ public class AppDbContext(DbContextOptions<AppDbContext> options) : DbContext(op
     public DbSet<Achievement> Achievements { get; set; }
     public DbSet<User> Users { get; set; }
     public DbSet<UsersBastiliaStatus> UsersBastiliaStatuses { get; set; }
-    public DbSet<UserBirthdayParty> UserBirthdayParties { get; set; }
+    public DbSet<ClubEvent> ClubEvents { get; set; }
     public DbSet<KogdaIgraGame> KogdaIgraGames { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -64,14 +64,24 @@ public class AppDbContext(DbContextOptions<AppDbContext> options) : DbContext(op
             .Property(ubs => ubs.StatusType)
             .HasConversion<string>();
 
-        modelBuilder.Entity<User>(
-            entity =>
-            {
-                entity
-                .HasMany(e => e.UserBirthdayParties)
-                .WithOne(ubp => ubp.User)
-                .HasForeignKey(ubp => ubp.JoinRpgUserId);
-            });
+        modelBuilder.Entity<ClubEvent>(entity =>
+        {
+            entity.ToTable("ClubEvents");
+
+            entity.Property(e => e.EventType)
+                .HasConversion<string>()
+                .HasDefaultValueSql("'BirthdayParty'");
+
+            entity.HasOne(e => e.User)
+                .WithMany(u => u.ClubEvents)
+                .HasForeignKey(e => e.JoinRpgUserId)
+                .IsRequired(false);
+
+            entity.HasOne(e => e.Project)
+                .WithMany()
+                .HasForeignKey(e => e.ProjectId)
+                .IsRequired(false);
+        });
     }
 
     protected override void ConfigureConventions(ModelConfigurationBuilder configurationBuilder)

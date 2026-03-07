@@ -12,4 +12,7 @@ public enum BastiliaCalendarItemType
     BirthdayParty = 2,
     Project = 3,
     Game = 4,
+    BastiliaDinner = 5,
+    ProjectGathering = 6,
+    PartyEvent = 7,
 }

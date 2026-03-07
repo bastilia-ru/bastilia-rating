@@ -11,7 +11,7 @@ internal class Program
         HostApplicationBuilder builder = Host.CreateApplicationBuilder(args);
         builder.Services.AddRatingDal(builder.Configuration, builder.Environment);
         builder.Services.AddHostedService<MigrationsLauncher>();
-        builder.Services.AddScoped<IMigratorService, MigrateEfCoreHostService<AppDbContext>>();
+        builder.Services.AddTransient<IMigratorService, MigrateEfCoreHostService<AppDbContext>>();
 
         builder.Build().Run();
     }

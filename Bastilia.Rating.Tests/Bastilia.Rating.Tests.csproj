@@ -17,6 +17,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Bastilia.Rating.Domain\Bastilia.Rating.Domain.csproj" />
+    <ProjectReference Include="..\Bastilia.Rating.Database\Bastilia.Rating.Database.csproj" />
   </ItemGroup>
 
   <ItemGroup>

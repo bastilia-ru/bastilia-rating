@@ -15,6 +15,10 @@
 	</ItemGroup>
 
 	<ItemGroup>
+	  <InternalsVisibleTo Include="Bastilia.Rating.Tests" />
+	</ItemGroup>
+
+	<ItemGroup>
 	  <PackageVersion Update="ReferenceTrimmer" Version="3.3.12" />
 	</ItemGroup>
 
