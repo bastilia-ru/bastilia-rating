@@ -69,8 +69,7 @@ public class AppDbContext(DbContextOptions<AppDbContext> options) : DbContext(op
             entity.ToTable("ClubEvents");
 
             entity.Property(e => e.EventType)
-                .HasConversion<string>()
-                .HasDefaultValueSql("'BirthdayParty'");
+                .HasConversion<string>();
 
             entity.HasOne(e => e.User)
                 .WithMany(u => u.ClubEvents)
