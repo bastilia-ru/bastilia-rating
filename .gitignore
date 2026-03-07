@@ -145,3 +145,4 @@ appsettings.Development.json
 
 *.received.*
 *.received/
+/.claude/settings.local.json
