@@ -1,3 +1,4 @@
+using Bastilia.Rating.Domain;
 using Bastilia.Rating.Domain.Common;
 using Bastilia.Rating.Domain.DomainServices;
 using Microsoft.AspNetCore.Authentication;
@@ -60,6 +61,15 @@ internal static class AuthEndpoints
                 new(ClaimTypes.Name, member.UserName),
                 new("avatar", member.AvatarUrl)
             };
+
+            if (member.IsActiveMember)
+            {
+                claims.Add(new(ClaimTypes.Role, BastiliaRoles.Member));
+            }
+            if (member.IsPresident)
+            {
+                claims.Add(new(ClaimTypes.Role, BastiliaRoles.President));
+            }
 
             var identity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
             await context.SignInAsync(

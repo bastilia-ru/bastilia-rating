@@ -23,7 +23,6 @@ builder.Services.AddJoinRpgAuthentication(builder.Configuration);
 builder.Services.AddRatingDal(builder.Configuration, builder.Environment);
 builder.Services.AddLocalization();
 
-builder.Services.AddOptions<PasswordOptions>().BindConfiguration("PasswordOptions");
 builder.Services.AddOptions<JoinConnectOptions>().BindConfiguration("JoinConnectOptions");
 builder.Services.AddOptions<KogdaIgraOptions>().BindConfiguration("KogdaIgra");
 builder.Services.AddTransient<ProjectNavigateHelper>();
