@@ -1,19 +1,27 @@
+using EntityFramework.Exceptions.PostgreSQL;
+using Microsoft.EntityFrameworkCore.Diagnostics;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Logging;
 
 namespace Bastilia.Rating.Database;
 
 public static class DbContextRegisterHelper
 {
-    public static void AddJoinEfCoreDbContext<TContext>(this IServiceCollection services, IConfiguration configuration, IHostEnvironment environment, string connectionStringName)
+    public static bool AddJoinEfCoreDbContext<TContext>(
+        this IServiceCollection services,
+        IConfiguration configuration,
+        IHostEnvironment environment,
+        string connectionStringName,
+        Action<DbContextOptionsBuilder>? optionsBuilder = null)
         where TContext : DbContext
     {
         var connectionString = configuration.GetConnectionString(connectionStringName);
 
         if (string.IsNullOrWhiteSpace(connectionString))
         {
-            return;
+            return false;
         }
 
         services.AddDbContext<TContext>(
@@ -22,6 +30,13 @@ public static class DbContextRegisterHelper
             options.UseNpgsql(connectionString);
             options.EnableSensitiveDataLogging(environment.IsDevelopment());
             options.EnableDetailedErrors(environment.IsDevelopment());
+            options.UseExceptionProcessor();
+            options
+                .ConfigureWarnings(
+                    b => b.Log(
+                        (RelationalEventId.CommandExecuted, LogLevel.Debug)));
+
+            optionsBuilder?.Invoke(options);
         });
 
         //services
@@ -30,5 +45,7 @@ public static class DbContextRegisterHelper
         //        connectionString,
         //        name: $"{connectionStringName}-db",
         //        failureStatus: HealthStatus.Degraded);
+
+        return true;
     }
 }
