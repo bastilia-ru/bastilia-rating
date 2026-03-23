@@ -41,6 +41,12 @@ docker-compose up -d
 
 Ключ строки подключения — `BastiliaRating`. Настраивается через `appsettings.json` или user secrets (UserSecretsId: `763c5644-5459-415e-bc3a-37ce53120f08` в проекте Portal).
 
+## Правила кода
+
+- **Program.cs должен быть компактным.** Не добавляй многострочный код в `Program.cs` — оборачивай в extension-методы и выноси в отдельные файлы (пример: `Auth/AuthRegistration.cs`, `Common/HealthChecks.cs`).
+- **Всегда используй типизированные опции.** Не читай конфигурацию через `IConfiguration.GetSection(...)["Key"]` — создавай класс опций и привязывай через `AddOptions<T>().BindConfiguration(...)` или `IConfiguration.GetSection(...).Get<T>()`.
+- **Не зашивай URL и адреса внешних сервисов в код.** Выноси в конфигурацию (`appsettings.json` / user secrets) и читай через типизированные опции.
+
 ## Архитектура
 
 Решение — Blazor Web App (гибрид SSR + WASM) на .NET 10, база данных PostgreSQL через Entity Framework Core. Система ведёт учёт рейтинга и достижений членов LARP-клуба «Бастилия».
