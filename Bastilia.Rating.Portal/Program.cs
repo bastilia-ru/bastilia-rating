@@ -2,6 +2,7 @@ using Bastilia.Rating.Database;
 using Bastilia.Rating.Domain;
 using Bastilia.Rating.Domain.DomainServices;
 using Bastilia.Rating.Portal.AppServices;
+using Bastilia.Rating.Portal.Auth;
 using Bastilia.Rating.Portal.Common;
 using Bastilia.Rating.Portal.Components;
 using JoinRpg.Client;
@@ -16,6 +17,8 @@ builder.Services.AddRazorComponents()
     .AddInteractiveWebAssemblyComponents();
 
 builder.Services.AddHealthChecks();
+
+builder.Services.AddJoinRpgAuthentication(builder.Configuration);
 
 builder.Services.AddRatingDal(builder.Configuration, builder.Environment);
 builder.Services.AddLocalization();
@@ -48,6 +51,9 @@ else
     app.UseExceptionHandler("/Error", createScopeForErrors: true);
 }
 
+app.UseAuthentication();
+app.UseAuthorization();
+
 app.UseAntiforgery();
 
 app.UseRequestLocalization("ru-RU");
@@ -60,7 +66,7 @@ app.MapRazorComponents<App>()
 
 app.MapGet("/api/calendar/ical", async ([FromServices] ICalService calendarService) => TypedResults.File(await calendarService.GetCurrentIcalCalendar(), "text/calendar"));
 
-// TODO Ýòà àïèøêà áåç àâòîðèçàöèè, íî ñàìîå ÷òî ìîæåò ñëó÷èòüñÿ — ìû ïðîñòî çàëüåì ê íàì âñþ áàçó ÊÈ.
+// TODO  Ð­Ñ‚Ð° Ð°Ð¿Ð¸ÑˆÐºÐ° Ð±ÐµÐ· Ð°Ð²Ñ‚Ð¾Ñ€Ð¸Ð·Ð°Ñ†Ð¸Ð¸, Ð½Ð¾ ÑÐ°Ð¼Ð¾Ðµ Ñ‡Ñ‚Ð¾ Ð¼Ð¾Ð¶ÐµÑ‚ ÑÐ»ÑƒÑ‡Ð¸Ñ‚ÑŒÑÑ â€” Ð¼Ñ‹ Ð¿Ñ€Ð¾ÑÑ‚Ð¾ Ð·Ð°Ð»ÑŒÐµÐ¼ Ðº Ð½Ð°Ð¼ Ð²ÑÑŽ Ð±Ð°Ð·Ñƒ ÐšÐ˜.
 app.MapGet("/api/kogda-igra/add/{id}", async (int id, [FromServices] KiAddService kiAddService) =>
 {
     await kiAddService.AddKogdaIgraGame(id);
@@ -69,7 +75,8 @@ app.MapGet("/api/kogda-igra/add/{id}", async (int id, [FromServices] KiAddServic
 
 app.MapGet("/api/members/actual", async ([FromServices] IBastiliaMemberRepository memberRepository) => (await memberRepository.GetActualAsync()).Select(x => x.JoinrpgUserId));
 
+app.MapAuthEndpoints();
+
 app.MapBrHealthChecks();
 
 app.Run();
-

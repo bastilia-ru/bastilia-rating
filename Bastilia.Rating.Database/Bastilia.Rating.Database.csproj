@@ -8,6 +8,7 @@
 		<PackageReference Include="LinqKit.Microsoft.EntityFrameworkCore" />
 		<PackageReference Include="Microsoft.Extensions.Hosting.Abstractions" />
 		<PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" />
+		<PackageReference Include="OpenIddict.EntityFrameworkCore" />
 	</ItemGroup>
 
 	<ItemGroup>

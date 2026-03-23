@@ -9,7 +9,7 @@ namespace Bastilia.Rating.Database
     {
         public static void AddRatingDal(this IServiceCollection services, IConfiguration configuration, IHostEnvironment environment)
         {
-            services.AddJoinEfCoreDbContext<AppDbContext>(configuration, environment, "BastiliaRating");
+            services.AddJoinEfCoreDbContext<AppDbContext>(configuration, environment, "BastiliaRating", options => options.UseOpenIddict());
             services.AddTransient<IBastiliaMemberRepository, BastiliaMemberRepository>();
             services.AddTransient<IBastiliaProjectRepository, BastiliaProjectRepository>();
             services.AddTransient<IBastiliaTemplateRepository, BastiliaTemplateRepository>();
