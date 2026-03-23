@@ -28,6 +28,6 @@
 	<PackageVersion Include="JoinRpg.Common.KogdaIgraClient" Version="0.0.2-alpha" />
 	<PackageVersion Include="OpenIddict.Client.AspNetCore" Version="7.3.0" />
 	<PackageVersion Include="OpenIddict.Client.SystemNetHttp" Version="7.3.0" />
-	<PackageVersion Include="OpenIddict.EntityFrameworkCore" Version="7.3.0" />
+	<PackageVersion Include="OpenIddict.EntityFrameworkCore" Version="7.4.0" />
   </ItemGroup>
 </Project>
