@@ -1,15 +1,13 @@
 @page "/admin/project/{ProjectId}"
 @using Bastilia.Rating.Portal.Client.Components.Achievements
 @using Bastilia.Rating.Portal.Client.Components.Projects
+@using Bastilia.Rating.Portal.Auth
 @using Microsoft.AspNetCore.Authorization
 @using Microsoft.AspNetCore.Components.Authorization
-@using System.Security.Claims
 @attribute [Authorize]
 @inject ProjectNavigateHelper projectNavigateHelper
 @inject IAchievementService achievementService
-@inject IBastiliaMemberRepository bastiliaMemberRepository
 @inject UserLoaderHelper userLoaderHelper
-@inject NavigationManager navigationManager
 
 <PageTitle>Админка проекта @project?.ProjectName</PageTitle>
 
@@ -84,26 +82,9 @@ else if (project.EndDate is not null)
     {
         var authState = await AuthenticationStateTask!;
         var user = authState.User;
+        currentUserId = user.GetJoinrpgUserId();
 
-        if (!int.TryParse(user.FindFirstValue(ClaimTypes.NameIdentifier), out currentUserId))
-        {
-            navigationManager.NavigateTo("/403");
-            return;
-        }
-
-        project = await projectNavigateHelper.LoadProjectWithCheck(ProjectId!);
-        if (project is null)
-        {
-            return;
-        }
-
-        var isPresident = user.IsInRole(BastiliaRoles.President);
-        var isCoordinator = project.Coordinators.Any(c => c.JoinrpgUserId == currentUserId);
-        if (!isPresident && !isCoordinator)
-        {
-            navigationManager.NavigateTo("/403");
-            return;
-        }
+        project = await projectNavigateHelper.LoadProjectForAdmin(ProjectId!, user);
     }
 
     protected override void OnInitialized()
@@ -114,7 +95,8 @@ else if (project.EndDate is not null)
 
     private async Task Add()
     {
-        project = await projectNavigateHelper.LoadProjectWithCheck(ProjectId!);
+        var authState = await AuthenticationStateTask!;
+        project = await projectNavigateHelper.LoadProjectForAdmin(ProjectId!, authState.User);
         if (project != null)
         {
             var text = AddModel!.UserId;
@@ -136,7 +118,7 @@ else if (project.EndDate is not null)
             }
 
         }
-        project = await projectNavigateHelper.LoadProjectWithCheck(ProjectId!);
+        project = await projectNavigateHelper.LoadProjectForAdmin(ProjectId!, authState.User);
 
         static string Unprefix(string userIdOrSlug, string prefix)
         {
