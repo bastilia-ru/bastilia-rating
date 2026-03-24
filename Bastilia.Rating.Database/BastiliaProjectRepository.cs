@@ -9,8 +9,6 @@ internal class BastiliaProjectRepository(AppDbContext context) : BastiliaReposit
 
     public Task<IReadOnlyCollection<BastiliaProject>> GetActiveProjects() => GetProjectsByPredicate(p => p.EndDate == null);
 
-    public Task<IReadOnlyCollection<BastiliaProject>> GetProjectsWithoutPasswords() => GetProjectsByPredicate(p => p.Password == null);
-
     public Task<IReadOnlyCollection<BastiliaProject>> GetAllProjects() => GetProjectsByPredicate(p => true);
 
     public async Task<IReadOnlyCollection<BastiliaCalendarItem>> GetProjectCalendarFor(int year)
@@ -72,7 +70,6 @@ internal class BastiliaProjectRepository(AppDbContext context) : BastiliaReposit
            project.ProjectDescription,
            new Uri(project.ProjectIconUri),
            project.Slug,
-           project.Password,
            project.DeletedAt,
            project.LastUpdatedAt
            );
