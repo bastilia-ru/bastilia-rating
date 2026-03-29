@@ -14,7 +14,6 @@ public record BastiliaProject(int BastiliaProjectId,
                               string HowToHelp,
                               Uri ProjectIconUri,
                               string? Slug,
-                              string? Password,
                               DateTimeOffset? DeletedAt,
                               DateTimeOffset? LastUpdatedAt
                               ) : IBastiliaProjectLink

@@ -15,7 +15,6 @@ namespace Bastilia.Rating.Database
             services.AddTransient<IBastiliaTemplateRepository, BastiliaTemplateRepository>();
             services.AddTransient<IBastiliaKograIgraRepository, BastiliaKograIgraRepository>();
 
-            services.AddTransient<IProjectService, ProjectService>();
             services.AddTransient<IAchievementService, AchievementService>();
             services.AddTransient<IUserDbService, UserDbService>();
             services.AddTransient<IKiDbService, KiDbService>();

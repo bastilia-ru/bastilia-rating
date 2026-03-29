@@ -23,8 +23,6 @@ public class BastiliaProject
 
     public string? Slug { get; set; }
 
-    public string? Password { get; set; }
-
     public ICollection<ProjectAdmin> ProjectAdmins { get; set; } = [];
     public ICollection<AchievementTemplate> AchievementTemplates { get; set; } = [];
     public required string ProjectIconUri { get; set; }

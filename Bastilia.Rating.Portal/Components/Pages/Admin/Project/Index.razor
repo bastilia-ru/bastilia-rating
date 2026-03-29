@@ -1,9 +1,12 @@
-﻿@page "/admin/project/{ProjectId}/{Password}/index"
+@page "/admin/project/{ProjectId}"
 @using Bastilia.Rating.Portal.Client.Components.Achievements
 @using Bastilia.Rating.Portal.Client.Components.Projects
+@using Bastilia.Rating.Portal.Auth
+@using Microsoft.AspNetCore.Authorization
+@using Microsoft.AspNetCore.Components.Authorization
+@attribute [Authorize]
 @inject ProjectNavigateHelper projectNavigateHelper
 @inject IAchievementService achievementService
-@inject IBastiliaMemberRepository bastiliaMemberRepository
 @inject UserLoaderHelper userLoaderHelper
 
 <PageTitle>Админка проекта @project?.ProjectName</PageTitle>
@@ -27,9 +30,9 @@
             <div>
                 <label>
                     Пользователь:
-                    <InputTextArea @bind-Value="AddModel!.UserId" class="form-control"  /> 
+                    <InputTextArea @bind-Value="AddModel!.UserId" class="form-control"  />
                     <p>
-                        Можно указать Id пользователя или его короткий ник из адресной строки (1 или leotsarev). 
+                        Можно указать Id пользователя или его короткий ник из адресной строки (1 или leotsarev).
                         Можно кинуть ссылку на профиль пользователя в джойне или тут. 1 пользователь = 1 строка.
                     </p>
                 </label>
@@ -41,17 +44,6 @@
                         @foreach (var template in project.Templates)
                         {
                             <option value="@template.TemplateId">@template.Name</option>
-                        }
-                    </InputSelect>
-                </label>
-            </div>
-            <div>
-                <label>
-                    От имени:
-                    <InputSelect @bind-Value="AddModel!.GrantedId" class="form-select">
-                        @foreach (var coord in project.Coordinators)
-                        {
-                            <option value="@coord.JoinrpgUserId">@coord.UserName</option>
                         }
                     </InputSelect>
                 </label>
@@ -74,27 +66,25 @@ else if (project.EndDate is not null)
 
 @code {
     [Parameter]
-    public string? Password { get; set; }
-
-    [Parameter]
     public string? ProjectId { get; set; }
+
+    [CascadingParameter]
+    private Task<AuthenticationState>? AuthenticationStateTask { get; set; }
 
     [SupplyParameterFromForm]
     private AddViewModel? AddModel { get; set; }
 
-    private record class LeoLink(int JoinrpgUserId, string Slug, string UserName) : IUserLink;
-
     private BastiliaProjectWithDetails? project;
     private bool addedSuccess = false;
+    private int currentUserId;
 
     protected override async Task OnParametersSetAsync()
     {
-        project = await projectNavigateHelper.LoadProjectAdminWithCheck(ProjectId, Password);
-        if (project is not null && !project.Coordinators.Any(x => x.JoinrpgUserId == 1))
-        {
-            IUserLink leo = new LeoLink(1, "leotsarev", "#Лео");
-            project = project with { Coordinators = [.. project.Coordinators.Union([leo])] };
-        }
+        var authState = await AuthenticationStateTask!;
+        var user = authState.User;
+        currentUserId = user.GetJoinrpgUserId();
+
+        project = await projectNavigateHelper.LoadProjectForAdmin(ProjectId!, user);
     }
 
     protected override void OnInitialized()
@@ -105,7 +95,8 @@ else if (project.EndDate is not null)
 
     private async Task Add()
     {
-        project = await projectNavigateHelper.LoadProjectAdminWithCheck(ProjectId, Password);
+        var authState = await AuthenticationStateTask!;
+        project = await projectNavigateHelper.LoadProjectForAdmin(ProjectId!, authState.User);
         if (project != null)
         {
             var text = AddModel!.UserId;
@@ -122,12 +113,12 @@ else if (project.EndDate is not null)
                 var user = await userLoaderHelper.LoadUserWithCheck(userId);
                 if (user != null)
                 {
-                    await achievementService.GrantAchivement(project.BastiliaProjectId, user!.JoinrpgUserId, AddModel.TemplateId, AddModel.GrantedId, null);
+                    await achievementService.GrantAchivement(project.BastiliaProjectId, user!.JoinrpgUserId, AddModel.TemplateId, currentUserId, null);
                 }
             }
-           
+
         }
-        project = await projectNavigateHelper.LoadProjectAdminWithCheck(ProjectId, Password);
+        project = await projectNavigateHelper.LoadProjectForAdmin(ProjectId!, authState.User);
 
         static string Unprefix(string userIdOrSlug, string prefix)
         {
@@ -145,6 +136,5 @@ else if (project.EndDate is not null)
     {
         public string UserId { get; set; } = "";
         public int TemplateId { get; set; }
-        public int GrantedId { get; set; }
     }
 }

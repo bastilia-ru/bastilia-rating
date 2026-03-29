@@ -1,5 +1,4 @@
-﻿@inject IBastiliaProjectRepository bastiliaProjectRepository
-@inject IProjectService projectService
+@inject IBastiliaProjectRepository bastiliaProjectRepository
 @using Microsoft.AspNetCore.Components.QuickGrid
 
 @if (bastiliaProjects is null)
@@ -8,11 +7,11 @@
     return;
 }
 
-<h3>Пароли проектов</h3>
+<h3>Проекты</h3>
 <QuickGrid Items="bastiliaProjects.AsQueryable()" Class="table table-striped" Virtualize="false">
     <PropertyColumn Property="x => x.ProjectName" />
     <TemplateColumn Context="project" Title="Ссылка">
-        [<a href="/admin/project/@project.BastiliaProjectId/@project.Password/index">ссылка</a>]
+        [<a href="/admin/project/@project.BastiliaProjectId">ссылка</a>]
     </TemplateColumn>
 </QuickGrid>
 
@@ -21,11 +20,6 @@
 
     protected override async Task OnParametersSetAsync()
     {
-        var projectsWithoutPassword = await bastiliaProjectRepository.GetProjectsWithoutPasswords();
-        foreach (var p in projectsWithoutPassword)
-        {
-            await projectService.EnsureProjectHasPassword(p.BastiliaProjectId);
-        }
         bastiliaProjects = await bastiliaProjectRepository.GetAllProjects();
         base.OnParametersSet();
     }

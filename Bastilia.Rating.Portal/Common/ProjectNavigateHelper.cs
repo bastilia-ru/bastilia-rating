@@ -1,4 +1,6 @@
-﻿using Bastilia.Rating.Domain;
+﻿using System.Security.Claims;
+using Bastilia.Rating.Domain;
+using Bastilia.Rating.Portal.Auth;
 using Microsoft.AspNetCore.Components;
 
 namespace Bastilia.Rating.Portal.Common
@@ -28,25 +30,21 @@ namespace Bastilia.Rating.Portal.Common
             }
         }
 
-        public async Task<BastiliaProjectWithDetails?> LoadProjectAdminWithCheck(string? projectIdOrSlug, string? password)
+        public async Task<BastiliaProjectWithDetails?> LoadProjectForAdmin(string projectIdOrSlug, ClaimsPrincipal user)
         {
-            if (projectIdOrSlug is null || password is null)
-            {
-                navigationManager.NavigateTo("/404");
-                return null;
-            }
             var project = await LoadProjectWithCheck(projectIdOrSlug);
             if (project is null)
             {
                 return null;
             }
-            if (project.Password == password)
+
+            if (!user.IsProjectAdmin(project))
             {
-                return project;
+                navigationManager.NavigateTo("/403");
+                return null;
             }
 
-            navigationManager.NavigateTo("/403");
-            return null;
+            return project;
         }
     }
 }
