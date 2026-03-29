@@ -2,6 +2,8 @@
 @using Bastilia.Rating.Portal.Client.Components.Achievements
 @using Bastilia.Rating.Portal.Client.Components.BastiliaUsers
 @using Bastilia.Rating.Portal.Client.Components.Projects
+@using Bastilia.Rating.Portal.Auth
+@using Microsoft.AspNetCore.Components.Authorization
 @using Microsoft.AspNetCore.Components.QuickGrid
 
 @inject ProjectNavigateHelper projectNavigateHelper
@@ -11,7 +13,7 @@
     <LoadingSpinner />
     return;
 }
-<ProjectCard Project="project" />
+<ProjectCard Project="project" ShowAdminLink="isAdmin" />
 
 @if (project.ProjectMemberAchievements.Count > 0)
 {
@@ -26,10 +28,25 @@ else if (project.EndDate is not null)
     [Parameter]
     public string ProjectId { get; set; } = null!;
 
+    [CascadingParameter]
+    private Task<AuthenticationState>? AuthenticationStateTask { get; set; }
+
     private BastiliaProjectWithDetails? project;
+    private bool isAdmin;
 
     protected override async Task OnParametersSetAsync()
     {
         project = await projectNavigateHelper.LoadProjectWithCheck(ProjectId);
+        if (project is null)
+        {
+            return;
+        }
+
+        var authState = await AuthenticationStateTask!;
+        var user = authState.User;
+        if (user.Identity?.IsAuthenticated == true)
+        {
+            isAdmin = user.IsProjectAdmin(project);
+        }
     }
 }

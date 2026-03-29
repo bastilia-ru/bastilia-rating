@@ -17,6 +17,10 @@
                         <br />
                     }
                     <ProjectLinks Project="Project" />
+                    @if (ShowAdminLink)
+                    {
+                        <a href="/admin/project/@Project.BastiliaProjectId" class="btn btn-outline-secondary btn-sm">Управление проектом</a>
+                    }
                 </p>
             </div>
         </div>
@@ -34,4 +38,7 @@
 @code {
     [Parameter, EditorRequired]
     public BastiliaProjectWithDetails Project { get; set; } = null!;
+
+    [Parameter]
+    public bool ShowAdminLink { get; set; }
 }

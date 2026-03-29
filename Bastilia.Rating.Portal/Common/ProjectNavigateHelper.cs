@@ -38,10 +38,7 @@ namespace Bastilia.Rating.Portal.Common
                 return null;
             }
 
-            var userId = user.GetJoinrpgUserId();
-            var isPresident = user.IsInRole(BastiliaRoles.President);
-            var isCoordinator = project.Coordinators.Any(c => c.JoinrpgUserId == userId);
-            if (!isPresident && !isCoordinator)
+            if (!user.IsProjectAdmin(project))
             {
                 navigationManager.NavigateTo("/403");
                 return null;
