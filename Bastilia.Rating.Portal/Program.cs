@@ -7,6 +7,7 @@ using Bastilia.Rating.Portal.Common;
 using Bastilia.Rating.Portal.Components;
 using JoinRpg.Client;
 using JoinRpg.Common.KogdaIgraClient;
+using Microsoft.AspNetCore.HttpOverrides;
 using Microsoft.AspNetCore.Mvc;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -48,6 +49,18 @@ if (app.Environment.IsDevelopment())
 else
 {
     app.UseExceptionHandler("/Error", createScopeForErrors: true);
+}
+
+if (!app.Environment.IsDevelopment())
+{
+    var forwardedHeadersOptions = new ForwardedHeadersOptions
+    {
+        ForwardedHeaders = ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto,
+    };
+    forwardedHeadersOptions.KnownProxies.Clear();
+    forwardedHeadersOptions.KnownIPNetworks.Clear();
+    forwardedHeadersOptions.ForwardLimit = 1;
+    app.UseForwardedHeaders(forwardedHeadersOptions);
 }
 
 app.UseAuthentication();
