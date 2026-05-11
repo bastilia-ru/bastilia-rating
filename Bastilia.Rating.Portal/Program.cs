@@ -7,17 +7,26 @@ using Bastilia.Rating.Portal.Common;
 using Bastilia.Rating.Portal.Components;
 using JoinRpg.Client;
 using JoinRpg.Common.KogdaIgraClient;
-using Microsoft.AspNetCore.HttpOverrides;
+using JoinRpg.Common.WebInfrastructure;
 using Microsoft.AspNetCore.Mvc;
 
 var builder = WebApplication.CreateBuilder(args);
+
+builder.Host.UseJoinSerilog("Bastilia.Rating.Portal");
 
 // Add services to the container.
 builder.Services.AddRazorComponents()
     .AddInteractiveServerComponents()
     .AddInteractiveWebAssemblyComponents();
 
-builder.Services.AddHealthChecks();
+builder.Services.AddJoinWebPlatform(
+    configuration: builder.Configuration,
+    environment: builder.Environment,
+    appName: "Bastilia.Rating.Portal",
+    dataProtectionConnectionStringName: "DataProtection",
+    telemetryServiceNames: ["Bastilia.Rating.Portal"]);
+
+builder.Services.Configure<JoinRpgHostNamesOptions>(builder.Configuration.GetSection("JoinRpgHostNames"));
 
 builder.Services.AddJoinRpgAuthentication(builder.Configuration);
 
@@ -53,15 +62,11 @@ else
 
 if (!app.Environment.IsDevelopment())
 {
-    var forwardedHeadersOptions = new ForwardedHeadersOptions
-    {
-        ForwardedHeaders = ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto,
-    };
-    forwardedHeadersOptions.KnownProxies.Clear();
-    forwardedHeadersOptions.KnownIPNetworks.Clear();
-    forwardedHeadersOptions.ForwardLimit = 1;
-    app.UseForwardedHeaders(forwardedHeadersOptions);
+    app.UseForwardedHeaders();
 }
+
+app.UseOpenTelemetryPrometheusScrapingEndpoint();
+app.UseJoinRequestLogging();
 
 app.UseAuthentication();
 app.UseAuthorization();
@@ -89,6 +94,6 @@ app.MapGet("/api/members/actual", async ([FromServices] IBastiliaMemberRepositor
 
 app.MapAuthEndpoints();
 
-app.MapBrHealthChecks();
+app.MapJoinHealthChecks();
 
 app.Run();

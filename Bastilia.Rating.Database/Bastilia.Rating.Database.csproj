@@ -4,10 +4,8 @@
   </PropertyGroup>
 
 	<ItemGroup>
-		<PackageReference Include="EntityFrameworkCore.Exceptions.PostgreSQL" />
+		<PackageReference Include="JoinRpg.Common.WebInfrastructure" />
 		<PackageReference Include="LinqKit.Microsoft.EntityFrameworkCore" />
-		<PackageReference Include="Microsoft.Extensions.Hosting.Abstractions" />
-		<PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" />
 		<PackageReference Include="OpenIddict.EntityFrameworkCore" />
 	</ItemGroup>
 
@@ -17,17 +15,6 @@
 
 	<ItemGroup>
 	  <InternalsVisibleTo Include="Bastilia.Rating.Tests" />
-	</ItemGroup>
-
-	<ItemGroup>
-	  <PackageVersion Update="ReferenceTrimmer" Version="3.3.12" />
-	</ItemGroup>
-
-	<ItemGroup>
-	  <PackageReference Update="ReferenceTrimmer">
-	    <PrivateAssets>all</PrivateAssets>
-	    <IncludeAssets>runtime; build; native; contentfiles; analyzers</IncludeAssets>
-	  </PackageReference>
 	</ItemGroup>
 
 </Project>

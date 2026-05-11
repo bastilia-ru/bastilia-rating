@@ -1,5 +1,6 @@
 using Bastilia.Rating.Database;
-using Microsoft.Extensions.DependencyInjection;
+using JoinRpg.Common.WebInfrastructure.EfCoreMigration;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Hosting;
 
 namespace Bastilia.Rating.Migrator;
@@ -9,9 +10,8 @@ internal class Program
     private static void Main(string[] args)
     {
         HostApplicationBuilder builder = Host.CreateApplicationBuilder(args);
-        builder.Services.AddRatingDal(builder.Configuration, builder.Environment);
-        builder.Services.AddHostedService<MigrationsLauncher>();
-        builder.Services.AddTransient<IMigratorService, MigrateEfCoreHostService<AppDbContext>>();
+        builder.Services.AddMigrationsLauncher();
+        builder.Services.RegisterMigrator<AppDbContext>(builder.Configuration, builder.Environment, "BastiliaRating", options => options.UseOpenIddict());
 
         builder.Build().Run();
     }
