@@ -28,14 +28,7 @@
     <Body>
         <EditForm FormName="AddAchievemntForm" Model="AddModel" OnValidSubmit="Add">
             <div>
-                <label>
-                    Пользователь:
-                    <InputTextArea @bind-Value="AddModel!.UserId" class="form-control"  />
-                    <p>
-                        Можно указать Id пользователя или его короткий ник из адресной строки (1 или leotsarev).
-                        Можно кинуть ссылку на профиль пользователя в джойне или тут. 1 пользователь = 1 строка.
-                    </p>
-                </label>
+                <MultiUserInput Label="Пользователь:" @bind-Value="AddModel!.UserId" />
             </div>
             <div>
                 <label>
@@ -90,6 +83,7 @@ else if (project.EndDate is not null)
     protected override void OnInitialized()
     {
         AddModel ??= new AddViewModel();
+        AddModel.UserId ??= [];
         base.OnInitialized();
     }
 
@@ -99,37 +93,23 @@ else if (project.EndDate is not null)
         project = await projectNavigateHelper.LoadProjectForAdmin(ProjectId!, authState.User);
         if (project != null)
         {
-            var text = AddModel!.UserId;
-            foreach (var r in text.Split("\n"))
+            var users = await userLoaderHelper.LoadUsersWithCheck(AddModel!.UserId);
+            foreach (var user in users)
             {
-                var userId = r;
-                userId = Unprefix(userId, "https://joinrpg.ru/user/");
-                userId = Unprefix(userId, "https://rating.bastilia.ru/member/");
-                userId = userId.Trim();
-                if (string.IsNullOrWhiteSpace(userId))
-                {
-                    continue;
+                await achievementService.GrantAchivement(project.BastiliaProjectId, user.JoinrpgUserId, AddModel.TemplateId, currentUserId, null);
                 }
                 var user = await userLoaderHelper.LoadUserWithCheck(userId);
                 if (user != null)
                 {
                     await achievementService.GrantAchivement(project.BastiliaProjectId, user!.JoinrpgUserId, AddModel.TemplateId, currentUserId, null);
                 }
-            }
-
-        }
         project = await projectNavigateHelper.LoadProjectForAdmin(ProjectId!, authState.User);
-
-        static string Unprefix(string userIdOrSlug, string prefix)
-        {
-            if (userIdOrSlug.StartsWith(prefix))
-            {
-                userIdOrSlug = userIdOrSlug[prefix.Length..];
             }
 
-            return userIdOrSlug;
-        }
-
+    private class AddViewModel
+        {
+        public string[] UserId { get; set; } = [];
+        public int TemplateId { get; set; }
     }
 
     private class AddViewModel

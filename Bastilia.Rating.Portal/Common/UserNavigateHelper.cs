@@ -33,5 +33,20 @@ namespace Bastilia.Rating.Portal.Common
                 return user;
             }
         }
+
+        public async Task<List<BastiliaMember>> LoadUsersWithCheck(IReadOnlyList<string> userIdsOrSlugs)
+        {
+            var result = new List<BastiliaMember>();
+            foreach (var userIdOrSlug in userIdsOrSlugs)
+            {
+                var user = await LoadUserWithCheck(userIdOrSlug);
+                if (user != null)
+                {
+                    result.Add(user);
+                }
+            }
+
+            return result;
+        }
     }
 }
