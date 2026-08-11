@@ -1,25 +1,31 @@
 version: 2
 updates:
   - package-ecosystem: "nuget"
-    directory: "/" 
+    directory: "/"
     schedule:
       interval: "daily"
     groups:
-      net: #I like to merge this groups, but it will cause dependabot to timeout
+      net:
         patterns:
           - "Microsoft.Extensions.*"
           - "System.Text.Json"
           - "System.Net.Http.Json"
           - "Microsoft.AspNetCore.*"
+      efcore:
+        patterns:
           - "Microsoft.EntityFrameworkCore*"
           - "dotnet-ef"
       xunit:
         patterns:
           - "xunit*"
-      serilog:
+      openiddict:
         patterns:
-          - "Serilog*"
-  - package-ecosystem: "github-actions" 
-    directory: "/" 
+          - "OpenIddict.*"
+      joinrpg:
+        patterns:
+          - "JoinRpg.Common.*"
+
+  - package-ecosystem: "github-actions"
+    directory: "/"
     schedule:
       interval: "daily"
