@@ -1,0 +1,153 @@
+@page "/admin/projects/create"
+@using Bastilia.Rating.Domain.Common
+@using Microsoft.AspNetCore.Components.Authorization
+@inject IProjectService ProjectService
+@inject UserLoaderHelper userLoaderHelper
+@inject NavigationManager NavigationManager
+
+<PageTitle>Создание проекта</PageTitle>
+
+<h3>Создание проекта</h3>
+
+<AuthorizeView Roles="president" Context="authContext">
+    <Authorized>
+        <EditForm FormName="CreateProjectForm" Model="Model" OnValidSubmit="Submit">
+            <div>
+                <label>
+                    Название проекта:
+                    <InputText @bind-Value="Model!.ProjectName" class="form-control" />
+                </label>
+            </div>
+            <div>
+                <label>
+                    Тип проекта:
+                    <InputSelect @bind-Value="Model!.ProjectType" class="form-select">
+                        <option value="@ProjectType.MasteringGame">Мастерение игры</option>
+                        <option value="@ProjectType.NearRpgProject">Ролевой проект</option>
+                        <option value="@ProjectType.TeamPlaying">Командный выезд</option>
+                        <option value="@ProjectType.InternalProject">Внутрибастильский проект</option>
+                        <option value="@ProjectType.ActivityOnConvent">Мероприятие на конвенте</option>
+                    </InputSelect>
+                </label>
+            </div>
+            <div>
+                <label>
+                    Тип бренда:
+                    <InputSelect @bind-Value="Model!.BrandType" class="form-select">
+                        <option value="@BrandType.Bastilia">Бастилия и друзья</option>
+                        <option value="@BrandType.PubliclySupported">Поддерживаем проект</option>
+                        <option value="@BrandType.PrivatelySupported">Поддерживается частным образом</option>
+                        <option value="@BrandType.JustTracked">Просто отслеживаем</option>
+                    </InputSelect>
+                </label>
+            </div>
+            <div>
+                <label>
+                    <InputCheckbox @bind-Value="Model!.OngoingProject" />
+                    Постоянный (бессрочный) проект
+                </label>
+            </div>
+            <div>
+                <label>
+                    ID проекта на JoinRPG (необязательно):
+                    <InputNumber @bind-Value="Model!.JoinrpgProjectId" class="form-control" />
+                </label>
+            </div>
+            <div>
+                <label>
+                    ID проекта в КогдаИгра (необязательно):
+                    <InputNumber @bind-Value="Model!.KogdaIgraProjectId" class="form-control" />
+                </label>
+            </div>
+            <div>
+                <label>
+                    Ссылка на проект:
+                    <InputText @bind-Value="Model!.ProjectUri" class="form-control" />
+                </label>
+            </div>
+            <div>
+                <MultiUserInput Label="Координаторы проекта:" @bind-Value="Model!.Coordinators" />
+            </div>
+            <div>
+                <label>
+                    Дата начала:
+                    <InputDate @bind-Value="Model!.StartDate" class="form-control" />
+                </label>
+            </div>
+            <div>
+                <label>
+                    Плановая дата окончания:
+                    <InputDate @bind-Value="Model!.EndDate" class="form-control" />
+                </label>
+            </div>
+            <div>
+                <label>
+                    <InputCheckbox @bind-Value="Model!.AlreadyCompleted" />
+                    Проект уже завершён (даты выше — фактические)
+                </label>
+            </div>
+            <div>
+                <label>
+                    Описание проекта:
+                    <InputTextArea @bind-Value="Model!.ProjectDescription" class="form-control" />
+                </label>
+            </div>
+            <div>
+                <input type="submit" value="Создать проект" class="btn btn-success" />
+            </div>
+        </EditForm>
+    </Authorized>
+    <NotAuthorized>
+        <p>Доступ запрещён. Эта страница доступна только председателю.</p>
+    </NotAuthorized>
+</AuthorizeView>
+
+@code {
+    [SupplyParameterFromForm]
+    private CreateViewModel? Model { get; set; }
+
+    protected override void OnInitialized()
+    {
+        Model ??= new CreateViewModel();
+        Model.Coordinators ??= [];
+        base.OnInitialized();
+    }
+
+    private async Task Submit()
+    {
+        var users = await userLoaderHelper.LoadUsersWithCheck(Model!.Coordinators);
+        var coordinators = users.Select(u => new UserIdentification(u.JoinrpgUserId)).ToList();
+
+        var id = await ProjectService.CreateProject(
+            Model.ProjectName,
+            Model.ProjectType,
+            Model.BrandType,
+            Model.OngoingProject,
+            Model.JoinrpgProjectId,
+            Model.KogdaIgraProjectId,
+            Model.ProjectUri,
+            coordinators,
+            Model.StartDate,
+            Model.EndDate,
+            Model.AlreadyCompleted,
+            Model.ProjectDescription);
+
+        NavigationManager.NavigateTo($"/admin/project/{id}");
+    }
+
+    private class CreateViewModel
+    {
+        public string ProjectName { get; set; } = "";
+        public ProjectType ProjectType { get; set; } = ProjectType.NearRpgProject;
+        public BrandType BrandType { get; set; } = BrandType.Bastilia;
+        public bool OngoingProject { get; set; }
+        public int? JoinrpgProjectId { get; set; }
+        public int? KogdaIgraProjectId { get; set; }
+        public string ProjectUri { get; set; } = "";
+        public string[] Coordinators { get; set; } = [];
+        public DateOnly StartDate { get; set; } = DateOnly.FromDateTime(DateTime.Today);
+        public DateOnly EndDate { get; set; } = DateOnly.FromDateTime(DateTime.Today);
+        public bool AlreadyCompleted { get; set; }
+        public string ProjectDescription { get; set; } = "";
+    }
+}

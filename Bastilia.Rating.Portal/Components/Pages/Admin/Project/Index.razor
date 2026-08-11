@@ -57,6 +57,11 @@ else if (project.EndDate is not null)
     <Alert>Здесь нет ни одной ачивки. Скорее всего данные об этом проекте еще восстанавливаются с архивов.</Alert>
 }
 
+@if (project.EndDate is null && project.ProjectMemberAchievements.Count == 0)
+{
+    <CompleteProjectForm ProjectId="project.BastiliaProjectId" OnCompleted="ReloadProject" />
+}
+
 @code {
     [Parameter]
     public string? ProjectId { get; set; }
@@ -97,24 +102,20 @@ else if (project.EndDate is not null)
             foreach (var user in users)
             {
                 await achievementService.GrantAchivement(project.BastiliaProjectId, user.JoinrpgUserId, AddModel.TemplateId, currentUserId, null);
-                }
-                var user = await userLoaderHelper.LoadUserWithCheck(userId);
-                if (user != null)
-                {
-                    await achievementService.GrantAchivement(project.BastiliaProjectId, user!.JoinrpgUserId, AddModel.TemplateId, currentUserId, null);
-                }
-        project = await projectNavigateHelper.LoadProjectForAdmin(ProjectId!, authState.User);
             }
-
-    private class AddViewModel
-        {
-        public string[] UserId { get; set; } = [];
-        public int TemplateId { get; set; }
+        }
+        project = await projectNavigateHelper.LoadProjectForAdmin(ProjectId!, authState.User);
     }
 
     private class AddViewModel
     {
-        public string UserId { get; set; } = "";
+        public string[] UserId { get; set; } = [];
         public int TemplateId { get; set; }
+    }
+
+    private async Task ReloadProject()
+    {
+        var authState = await AuthenticationStateTask!;
+        project = await projectNavigateHelper.LoadProjectForAdmin(ProjectId!, authState.User);
     }
 }

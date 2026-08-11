@@ -8,6 +8,7 @@
 }
 
 <h3>Проекты</h3>
+<p><a href="/admin/projects/create">Создать проект</a></p>
 <QuickGrid Items="bastiliaProjects.AsQueryable()" Class="table table-striped" Virtualize="false">
     <PropertyColumn Property="x => x.ProjectName" />
     <TemplateColumn Context="project" Title="Ссылка">
