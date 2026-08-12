@@ -12,7 +12,7 @@
                     <InputDate @bind-Value="Model!.EndDate" class="form-control" />
                 </label>
             </div>
-            <AchievementTemplateNamesInput @bind-ProjectLevel="Model!.ProjectLevel" TemplateNames="Model!.TemplateNames" />
+            <AchievementTemplateNamesInput @bind-ProjectLevel="Model!.ProjectLevel" @bind-Templates="Model!.Templates" />
             @if (error is not null)
             {
                 <Alert>@error</Alert>
@@ -44,16 +44,14 @@
 
     private async Task Complete()
     {
-        var ratingValues = Model!.ProjectLevel.GetAchievementRatingValues();
-        var names = Model.TemplateNames.Take(ratingValues.Count).ToList();
-        if (names.Any(string.IsNullOrWhiteSpace))
+        if (Model!.Templates.Any(t => string.IsNullOrWhiteSpace(t.Name)))
         {
             error = "Заполните название для каждой ачивки уровня";
             return;
         }
         error = null;
 
-        await projectService.CompleteProject(ProjectId, Model.EndDate, Model.ProjectLevel, names);
+        await projectService.CompleteProject(ProjectId, Model.EndDate, Model.ProjectLevel, Model.Templates);
         await OnCompleted.InvokeAsync();
         navigationManager.NavigateTo(navigationManager.Uri, forceLoad: true);
     }
@@ -62,6 +60,6 @@
     {
         public DateOnly EndDate { get; set; } = DateOnly.FromDateTime(DateTime.Today);
         public ProjectLevel ProjectLevel { get; set; } = ProjectLevel.XS;
-        public List<string> TemplateNames { get; set; } = ["", "", ""];
+        public AchievementTemplateInput[] Templates { get; set; } = AchievementTemplateInputHelper.CreateDefaults(ProjectLevel.XS);
     }
 }

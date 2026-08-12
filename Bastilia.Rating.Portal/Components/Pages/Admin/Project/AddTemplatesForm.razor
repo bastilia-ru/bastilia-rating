@@ -6,7 +6,7 @@
     <Header>Добавить шаблоны ачивок</Header>
     <Body>
         <EditForm FormName="AddTemplatesForm" Model="Model" OnValidSubmit="Complete">
-            <AchievementTemplateNamesInput @bind-ProjectLevel="Model!.ProjectLevel" TemplateNames="Model!.TemplateNames" />
+            <AchievementTemplateNamesInput @bind-ProjectLevel="Model!.ProjectLevel" @bind-Templates="Model!.Templates" />
             @if (error is not null)
             {
                 <Alert>@error</Alert>
@@ -38,16 +38,14 @@
 
     private async Task Complete()
     {
-        var ratingValues = Model!.ProjectLevel.GetAchievementRatingValues();
-        var names = Model.TemplateNames.Take(ratingValues.Count).ToList();
-        if (names.Any(string.IsNullOrWhiteSpace))
+        if (Model!.Templates.Any(t => string.IsNullOrWhiteSpace(t.Name)))
         {
             error = "Заполните название для каждой ачивки уровня";
             return;
         }
         error = null;
 
-        await projectService.AddAchievementTemplates(ProjectId, Model.ProjectLevel, names);
+        await projectService.AddAchievementTemplates(ProjectId, Model.ProjectLevel, Model.Templates);
         await OnCompleted.InvokeAsync();
         navigationManager.NavigateTo(navigationManager.Uri, forceLoad: true);
     }
@@ -55,6 +53,6 @@
     private class AddTemplatesViewModel
     {
         public ProjectLevel ProjectLevel { get; set; } = ProjectLevel.XS;
-        public List<string> TemplateNames { get; set; } = ["", "", ""];
+        public AchievementTemplateInput[] Templates { get; set; } = AchievementTemplateInputHelper.CreateDefaults(ProjectLevel.XS);
     }
 }
