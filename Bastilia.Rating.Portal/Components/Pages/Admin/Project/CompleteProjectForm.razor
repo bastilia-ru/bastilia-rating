@@ -1,4 +1,6 @@
 @inject IProjectService projectService
+@inject NavigationManager navigationManager
+@rendermode InteractiveServer
 
 <Card>
     <Header>Завершить проект</Header>
@@ -74,6 +76,7 @@
 
         await projectService.CompleteProject(ProjectId, Model.EndDate, Model.ProjectLevel, names);
         await OnCompleted.InvokeAsync();
+        navigationManager.NavigateTo(navigationManager.Uri, forceLoad: true);
     }
 
     private class CompleteViewModel
