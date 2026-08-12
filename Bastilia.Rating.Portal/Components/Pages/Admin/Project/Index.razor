@@ -51,6 +51,19 @@
     </Card>
 }
 
+@if (project.Templates.Count > 0)
+{
+    <Card>
+        <Header>Ачивки проекта</Header>
+        <Body>
+            @foreach (var template in project.Templates)
+            {
+                <EditTemplateForm Template="template" OnCompleted="ReloadProject" />
+            }
+        </Body>
+    </Card>
+}
+
 @if (project.ProjectMemberAchievements.Count > 0)
 {
     <AchievementList Project="project" />
