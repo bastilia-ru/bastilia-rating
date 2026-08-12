@@ -8,11 +8,20 @@ else
 {
     <a href="/project/@Project.Slug">@Project.ProjectName</a>
 }
+@if (AdminProjectIds?.Contains(Project.BastiliaProjectId) == true)
+{
+    <a href="/admin/project/@Project.BastiliaProjectId" title="Управление проектом" class="ms-1">
+        <JoinPencilIcon />
+    </a>
+}
 
 
 
-@code 
+@code
 {
     [Parameter, EditorRequired]
     public IBastiliaProjectLink Project { get; set; } = null!;
+
+    [CascadingParameter]
+    private HashSet<int>? AdminProjectIds { get; set; }
 }

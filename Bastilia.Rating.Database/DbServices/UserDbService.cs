@@ -1,6 +1,6 @@
 ﻿namespace Bastilia.Rating.Database.DbServices
 {
-    internal class UserDbService(AppDbContext appDbContext) : IUserDbService
+    internal class UserDbService(IDbContextFactory<AppDbContext> contextFactory) : IUserDbService
     {
         public async Task<BastiliaMember> AddUser(int playerId, string nickName, string avatarUrl)
         {
@@ -11,10 +11,14 @@
                 JoinRpgUserId = playerId,
                 ParticipateInRating = true,
             };
-            await appDbContext.Set<Entities.User>().AddAsync(user);
-            await appDbContext.SaveChangesAsync();
 
-            var rep = new BastiliaMemberRepository(appDbContext);
+            await using (var appDbContext = await contextFactory.CreateDbContextAsync())
+            {
+                await appDbContext.Set<Entities.User>().AddAsync(user);
+                await appDbContext.SaveChangesAsync();
+            }
+
+            var rep = new BastiliaMemberRepository(contextFactory);
             return await rep.GetByIdAsync(playerId) ?? throw new InvalidOperationException();
         }
     }

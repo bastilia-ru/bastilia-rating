@@ -2,10 +2,11 @@
 
 namespace Bastilia.Rating.Database.DbServices
 {
-    internal class AchievementService(AppDbContext appDbContext) : IAchievementService
+    internal class AchievementService(IDbContextFactory<AppDbContext> contextFactory) : IAchievementService
     {
         public async Task GrantAchivement(int projectId, int userId, int templateId, int grantedById, string? overrideName)
         {
+            await using var appDbContext = await contextFactory.CreateDbContextAsync();
             var entity = await appDbContext.Set<Entities.BastiliaProject>()
                 .Include(x => x.AchievementTemplates).ThenInclude(x => x.Achievements)
                 .Include(x => x.ProjectAdmins).ThenInclude(x => x.User)
