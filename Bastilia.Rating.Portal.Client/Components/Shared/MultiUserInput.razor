@@ -1,0 +1,50 @@
+<label>
+    @Label
+    <InputTextArea @bind-Value="RawTextField" class="form-control" />
+    <p>
+        Можно указать Id пользователя или его короткий ник из адресной строки (1 или leotsarev).
+        Можно кинуть ссылку на профиль пользователя в джойне или тут. 1 пользователь = 1 строка.
+    </p>
+</label>
+
+@code {
+    [Parameter, EditorRequired]
+    public string Label { get; set; } = "";
+
+    [Parameter]
+    public string[] Value { get; set; } = [];
+
+    [Parameter]
+    public EventCallback<string[]> ValueChanged { get; set; }
+
+    [SupplyParameterFromForm]
+    private string? RawTextField { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        RawTextField ??= string.Join('\n', Value ?? []);
+        await ValueChanged.InvokeAsync(Parse(RawTextField));
+    }
+
+    private static string[] Parse(string text)
+    {
+        var result = new List<string>();
+        foreach (var line in text.Split('\n'))
+        {
+            var userIdOrSlug = Unprefix(line, "https://joinrpg.ru/user/");
+            userIdOrSlug = Unprefix(userIdOrSlug, "https://rating.bastilia.ru/member/");
+            userIdOrSlug = userIdOrSlug.Trim();
+            if (string.IsNullOrWhiteSpace(userIdOrSlug))
+            {
+                continue;
+            }
+
+            result.Add(userIdOrSlug);
+        }
+
+        return [.. result];
+
+        static string Unprefix(string userIdOrSlug, string prefix)
+            => userIdOrSlug.StartsWith(prefix) ? userIdOrSlug[prefix.Length..] : userIdOrSlug;
+    }
+}

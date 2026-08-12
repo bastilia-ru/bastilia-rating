@@ -1,0 +1,85 @@
+@inject IProjectService projectService
+
+<Card>
+    <Header>Завершить проект</Header>
+    <Body>
+        <EditForm FormName="CompleteProjectForm" Model="Model" OnValidSubmit="Complete">
+            <div>
+                <label>
+                    Дата окончания проекта:
+                    <InputDate @bind-Value="Model!.EndDate" class="form-control" />
+                </label>
+            </div>
+            <div>
+                <label>
+                    Уровень проекта:
+                    <InputSelect @bind-Value="Model!.ProjectLevel" class="form-select">
+                        <option value="@ProjectLevel.XS">XS</option>
+                        <option value="@ProjectLevel.S">S</option>
+                        <option value="@ProjectLevel.M">M</option>
+                        <option value="@ProjectLevel.L">L</option>
+                    </InputSelect>
+                </label>
+            </div>
+            @{ var ratingValues = Model!.ProjectLevel.GetAchievementRatingValues(); }
+            @for (var i = 0; i < ratingValues.Count; i++)
+            {
+                var index = i;
+                <div>
+                    <label>
+                        Название ачивки за @CountHelper.DisplayCount(ratingValues[index], "балл", "балла", "баллов"):
+                        <InputText @bind-Value="Model.TemplateNames[index]" class="form-control" />
+                    </label>
+                </div>
+            }
+            @if (error is not null)
+            {
+                <Alert>@error</Alert>
+            }
+            <div>
+                <input type="submit" value="Завершить проект" class="btn btn-danger" />
+            </div>
+        </EditForm>
+    </Body>
+</Card>
+
+@code {
+    [Parameter, EditorRequired]
+    public int ProjectId { get; set; }
+
+    [Parameter]
+    public EventCallback OnCompleted { get; set; }
+
+    [SupplyParameterFromForm]
+    private CompleteViewModel? Model { get; set; }
+
+    private string? error;
+
+    protected override void OnInitialized()
+    {
+        Model ??= new CompleteViewModel();
+        base.OnInitialized();
+    }
+
+    private async Task Complete()
+    {
+        var ratingValues = Model!.ProjectLevel.GetAchievementRatingValues();
+        var names = Model.TemplateNames.Take(ratingValues.Count).ToList();
+        if (names.Any(string.IsNullOrWhiteSpace))
+        {
+            error = "Заполните название для каждой ачивки уровня";
+            return;
+        }
+        error = null;
+
+        await projectService.CompleteProject(ProjectId, Model.EndDate, Model.ProjectLevel, names);
+        await OnCompleted.InvokeAsync();
+    }
+
+    private class CompleteViewModel
+    {
+        public DateOnly EndDate { get; set; } = DateOnly.FromDateTime(DateTime.Today);
+        public ProjectLevel ProjectLevel { get; set; } = ProjectLevel.XS;
+        public List<string> TemplateNames { get; set; } = ["", "", ""];
+    }
+}
