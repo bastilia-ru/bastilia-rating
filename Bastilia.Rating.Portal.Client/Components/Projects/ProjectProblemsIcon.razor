@@ -1,0 +1,29 @@
+@using Bastilia.Rating.Domain
+@if (Project.HasProblems)
+{
+    <Tooltip Title="@TooltipText">
+        <WarningIcon />
+    </Tooltip>
+}
+@code {
+    [Parameter, EditorRequired]
+    public BastiliaProject Project { get; set; } = null!;
+
+    private string TooltipText => string.Join("; ", Descriptions());
+
+    private IEnumerable<string> Descriptions()
+    {
+        if (Project.Problems.HasFlag(ProjectProblem.PlannedEndDatePassed))
+        {
+            yield return "Завершение проекта не отмечено";
+        }
+        if (Project.Problems.HasFlag(ProjectProblem.CompletedWithoutTemplates))
+        {
+            yield return "У проекта нет шаблонов ачивок";
+        }
+        if (Project.Problems.HasFlag(ProjectProblem.TemplatesWithoutAchievements))
+        {
+            yield return "У проекта нет ачивок";
+        }
+    }
+}

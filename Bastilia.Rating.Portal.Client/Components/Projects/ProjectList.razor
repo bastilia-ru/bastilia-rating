@@ -2,6 +2,12 @@
 @using Microsoft.AspNetCore.Components.QuickGrid
 
 <QuickGrid Items="Projects" Class="table table-striped" Virtualize="false">
+    @if (Projects.Any(x => x.HasProblems))
+    {
+        <TemplateColumn Context="project" Title="" SortBy="GridSort<BastiliaProject>.ByAscending(p => p.HasProblems)">
+            <ProjectProblemsIcon Project="project" />
+        </TemplateColumn>
+    }
     <TemplateColumn Context="project" Title="Название проекта" SortBy="@projectNameSort">
         <ProjectLink Project="@project" />
     </TemplateColumn>
