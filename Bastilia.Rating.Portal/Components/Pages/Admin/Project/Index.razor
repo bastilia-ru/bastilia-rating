@@ -23,30 +23,33 @@
     <Alert>Успешно добавлена ачивка</Alert>
 }
 
-<Card>
-    <Header>Добавление ачивки</Header>
-    <Body>
-        <EditForm FormName="AddAchievemntForm" Model="AddModel" OnValidSubmit="Add">
-            <div>
-                <MultiUserInput Label="Пользователь:" @bind-Value="AddModel!.UserId" />
-            </div>
-            <div>
-                <label>
-                    Ачивка:
-                    <InputSelect @bind-Value="AddModel!.TemplateId" class="form-select">
-                        @foreach (var template in project.Templates)
-                        {
-                            <option value="@template.TemplateId">@template.Name</option>
-                        }
-                    </InputSelect>
-                </label>
-            </div>
-            <div>
-                <input type="submit" value="Добавить" class="btn btn-success" />
-            </div>
-        </EditForm>
-    </Body>
-</Card>
+@if (project.Templates.Count > 0)
+{
+    <Card>
+        <Header>Добавление ачивки</Header>
+        <Body>
+            <EditForm FormName="AddAchievemntForm" Model="AddModel" OnValidSubmit="Add">
+                <div>
+                    <MultiUserInput Label="Пользователь:" @bind-Value="AddModel!.UserId" />
+                </div>
+                <div>
+                    <label>
+                        Ачивка:
+                        <InputSelect @bind-Value="AddModel!.TemplateId" class="form-select">
+                            @foreach (var template in project.Templates)
+                            {
+                                <option value="@template.TemplateId">@template.Name</option>
+                            }
+                        </InputSelect>
+                    </label>
+                </div>
+                <div>
+                    <input type="submit" value="Добавить" class="btn btn-success" />
+                </div>
+            </EditForm>
+        </Body>
+    </Card>
+}
 
 @if (project.ProjectMemberAchievements.Count > 0)
 {
