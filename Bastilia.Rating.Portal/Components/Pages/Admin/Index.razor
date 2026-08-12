@@ -1,14 +1,44 @@
 @page "/admin/"
+@using Microsoft.AspNetCore.Authorization
 @using Microsoft.AspNetCore.Components.Authorization
 @using Bastilia.Rating.Portal.Client.Components.Projects
+@attribute [Authorize]
+@inject IBastiliaProjectRepository Repository
 
 <h3>Админка</h3>
 
 <AuthorizeView Roles="president">
     <Authorized>
-        <ProjectAdminList />
+        <p>
+            <a href="/admin/projects/create">Добавить проект</a>
+            | <a href="/admin/projects/from-kogda-igra">Добавить проект по КогдаИгре</a>
+        </p>
     </Authorized>
-    <NotAuthorized>
-        <p>Доступ запрещён. Эта страница доступна только председателю.</p>
-    </NotAuthorized>
 </AuthorizeView>
+
+@if (adminProjects is null)
+{
+    <LoadingSpinner />
+}
+else if (adminProjects.Count == 0)
+{
+    <p>Доступ запрещён. У вас нет прав администратора ни на один проект.</p>
+}
+else
+{
+    <ProjectList Projects="adminProjects.AsQueryable()" ShowYear="true" />
+}
+
+@code {
+    [CascadingParameter]
+    private HashSet<int>? AdminProjectIds { get; set; }
+
+    private List<BastiliaProject>? adminProjects;
+
+    protected override async Task OnInitializedAsync()
+    {
+        var list = await Repository.GetAllProjects();
+        var adminProjectIds = AdminProjectIds ?? [];
+        adminProjects = [.. list.Where(p => adminProjectIds.Contains(p.BastiliaProjectId))];
+    }
+}
