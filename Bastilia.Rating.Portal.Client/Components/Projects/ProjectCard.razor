@@ -5,7 +5,10 @@
             
                 <img src="@Project.ProjectIconUri.AbsoluteUri" width="150" height="150" />
             <div style="margin-left:1em">
-                <h3 class="card-title">@Project.ProjectName</h3>
+                <h3 class="card-title">
+                    @Project.ProjectName
+                    <ProjectProblemsIcon Project="Project" />
+                </h3>
                 <p>
                     @if (Project.Coordinators.Count > 0)
                     {

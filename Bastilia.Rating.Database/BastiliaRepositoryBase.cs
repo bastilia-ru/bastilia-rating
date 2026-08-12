@@ -16,7 +16,7 @@ internal abstract class BastiliaRepositoryBase
         }
         return a.Template.AchievementName;
     }
-    protected static BastiliaProject ToProject(Entities.BastiliaProject project)
+    protected static BastiliaProject ToProject(Entities.BastiliaProject project, int templatesCount, int achievementsCount)
     {
         return new BastiliaProject(
             project.BastiliaProjectId,
@@ -34,7 +34,10 @@ internal abstract class BastiliaRepositoryBase
             new Uri(project.ProjectIconUri),
             project.Slug,
             project.DeletedAt,
-            project.LastUpdatedAt
+            project.LastUpdatedAt,
+            project.PlannedEndDate,
+            templatesCount,
+            achievementsCount
             );
     }
 

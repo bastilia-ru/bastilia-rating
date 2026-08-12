@@ -14,10 +14,12 @@ namespace Bastilia.Rating.Domain
                                           Uri ProjectIconUri,
                                           string? slug,
                                           DateTimeOffset? deletedAt,
-                                          DateTimeOffset? lastUpdatedAt
+                                          DateTimeOffset? lastUpdatedAt,
+                                          DateOnly? plannedEndDate
                                           )
             : base(BastiliaProjectId, ProjectName, ProjectType, BrandType, OngoingProject, ProjectOfTheYear,
-                   JoinrpgProjectId, KogdaIgraProjectId, ProjectUri, Coordinators, endDate, HowToHelp, ProjectIconUri, slug, deletedAt, lastUpdatedAt)
+                   JoinrpgProjectId, KogdaIgraProjectId, ProjectUri, Coordinators, endDate, HowToHelp, ProjectIconUri, slug, deletedAt, lastUpdatedAt,
+                   plannedEndDate, Templates.Count, ProjectMemberAchievements.Count)
         {
             this.ProjectMemberAchievements = ProjectMemberAchievements;
             this.Templates = Templates;

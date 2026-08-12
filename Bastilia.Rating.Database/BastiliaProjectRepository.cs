@@ -34,9 +34,17 @@ internal class BastiliaProjectRepository(IDbContextFactory<AppDbContext> context
     private async Task<IReadOnlyCollection<BastiliaProject>> GetProjectsByPredicate(Expression<Func<Entities.BastiliaProject, bool>> predicate)
     {
         await using var context = await contextFactory.CreateDbContextAsync();
-        var projects = await Query(context).Where(predicate).ToListAsync();
+        var projects = await Query(context)
+                    .Where(predicate)
+                    .Select(p => new
+                    {
+                        Project = p,
+                        TemplatesCount = p.AchievementTemplates.Count,
+                        AchievementsCount = p.AchievementTemplates.SelectMany(t => t.Achievements).Count()
+                    })
+                    .ToListAsync();
 
-        return [.. projects.Select(ToProject)];
+        return [.. projects.Select(x => ToProject(x.Project, x.TemplatesCount, x.AchievementsCount))];
     }
 
     private static IQueryable<Entities.BastiliaProject> Query(AppDbContext context)
@@ -83,7 +91,8 @@ internal class BastiliaProjectRepository(IDbContextFactory<AppDbContext> context
            new Uri(project.ProjectIconUri),
            project.Slug,
            project.DeletedAt,
-           project.LastUpdatedAt
+           project.LastUpdatedAt,
+           project.PlannedEndDate
            );
     }
 }
