@@ -1,0 +1,33 @@
+<div>
+    <label>
+        Уровень проекта:
+        <InputSelect TValue="ProjectLevel" Value="ProjectLevel" ValueChanged="ProjectLevelChanged" ValueExpression="() => ProjectLevel" class="form-select">
+            <option value="@ProjectLevel.XS">XS</option>
+            <option value="@ProjectLevel.S">S</option>
+            <option value="@ProjectLevel.M">M</option>
+            <option value="@ProjectLevel.L">L</option>
+        </InputSelect>
+    </label>
+</div>
+@{ var ratingValues = ProjectLevel.GetAchievementRatingValues(); }
+@for (var i = 0; i < ratingValues.Count; i++)
+{
+    var index = i;
+    <div>
+        <label>
+            Название ачивки за @CountHelper.DisplayCount(ratingValues[index], "балл", "балла", "баллов"):
+            <InputText @bind-Value="TemplateNames[index]" class="form-control" />
+        </label>
+    </div>
+}
+
+@code {
+    [Parameter, EditorRequired]
+    public ProjectLevel ProjectLevel { get; set; }
+
+    [Parameter]
+    public EventCallback<ProjectLevel> ProjectLevelChanged { get; set; }
+
+    [Parameter, EditorRequired]
+    public List<string> TemplateNames { get; set; } = [];
+}
