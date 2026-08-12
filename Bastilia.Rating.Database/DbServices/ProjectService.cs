@@ -90,5 +90,35 @@ namespace Bastilia.Rating.Database.DbServices
                 });
             }
         }
+
+        public async Task UpdateCoordinators(int projectId, IReadOnlyList<UserIdentification> coordinators)
+        {
+            var entity = await appDbContext.Set<Entities.BastiliaProject>()
+                .Include(x => x.ProjectAdmins)
+                .FirstOrDefaultAsync(x => x.BastiliaProjectId == projectId) ?? throw new InvalidOperationException();
+
+            var today = DateOnly.FromDateTime(DateTime.UtcNow);
+            var newCoordinatorIds = coordinators.Select(c => c.Value).ToHashSet();
+
+            foreach (var admin in entity.ProjectAdmins.Where(a => a.RemoveDate == null && !newCoordinatorIds.Contains(a.UserId)))
+            {
+                admin.RemoveDate = today;
+            }
+
+            var existingCoordinatorIds = entity.ProjectAdmins.Select(a => a.UserId).ToHashSet();
+            foreach (var coordinatorId in newCoordinatorIds.Where(id => !existingCoordinatorIds.Contains(id)))
+            {
+                var user = await appDbContext.Set<Entities.User>().FindAsync(coordinatorId)
+                    ?? throw new InvalidOperationException($"User {coordinatorId} not found");
+                entity.ProjectAdmins.Add(new ProjectAdmin { Project = entity, User = user, AddDate = today });
+            }
+
+            foreach (var admin in entity.ProjectAdmins.Where(a => a.RemoveDate != null && newCoordinatorIds.Contains(a.UserId)))
+            {
+                admin.RemoveDate = null;
+            }
+
+            await appDbContext.SaveChangesAsync();
+        }
     }
 }

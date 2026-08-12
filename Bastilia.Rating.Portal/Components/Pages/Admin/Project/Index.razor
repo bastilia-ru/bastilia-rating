@@ -69,6 +69,8 @@ else if (project.EndDate is not null && project.Templates.Count == 0)
     <AddTemplatesForm ProjectId="project.BastiliaProjectId" OnCompleted="ReloadProject" />
 }
 
+<EditCoordinatorsForm ProjectId="project.BastiliaProjectId" Coordinators="project.Coordinators" OnCompleted="ReloadProject" />
+
 @code {
     [Parameter]
     public string? ProjectId { get; set; }
