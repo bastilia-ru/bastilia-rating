@@ -1,0 +1,64 @@
+@inject IProjectService projectService
+@inject NavigationManager navigationManager
+@rendermode InteractiveServer
+
+<EditForm FormName="@($"EditTemplateForm_{Template.TemplateId}")" Model="Model" OnValidSubmit="Save">
+    <div>
+        <label>
+            Название:
+            <InputText @bind-Value="Model!.Name" class="form-control" />
+        </label>
+    </div>
+    <div>
+        <label>
+            Описание:
+            <InputTextArea @bind-Value="Model!.Description" class="form-control" />
+        </label>
+    </div>
+    @if (error is not null)
+    {
+        <Alert>@error</Alert>
+    }
+    <div>
+        <input type="submit" value="Сохранить" class="btn btn-primary" />
+    </div>
+</EditForm>
+
+@code {
+    [Parameter, EditorRequired]
+    public required Bastilia.Rating.Domain.AchievementTemplate Template { get; set; }
+
+    [Parameter]
+    public EventCallback OnCompleted { get; set; }
+
+    [SupplyParameterFromForm]
+    private EditTemplateViewModel? Model { get; set; }
+
+    private string? error;
+
+    protected override void OnInitialized()
+    {
+        Model ??= new EditTemplateViewModel { Name = Template.Name, Description = Template.Description };
+        base.OnInitialized();
+    }
+
+    private async Task Save()
+    {
+        if (string.IsNullOrWhiteSpace(Model!.Name))
+        {
+            error = "Заполните название ачивки";
+            return;
+        }
+        error = null;
+
+        await projectService.UpdateAchievementTemplate(Template.TemplateId, Model.Name, Model.Description);
+        await OnCompleted.InvokeAsync();
+        navigationManager.NavigateTo(navigationManager.Uri, forceLoad: true);
+    }
+
+    private class EditTemplateViewModel
+    {
+        public string Name { get; set; } = "";
+        public string Description { get; set; } = "";
+    }
+}

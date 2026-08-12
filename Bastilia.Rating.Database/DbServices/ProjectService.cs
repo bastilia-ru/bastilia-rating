@@ -65,6 +65,17 @@ namespace Bastilia.Rating.Database.DbServices
             await appDbContext.SaveChangesAsync();
         }
 
+        public async Task UpdateAchievementTemplate(int templateId, string name, string description)
+        {
+            var entity = await appDbContext.Set<Entities.AchievementTemplate>()
+                .FirstOrDefaultAsync(x => x.AchievementTemplateId == templateId) ?? throw new InvalidOperationException();
+
+            entity.AchievementName = name;
+            entity.AchievementDescription = description;
+
+            await appDbContext.SaveChangesAsync();
+        }
+
         private void AddTemplateEntities(Entities.BastiliaProject entity, ProjectLevel projectLevel, IReadOnlyList<string> achievementTemplateNames)
         {
             var ratingValues = projectLevel.GetAchievementRatingValues();
