@@ -28,7 +28,7 @@ internal abstract class BastiliaRepositoryBase
             project.JoinrpgProjectId,
             project.KogdaIgraProjectId,
             project.ProjectUri,
-            [.. project.ProjectAdmins.Select(pa => ToUserLink(pa.User))],
+            [.. project.ProjectAdmins.Where(pa => pa.RemoveDate == null).Select(pa => ToUserLink(pa.User))],
             project.EndDate,
             project.HowToHelp,
             new Uri(project.ProjectIconUri),

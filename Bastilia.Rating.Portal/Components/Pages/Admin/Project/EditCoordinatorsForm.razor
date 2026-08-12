@@ -1,0 +1,56 @@
+@using Bastilia.Rating.Domain.Common
+@inject IProjectService projectService
+@inject UserLoaderHelper userLoaderHelper
+@inject NavigationManager navigationManager
+
+<Card>
+    <Header>Координаторы проекта</Header>
+    <Body>
+        <EditForm FormName="EditCoordinatorsForm" Model="Model" OnValidSubmit="Submit">
+            <div>
+                <MultiUserInput Label="Координаторы проекта:" @bind-Value="Model!.Coordinators" />
+            </div>
+            <div>
+                <input type="submit" value="Сохранить" class="btn btn-success" />
+            </div>
+        </EditForm>
+    </Body>
+</Card>
+
+@code {
+    [Parameter, EditorRequired]
+    public int ProjectId { get; set; }
+
+    [Parameter, EditorRequired]
+    public IReadOnlyCollection<IUserLink> Coordinators { get; set; } = [];
+
+    [Parameter]
+    public EventCallback OnCompleted { get; set; }
+
+    [SupplyParameterFromForm]
+    private EditCoordinatorsViewModel? Model { get; set; }
+
+    protected override void OnInitialized()
+    {
+        Model ??= new EditCoordinatorsViewModel
+        {
+            Coordinators = [.. Coordinators.Select(c => c.Slug ?? c.JoinrpgUserId.ToString())],
+        };
+        base.OnInitialized();
+    }
+
+    private async Task Submit()
+    {
+        var users = await userLoaderHelper.LoadUsersWithCheck(Model!.Coordinators);
+        var coordinators = users.Select(u => new UserIdentification(u.JoinrpgUserId)).ToList();
+
+        await projectService.UpdateCoordinators(ProjectId, coordinators);
+        await OnCompleted.InvokeAsync();
+        navigationManager.NavigateTo(navigationManager.Uri, forceLoad: true);
+    }
+
+    private class EditCoordinatorsViewModel
+    {
+        public string[] Coordinators { get; set; } = [];
+    }
+}

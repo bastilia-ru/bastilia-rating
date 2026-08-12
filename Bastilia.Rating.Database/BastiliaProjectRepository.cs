@@ -15,7 +15,7 @@ internal class BastiliaProjectRepository(IDbContextFactory<AppDbContext> context
     {
         await using var context = await contextFactory.CreateDbContextAsync();
         return [.. await context.ProjectAdmins
-            .Where(pa => pa.UserId == joinrpgUserId)
+            .Where(pa => pa.UserId == joinrpgUserId && pa.RemoveDate == null)
             .Select(pa => pa.ProjectId)
             .ToListAsync()];
     }
@@ -82,7 +82,7 @@ internal class BastiliaProjectRepository(IDbContextFactory<AppDbContext> context
            project.JoinrpgProjectId,
            project.KogdaIgraProjectId,
            project.ProjectUri,
-           [.. project.ProjectAdmins.Select(pa => ToUserLink(pa.User))],
+           [.. project.ProjectAdmins.Where(pa => pa.RemoveDate == null).Select(pa => ToUserLink(pa.User))],
            [.. project.AchievementTemplates.SelectMany(a => a.Achievements).Select(ToMemberAchievement)],
            [.. project.AchievementTemplates.Select(ToTemplate)],
            project.EndDate,
