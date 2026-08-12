@@ -35,6 +35,15 @@
             </NavLink>
         </div>
 
+        @if (AdminProjectIds is { Count: > 0 })
+        {
+            <div class="nav-item px-3">
+                <NavLink class="nav-link" href="admin">
+                    <span class="bi bi-list-nested-nav-menu" aria-hidden="true"></span> Админка
+                </NavLink>
+            </div>
+        }
+
         <AuthorizeView>
             <Authorized>
                 <div class="nav-item px-3 auth-block">
@@ -57,4 +66,9 @@
         </AuthorizeView>
     </nav>
 </div>
+
+@code {
+    [CascadingParameter]
+    private HashSet<int>? AdminProjectIds { get; set; }
+}
 
