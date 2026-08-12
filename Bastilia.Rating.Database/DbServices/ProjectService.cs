@@ -44,6 +44,29 @@ namespace Bastilia.Rating.Database.DbServices
 
         public async Task CompleteProject(int projectId, DateOnly endDate, ProjectLevel projectLevel, IReadOnlyList<string> achievementTemplateNames)
         {
+            var entity = await appDbContext.Set<Entities.BastiliaProject>()
+                .FirstOrDefaultAsync(x => x.BastiliaProjectId == projectId) ?? throw new InvalidOperationException();
+
+            entity.EndDate = endDate;
+            entity.OngoingProject = false;
+
+            AddTemplateEntities(entity, projectLevel, achievementTemplateNames);
+
+            await appDbContext.SaveChangesAsync();
+        }
+
+        public async Task AddAchievementTemplates(int projectId, ProjectLevel projectLevel, IReadOnlyList<string> achievementTemplateNames)
+        {
+            var entity = await appDbContext.Set<Entities.BastiliaProject>()
+                .FirstOrDefaultAsync(x => x.BastiliaProjectId == projectId) ?? throw new InvalidOperationException();
+
+            AddTemplateEntities(entity, projectLevel, achievementTemplateNames);
+
+            await appDbContext.SaveChangesAsync();
+        }
+
+        private void AddTemplateEntities(Entities.BastiliaProject entity, ProjectLevel projectLevel, IReadOnlyList<string> achievementTemplateNames)
+        {
             var ratingValues = projectLevel.GetAchievementRatingValues();
             if (achievementTemplateNames.Count != ratingValues.Count)
             {
@@ -51,12 +74,6 @@ namespace Bastilia.Rating.Database.DbServices
                     $"Для уровня {projectLevel} требуется {ratingValues.Count} названий ачивок, передано {achievementTemplateNames.Count}",
                     nameof(achievementTemplateNames));
             }
-
-            var entity = await appDbContext.Set<Entities.BastiliaProject>()
-                .FirstOrDefaultAsync(x => x.BastiliaProjectId == projectId) ?? throw new InvalidOperationException();
-
-            entity.EndDate = endDate;
-            entity.OngoingProject = false;
 
             for (var i = 0; i < achievementTemplateNames.Count; i++)
             {
@@ -72,8 +89,6 @@ namespace Bastilia.Rating.Database.DbServices
                     CreateDate = DateTime.UtcNow,
                 });
             }
-
-            await appDbContext.SaveChangesAsync();
         }
     }
 }
