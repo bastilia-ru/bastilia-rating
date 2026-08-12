@@ -1,10 +1,11 @@
 ﻿
 namespace Bastilia.Rating.Database.DbServices
 {
-    internal class KiDbService(AppDbContext appDbContext) : IKiDbService
+    internal class KiDbService(IDbContextFactory<AppDbContext> contextFactory) : IKiDbService
     {
         public async Task AddKogdaIgraGame(int kogdaIgraId, string name, DateOnly begin, DateOnly end, DateTimeOffset lastUpdatedAt)
         {
+            await using var appDbContext = await contextFactory.CreateDbContextAsync();
             var entity = await appDbContext.Set<Entities.KogdaIgraGame>().FindAsync(kogdaIgraId);
             if (entity is null)
             {

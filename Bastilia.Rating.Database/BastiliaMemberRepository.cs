@@ -2,7 +2,7 @@ using LinqKit;
 
 namespace Bastilia.Rating.Database;
 
-internal class BastiliaMemberRepository(AppDbContext context) : BastiliaRepositoryBase, IBastiliaMemberRepository
+internal class BastiliaMemberRepository(IDbContextFactory<AppDbContext> contextFactory) : BastiliaRepositoryBase, IBastiliaMemberRepository
 {
     public async Task<BastiliaMember?> GetByIdAsync(int userId) => (await GetMemberImpl(u => u.JoinRpgUserId == userId)).FirstOrDefault();
 
@@ -12,8 +12,9 @@ internal class BastiliaMemberRepository(AppDbContext context) : BastiliaReposito
 
     public async Task<IReadOnlyCollection<BastiliaMember>> GetActualAsync()
     {
+        await using var context = await contextFactory.CreateDbContextAsync();
         var actualStatusPredicate = GetActualStatusPredicate();
-        var users = await MemberQuery()
+        var users = await MemberQuery(context)
                     .AsNoTracking()
                     .Where(u => actualStatusPredicate.Invoke(u))
                     .ToArrayAsync();
@@ -23,6 +24,7 @@ internal class BastiliaMemberRepository(AppDbContext context) : BastiliaReposito
 
     public async Task<IReadOnlyCollection<MemberHistoryItem>> GetMembersHistory()
     {
+        await using var context = await contextFactory.CreateDbContextAsync();
         var users = await context.UsersBastiliaStatuses
                     .Include(s => s.User)
                     .Where(s => s.StatusType == BastiliaStatusType.Member)
@@ -32,8 +34,9 @@ internal class BastiliaMemberRepository(AppDbContext context) : BastiliaReposito
 
     public async Task<IReadOnlyCollection<BastiliaCalendarItem>> GetMemberCalendarFor(int year)
     {
+        await using var context = await contextFactory.CreateDbContextAsync();
         var actualStatusPredicate = GetActualStatusPredicate();
-        var birthdays = await MemberQuery()
+        var birthdays = await MemberQuery(context)
             .AsNoTracking()
             .Where(u => actualStatusPredicate.Invoke(u))
             .Where(u => u.BirthDay != null)
@@ -54,9 +57,9 @@ internal class BastiliaMemberRepository(AppDbContext context) : BastiliaReposito
 
     private async Task<IReadOnlyCollection<BastiliaMember>> GetMemberImpl(Expression<Func<Entities.User, bool>> predicate)
     {
-
+        await using var context = await contextFactory.CreateDbContextAsync();
         var actualStatusPredicate = GetActualStatusPredicate();
-        var users = await MemberQuery()
+        var users = await MemberQuery(context)
                     .AsNoTracking()
                     .Select(u => new { User = u, CurrentStatus = actualStatusPredicate.Invoke(u) })
                     .Where(u => predicate.Invoke(u.User))
@@ -71,7 +74,7 @@ internal class BastiliaMemberRepository(AppDbContext context) : BastiliaReposito
         return u => u.BastiliaStatuses.Where(s => s.EndDate == null || s.EndDate > today).Where(s => s.BeginDate < today).OrderBy(s => s.BeginDate).Any();
     }
 
-    private IQueryable<Entities.User> MemberQuery()
+    private static IQueryable<Entities.User> MemberQuery(AppDbContext context)
     {
         return context.Users
                             .AsExpandable()

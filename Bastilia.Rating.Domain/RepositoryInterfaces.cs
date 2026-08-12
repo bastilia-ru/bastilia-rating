@@ -20,6 +20,7 @@ public interface IBastiliaProjectRepository
     Task<IReadOnlyCollection<BastiliaProject>> GetActiveProjects();
     Task<IReadOnlyCollection<BastiliaProject>> GetAllProjects();
     Task<IReadOnlyCollection<BastiliaCalendarItem>> GetProjectCalendarFor(int year);
+    Task<IReadOnlyCollection<int>> GetProjectIdsForCoordinator(int joinrpgUserId);
 }
 
 public interface IBastiliaTemplateRepository

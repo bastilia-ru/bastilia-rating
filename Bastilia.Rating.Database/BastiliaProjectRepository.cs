@@ -1,6 +1,6 @@
 namespace Bastilia.Rating.Database;
 
-internal class BastiliaProjectRepository(AppDbContext context) : BastiliaRepositoryBase, IBastiliaProjectRepository
+internal class BastiliaProjectRepository(IDbContextFactory<AppDbContext> contextFactory) : BastiliaRepositoryBase, IBastiliaProjectRepository
 {
     public Task<BastiliaProjectWithDetails?> GetByIdAsync(int projectId) => GetOneProjectByPredicate(p => p.BastiliaProjectId == projectId);
 
@@ -11,9 +11,19 @@ internal class BastiliaProjectRepository(AppDbContext context) : BastiliaReposit
 
     public Task<IReadOnlyCollection<BastiliaProject>> GetAllProjects() => GetProjectsByPredicate(p => true);
 
+    public async Task<IReadOnlyCollection<int>> GetProjectIdsForCoordinator(int joinrpgUserId)
+    {
+        await using var context = await contextFactory.CreateDbContextAsync();
+        return [.. await context.ProjectAdmins
+            .Where(pa => pa.UserId == joinrpgUserId)
+            .Select(pa => pa.ProjectId)
+            .ToListAsync()];
+    }
+
     public async Task<IReadOnlyCollection<BastiliaCalendarItem>> GetProjectCalendarFor(int year)
     {
-        return [..Query()
+        await using var context = await contextFactory.CreateDbContextAsync();
+        return [..Query(context)
             .Where(x => x.PlannedEndDate!.Value.Year == year || x.PlannedStartDate.Year == year)
             .Where(x => !x.OngoingProject)
             .Where(x => x.DeletedAt == null)
@@ -23,12 +33,13 @@ internal class BastiliaProjectRepository(AppDbContext context) : BastiliaReposit
 
     private async Task<IReadOnlyCollection<BastiliaProject>> GetProjectsByPredicate(Expression<Func<Entities.BastiliaProject, bool>> predicate)
     {
-        var projects = await Query().Where(predicate).ToListAsync();
+        await using var context = await contextFactory.CreateDbContextAsync();
+        var projects = await Query(context).Where(predicate).ToListAsync();
 
         return [.. projects.Select(ToProject)];
     }
 
-    private IQueryable<Entities.BastiliaProject> Query()
+    private static IQueryable<Entities.BastiliaProject> Query(AppDbContext context)
     {
         return context.BastiliaProjects
                     .Include(bp => bp.ProjectAdmins)
@@ -40,7 +51,8 @@ internal class BastiliaProjectRepository(AppDbContext context) : BastiliaReposit
 
     private async Task<BastiliaProjectWithDetails?> GetOneProjectByPredicate(Expression<Func<Entities.BastiliaProject, bool>> predicate)
     {
-        var project = await Query()
+        await using var context = await contextFactory.CreateDbContextAsync();
+        var project = await Query(context)
                     .Where(predicate)
                     .Include(p => p.AchievementTemplates)
                     .ThenInclude(p => p.Achievements)
