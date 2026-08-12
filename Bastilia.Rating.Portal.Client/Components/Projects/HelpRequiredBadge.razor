@@ -1,4 +1,4 @@
-@if (!string.IsNullOrWhiteSpace(HowToHelp))
+@if (Required)
 {
     <Tooltip Title="@HowToHelp">
         <span class="badge bg-warning">
@@ -8,6 +8,9 @@
 }
 @code
 {
+    [Parameter, EditorRequired]
+    public bool Required { get; set; }
+
     [Parameter, EditorRequired]
     public string HowToHelp { get; set; } = null!;
 }

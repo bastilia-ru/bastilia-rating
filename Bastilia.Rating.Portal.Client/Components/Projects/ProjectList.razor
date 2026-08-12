@@ -20,7 +20,7 @@
     @if (Projects.Any(x => x.HelpRequired))
     {
         <TemplateColumn Context="project" Title="Вписаться?" SortBy="GridSort<BastiliaProject>.ByAscending(p => p.HelpRequired)">
-           <HelpRequiredBadge HowToHelp="@project.HowToHelp"/>
+           <HelpRequiredBadge Required="@project.HelpRequired" HowToHelp="@project.HowToHelp"/>
         </TemplateColumn>
     }
     <TemplateColumn Context="project" Title="Глава/Координатор">
