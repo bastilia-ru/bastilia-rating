@@ -1,9 +1,11 @@
 @page "/admin/projects/create"
 @using Bastilia.Rating.Domain.Common
+@using JoinRpg.Common.KogdaIgraClient
 @using Microsoft.AspNetCore.Components.Authorization
 @inject IProjectService ProjectService
 @inject UserLoaderHelper userLoaderHelper
 @inject NavigationManager NavigationManager
+@inject IKogdaIgraApiClient KogdaIgraApiClient
 
 <PageTitle>Создание проекта</PageTitle>
 
@@ -11,6 +13,11 @@
 
 <AuthorizeView Roles="president" Context="authContext">
     <Authorized>
+        @if (Model is null)
+        {
+            <LoadingSpinner />
+            return;
+        }
         <EditForm FormName="CreateProjectForm" Model="Model" OnValidSubmit="Submit">
             <div>
                 <label>
@@ -106,11 +113,33 @@
     [SupplyParameterFromForm]
     private CreateViewModel? Model { get; set; }
 
-    protected override void OnInitialized()
+    [SupplyParameterFromQuery]
+    [Parameter]
+    public int? KogdaIgraId { get; set; }
+
+    protected override async Task OnInitializedAsync()
     {
+        if (Model is null && KogdaIgraId is int id)
+        {
+            var game = await KogdaIgraApiClient.GetGameInfo(id);
+            if (game is not null)
+            {
+                Model = new CreateViewModel
+                {
+                    ProjectName = game.Name,
+                    ProjectType = ProjectType.MasteringGame,
+                    BrandType = BrandType.Bastilia,
+                    KogdaIgraProjectId = game.Id,
+                    StartDate = game.Begin,
+                    EndDate = game.End,
+                    ProjectUri = game.SiteUri?.ToString() ?? "",
+                    AlreadyCompleted = true,
+                };
+            }
+        }
+
         Model ??= new CreateViewModel();
         Model.Coordinators ??= [];
-        base.OnInitialized();
     }
 
     private async Task Submit()

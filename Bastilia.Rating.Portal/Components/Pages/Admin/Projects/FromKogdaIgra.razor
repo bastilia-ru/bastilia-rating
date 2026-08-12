@@ -1,0 +1,62 @@
+@page "/admin/projects/from-kogda-igra"
+@using JoinRpg.Common.KogdaIgraClient
+@using Microsoft.AspNetCore.Components.Authorization
+@inject IKogdaIgraApiClient KogdaIgraApiClient
+@inject NavigationManager NavigationManager
+
+<PageTitle>Создание проекта из старой игры</PageTitle>
+
+<h3>Создание проекта из старой игры (КогдаИгра)</h3>
+
+<AuthorizeView Roles="president" Context="authContext">
+    <Authorized>
+        <EditForm FormName="FromKogdaIgraForm" Model="Model" OnValidSubmit="Submit">
+            <div>
+                <label>
+                    ID игры на КогдаИгре:
+                    <InputNumber @bind-Value="Model!.KogdaIgraId" class="form-control" />
+                </label>
+            </div>
+            @if (error is not null)
+            {
+                <Alert>@error</Alert>
+            }
+            <div>
+                <input type="submit" value="Загрузить и создать проект" class="btn btn-success" />
+            </div>
+        </EditForm>
+    </Authorized>
+    <NotAuthorized>
+        <p>Доступ запрещён. Эта страница доступна только председателю.</p>
+    </NotAuthorized>
+</AuthorizeView>
+
+@code {
+    [SupplyParameterFromForm]
+    private LookupViewModel? Model { get; set; }
+
+    private string? error;
+
+    protected override void OnInitialized()
+    {
+        Model ??= new LookupViewModel();
+        base.OnInitialized();
+    }
+
+    private async Task Submit()
+    {
+        var game = await KogdaIgraApiClient.GetGameInfo(Model!.KogdaIgraId);
+        if (game is null)
+        {
+            error = $"Игра с id {Model.KogdaIgraId} не найдена на КогдаИгре";
+            return;
+        }
+
+        NavigationManager.NavigateTo($"/admin/projects/create?kogdaIgraId={game.Id}");
+    }
+
+    private class LookupViewModel
+    {
+        public int KogdaIgraId { get; set; }
+    }
+}
