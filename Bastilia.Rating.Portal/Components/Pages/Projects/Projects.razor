@@ -1,6 +1,17 @@
 @page "/projects"
+@using Microsoft.AspNetCore.Components.Authorization
 @using Bastilia.Rating.Portal.Client.Components.Projects
 @inject IBastiliaProjectRepository Repository
+
+<AuthorizeView Roles="president">
+    <Authorized>
+        <p>
+            <a href="/admin/projects/create">Добавить проект</a>
+            | <a href="/admin/projects/from-kogda-igra">Добавить проект по КогдаИгре</a>
+        </p>
+    </Authorized>
+</AuthorizeView>
+
 @if (activeList is null || completedList is null)
 {
     <h3>Список проектов</h3>
