@@ -1,7 +1,7 @@
 <div>
     <label>
         Уровень проекта:
-        <InputSelect TValue="ProjectLevel" Value="ProjectLevel" ValueChanged="ProjectLevelChanged" ValueExpression="() => ProjectLevel" class="form-select">
+        <InputSelect TValue="ProjectLevel" Value="ProjectLevel" ValueChanged="OnProjectLevelChanged" ValueExpression="() => ProjectLevel" class="form-select">
             <option value="@ProjectLevel.XS">XS</option>
             <option value="@ProjectLevel.S">S</option>
             <option value="@ProjectLevel.M">M</option>
@@ -9,15 +9,25 @@
         </InputSelect>
     </label>
 </div>
+<div class="alert alert-info">@ProjectLevel.GetSizeDescription()</div>
 @{ var ratingValues = ProjectLevel.GetAchievementRatingValues(); }
 @for (var i = 0; i < ratingValues.Count; i++)
 {
     var index = i;
-    <div>
-        <label>
-            Название ачивки за @CountHelper.DisplayCount(ratingValues[index], "балл", "балла", "баллов"):
-            <InputText @bind-Value="TemplateNames[index]" class="form-control" />
-        </label>
+    <div class="border rounded p-3 mb-3">
+        <div class="fw-bold mb-2">Ачивка за @CountHelper.DisplayCount(ratingValues[index], "балл", "балла", "баллов")</div>
+        <div class="mb-2">
+            <label>
+                Название:
+                <InputText @bind-Value="Templates[index].Name" class="form-control" />
+            </label>
+        </div>
+        <div>
+            <label>
+                Описание:
+                <InputTextArea @bind-Value="Templates[index].Description" class="form-control" />
+            </label>
+        </div>
     </div>
 }
 
@@ -29,5 +39,16 @@
     public EventCallback<ProjectLevel> ProjectLevelChanged { get; set; }
 
     [Parameter, EditorRequired]
-    public List<string> TemplateNames { get; set; } = [];
+    public AchievementTemplateInput[] Templates { get; set; } = [];
+
+    [Parameter]
+    public EventCallback<AchievementTemplateInput[]> TemplatesChanged { get; set; }
+
+    private async Task OnProjectLevelChanged(ProjectLevel newLevel)
+    {
+        ProjectLevel = newLevel;
+        Templates = AchievementTemplateInputHelper.CreateDefaults(newLevel);
+        await TemplatesChanged.InvokeAsync(Templates);
+        await ProjectLevelChanged.InvokeAsync(newLevel);
+    }
 }

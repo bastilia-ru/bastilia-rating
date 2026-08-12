@@ -22,9 +22,9 @@ namespace Bastilia.Rating.Domain
         Task<int> CreateProject(string projectName, ProjectType projectType, BrandType brandType, bool OngoingProject, int? JoinrpgProjectId, int? KogdaIgraProjectId, string ProjectUri, IReadOnlyList<UserIdentification> coordinators,
             DateOnly startDate, DateOnly endDate, bool alreadyCompleted, string projectDescription);
 
-        Task CompleteProject(int projectId, DateOnly endDate, ProjectLevel projectLevel, IReadOnlyList<string> achievementTemplateNames);
+        Task CompleteProject(int projectId, DateOnly endDate, ProjectLevel projectLevel, IReadOnlyList<AchievementTemplateInput> achievementTemplates);
 
-        Task AddAchievementTemplates(int projectId, ProjectLevel projectLevel, IReadOnlyList<string> achievementTemplateNames);
+        Task AddAchievementTemplates(int projectId, ProjectLevel projectLevel, IReadOnlyList<AchievementTemplateInput> achievementTemplates);
 
         Task UpdateCoordinators(int projectId, IReadOnlyList<UserIdentification> coordinators);
 

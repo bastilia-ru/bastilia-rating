@@ -42,7 +42,7 @@ namespace Bastilia.Rating.Database.DbServices
             return entity.BastiliaProjectId;
         }
 
-        public async Task CompleteProject(int projectId, DateOnly endDate, ProjectLevel projectLevel, IReadOnlyList<string> achievementTemplateNames)
+        public async Task CompleteProject(int projectId, DateOnly endDate, ProjectLevel projectLevel, IReadOnlyList<AchievementTemplateInput> achievementTemplates)
         {
             var entity = await appDbContext.Set<Entities.BastiliaProject>()
                 .FirstOrDefaultAsync(x => x.BastiliaProjectId == projectId) ?? throw new InvalidOperationException();
@@ -50,17 +50,17 @@ namespace Bastilia.Rating.Database.DbServices
             entity.EndDate = endDate;
             entity.OngoingProject = false;
 
-            AddTemplateEntities(entity, projectLevel, achievementTemplateNames);
+            AddTemplateEntities(entity, projectLevel, achievementTemplates);
 
             await appDbContext.SaveChangesAsync();
         }
 
-        public async Task AddAchievementTemplates(int projectId, ProjectLevel projectLevel, IReadOnlyList<string> achievementTemplateNames)
+        public async Task AddAchievementTemplates(int projectId, ProjectLevel projectLevel, IReadOnlyList<AchievementTemplateInput> achievementTemplates)
         {
             var entity = await appDbContext.Set<Entities.BastiliaProject>()
                 .FirstOrDefaultAsync(x => x.BastiliaProjectId == projectId) ?? throw new InvalidOperationException();
 
-            AddTemplateEntities(entity, projectLevel, achievementTemplateNames);
+            AddTemplateEntities(entity, projectLevel, achievementTemplates);
 
             await appDbContext.SaveChangesAsync();
         }
@@ -76,25 +76,25 @@ namespace Bastilia.Rating.Database.DbServices
             await appDbContext.SaveChangesAsync();
         }
 
-        private void AddTemplateEntities(Entities.BastiliaProject entity, ProjectLevel projectLevel, IReadOnlyList<string> achievementTemplateNames)
+        private void AddTemplateEntities(Entities.BastiliaProject entity, ProjectLevel projectLevel, IReadOnlyList<AchievementTemplateInput> achievementTemplates)
         {
             var ratingValues = projectLevel.GetAchievementRatingValues();
-            if (achievementTemplateNames.Count != ratingValues.Count)
+            if (achievementTemplates.Count != ratingValues.Count)
             {
                 throw new ArgumentException(
-                    $"Для уровня {projectLevel} требуется {ratingValues.Count} названий ачивок, передано {achievementTemplateNames.Count}",
-                    nameof(achievementTemplateNames));
+                    $"Для уровня {projectLevel} требуется {ratingValues.Count} шаблонов ачивок, передано {achievementTemplates.Count}",
+                    nameof(achievementTemplates));
             }
 
-            for (var i = 0; i < achievementTemplateNames.Count; i++)
+            for (var i = 0; i < achievementTemplates.Count; i++)
             {
                 appDbContext.Set<Entities.AchievementTemplate>().Add(new Entities.AchievementTemplate
                 {
                     Project = entity,
                     Owner = null!,
-                    AchievementName = achievementTemplateNames[i],
-                    AchievementDescription = "",
-                    AchievementImageUrl = "https://bastilia.ru/images/logo-low.jpg",
+                    AchievementName = achievementTemplates[i].Name,
+                    AchievementDescription = achievementTemplates[i].Description,
+                    AchievementImageUrl = entity.ProjectIconUri,
                     AchievementRatingValue = ratingValues[i],
                     YearlyAchievement = false,
                     CreateDate = DateTime.UtcNow,
