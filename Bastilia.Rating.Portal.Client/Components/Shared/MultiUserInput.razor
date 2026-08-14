@@ -1,6 +1,6 @@
 <label>
     @Label
-    <InputTextArea @bind-Value="RawTextField" class="form-control" />
+    <InputTextArea @bind-Value="RawTextField" @bind-Value:after="NotifyChanged" class="form-control" />
     <p>
         Можно указать Id пользователя или его короткий ник из адресной строки (1 или leotsarev).
         Можно кинуть ссылку на профиль пользователя в джойне или тут. 1 пользователь = 1 строка.
@@ -23,7 +23,12 @@
     protected override async Task OnInitializedAsync()
     {
         RawTextField ??= string.Join('\n', Value ?? []);
-        await ValueChanged.InvokeAsync(Parse(RawTextField));
+        await NotifyChanged();
+    }
+
+    private async Task NotifyChanged()
+    {
+        await ValueChanged.InvokeAsync(Parse(RawTextField ?? ""));
     }
 
     private static string[] Parse(string text)

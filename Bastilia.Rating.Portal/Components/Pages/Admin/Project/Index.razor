@@ -5,6 +5,7 @@
 @using Microsoft.AspNetCore.Authorization
 @using Microsoft.AspNetCore.Components.Authorization
 @attribute [Authorize]
+@rendermode InteractiveServer
 @inject ProjectNavigateHelper projectNavigateHelper
 @inject IAchievementService achievementService
 @inject UserLoaderHelper userLoaderHelper
@@ -30,7 +31,7 @@
         <Body>
             <EditForm FormName="AddAchievemntForm" Model="AddModel" OnValidSubmit="Add">
                 <div>
-                    <MultiUserInput Label="Пользователь:" @bind-Value="AddModel!.UserId" />
+                    <MultiUserInput @key="addFormResetKey" Label="Пользователь:" @bind-Value="AddModel!.UserId" />
                 </div>
                 <div>
                     <label>
@@ -97,6 +98,7 @@ else if (project.EndDate is not null && project.Templates.Count == 0)
     private BastiliaProjectWithDetails? project;
     private bool addedSuccess = false;
     private int currentUserId;
+    private int addFormResetKey;
 
     protected override async Task OnParametersSetAsync()
     {
@@ -116,6 +118,7 @@ else if (project.EndDate is not null && project.Templates.Count == 0)
 
     private async Task Add()
     {
+        addedSuccess = false;
         var authState = await AuthenticationStateTask!;
         project = await projectNavigateHelper.LoadProjectForAdmin(ProjectId!, authState.User);
         if (project != null)
@@ -125,8 +128,11 @@ else if (project.EndDate is not null && project.Templates.Count == 0)
             {
                 await achievementService.GrantAchivement(project.BastiliaProjectId, user.JoinrpgUserId, AddModel.TemplateId, currentUserId, null);
             }
+            addedSuccess = true;
         }
         project = await projectNavigateHelper.LoadProjectForAdmin(ProjectId!, authState.User);
+        AddModel = new AddViewModel();
+        addFormResetKey++;
     }
 
     private class AddViewModel
