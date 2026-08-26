@@ -61,7 +61,7 @@ public class TelegramNewsSenderTests : IDisposable
             && (retryable == null || Equals(m.Tags.GetValueOrDefault("retryable"), retryable)));
 
     private static ProjectNews CreateNews() =>
-        new(1, 2, 3, "Имя Автора", DateTimeOffset.UtcNow, "**текст**", NewsSendStatus.NotSent, null);
+        new(1, new BastiliaProjectId(2), new UserIdentification(3), "Имя Автора", DateTimeOffset.UtcNow, "**текст**", NewsSendStatus.NotSent, null);
 
     private static TelegramBotOptions EnabledOptions(long chatId = 100) =>
         new() { BotId = 42, BotSecret = "secret", ChatId = chatId };

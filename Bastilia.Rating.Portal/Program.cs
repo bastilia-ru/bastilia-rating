@@ -94,7 +94,7 @@ app.MapGet("/api/kogda-igra/add/{id}", async (int id, [FromServices] KiAddServic
     return TypedResults.Ok();
 });
 
-app.MapGet("/api/members/actual", async ([FromServices] IBastiliaMemberRepository memberRepository) => (await memberRepository.GetActualAsync()).Select(x => x.JoinrpgUserId));
+app.MapGet("/api/members/actual", async ([FromServices] IBastiliaMemberRepository memberRepository) => (await memberRepository.GetActualAsync()).Select(x => x.JoinrpgUserId.Value));
 
 app.MapAuthEndpoints();
 

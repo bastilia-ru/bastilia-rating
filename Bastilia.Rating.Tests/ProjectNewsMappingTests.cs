@@ -9,9 +9,9 @@ public class ProjectNewsMappingTests
         var entity = new ProjectNewsEntity
         {
             ProjectNewsId = 7,
-            ProjectId = 55,
-            AuthorUserId = 42,
-            Author = new User { JoinRpgUserId = 42, Username = "Иванов", AvatarUrl = "https://example.com/a.png" },
+            ProjectId = new BastiliaProjectId(55),
+            AuthorUserId = new UserIdentification(42),
+            Author = new User { JoinRpgUserId = new UserIdentification(42), Username = "Иванов", AvatarUrl = "https://example.com/a.png" },
             CreatedAt = createdAt,
             Text = "Новость проекта",
             SendStatus = NewsSendStatus.Sent,
@@ -21,8 +21,8 @@ public class ProjectNewsMappingTests
         var news = BastiliaNewsRepository.ToNews(entity);
 
         news.Id.ShouldBe(7);
-        news.ProjectId.ShouldBe(55);
-        news.AuthorUserId.ShouldBe(42);
+        news.ProjectId.ShouldBe(new BastiliaProjectId(55));
+        news.AuthorUserId.ShouldBe(new UserIdentification(42));
         news.AuthorName.ShouldBe("Иванов");
         news.CreatedAt.ShouldBe(createdAt);
         news.Text.ShouldBe("Новость проекта");
@@ -36,9 +36,9 @@ public class ProjectNewsMappingTests
         var entity = new ProjectNewsEntity
         {
             ProjectNewsId = 8,
-            ProjectId = 56,
-            AuthorUserId = 43,
-            Author = new User { JoinRpgUserId = 43, Username = "Петров", AvatarUrl = "https://example.com/b.png" },
+            ProjectId = new BastiliaProjectId(56),
+            AuthorUserId = new UserIdentification(43),
+            Author = new User { JoinRpgUserId = new UserIdentification(43), Username = "Петров", AvatarUrl = "https://example.com/b.png" },
             CreatedAt = DateTimeOffset.Now,
             Text = "Ошибка отправки",
             SendStatus = NewsSendStatus.Failed,

@@ -2,7 +2,7 @@ namespace Bastilia.Rating.Tests;
 
 internal sealed class FakeMemberRepository(BastiliaMember? member = null, long? chatIdToThrow = null) : IBastiliaMemberRepository
 {
-    public Task<BastiliaMember?> GetByIdAsync(int userId) => Task.FromResult(member);
+    public Task<BastiliaMember?> GetByIdAsync(UserIdentification userId) => Task.FromResult(member);
 
     public Task<BastiliaMember?> GetBySlugAsync(string slug) => throw new NotImplementedException();
 

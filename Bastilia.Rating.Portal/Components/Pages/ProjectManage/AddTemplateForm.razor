@@ -23,7 +23,7 @@
                     <InputSelect @bind-Value="Model!.RatingValue" class="form-select">
                         @foreach (var value in ProjectLevel.GetAchievementRatingValues())
                         {
-                            <option value="@value">@CountHelper.DisplayCount(value, "балл", "балла", "баллов")</option>
+                            <option value="@value">@Bastilia.Rating.Portal.Client.CountHelper.DisplayCount(value, "балл", "балла", "баллов")</option>
                         }
                     </InputSelect>
                 </label>
@@ -41,7 +41,7 @@
 
 @code {
     [Parameter, EditorRequired]
-    public int ProjectId { get; set; }
+    public BastiliaProjectId ProjectId { get; set; } = null!;
 
     [Parameter, EditorRequired]
     public ProjectLevel ProjectLevel { get; set; }

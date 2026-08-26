@@ -12,7 +12,7 @@ public class ProjectProblemsTests
         NewsCadence newsCadence = NewsCadence.Monthly,
         DateTimeOffset? lastNewsDate = null,
         DateOnly? createDate = null)
-        => new(1, "Test", ProjectType.MasteringGame, BrandType.Bastilia, ongoing, null, null, null, null, [], endDate, projectLevel, "", new Uri("https://example.com"), null, null, null, plannedEndDate, templatesCount, achievementsCount, lastNewsDate, createDate ?? DateOnly.FromDateTime(DateTime.UtcNow), newsCadence);
+        => new(new BastiliaProjectId(1), "Test", ProjectType.MasteringGame, BrandType.Bastilia, ongoing, null, null, null, null, [], endDate, projectLevel, "", new Uri("https://example.com"), null, null, null, plannedEndDate, templatesCount, achievementsCount, lastNewsDate, createDate ?? DateOnly.FromDateTime(DateTime.UtcNow), newsCadence);
 
     [Fact]
     public void CompletedProject_WithoutLevel_HasCompletedWithoutLevelProblem()

@@ -145,7 +145,7 @@
     private async Task Submit()
     {
         var users = await userLoaderHelper.LoadUsersWithCheck(Model!.Coordinators);
-        var coordinators = users.Select(u => new UserIdentification(u.JoinrpgUserId)).ToList();
+        var coordinators = users.Select(u => u.JoinrpgUserId).ToList();
 
         var id = await ProjectService.CreateProject(
             Model.ProjectName,
@@ -161,7 +161,7 @@
             Model.AlreadyCompleted,
             Model.ProjectDescription);
 
-        NavigationManager.NavigateTo($"/project/{id}/manage");
+        NavigationManager.NavigateTo($"/project/{id.Value}/manage");
     }
 
     private class CreateViewModel

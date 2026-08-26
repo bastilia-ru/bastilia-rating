@@ -16,7 +16,7 @@ public class UserImportServiceTests
     private const string ExistingUsername = "old_telegram";
 
     private static BastiliaMember CreateMember(string userName = "old", string avatarUrl = "https://example.com/old.png", TelegramSocialLink? telegram = null) =>
-        new(1, userName, avatarUrl, "slug", true, [], [], [], null, telegram);
+        new(new UserIdentification(1), userName, avatarUrl, "slug", true, [], [], [], null, telegram);
 
     private static TelegramSocialLink TelegramLink(long chatId = ExistingChatId, string? username = ExistingUsername)
         => TelegramSocialLink.FromOptional(chatId, username)!;
@@ -27,7 +27,7 @@ public class UserImportServiceTests
         var db = new FakeUserDbService { MemberToReturn = CreateMember(userName: "new") };
         var importService = CreateImportService(CreateMember(userName: "old"), db);
 
-        var result = await importService.ImportUser(1, "new", null);
+        var result = await importService.ImportUser(new UserIdentification(1), "new", null);
 
         db.UpdateCalls.ShouldBe([(1, "new", (string?)null, (TelegramSocialLink?)null)]);
         db.AddCalls.ShouldBeEmpty();
@@ -41,7 +41,7 @@ public class UserImportServiceTests
         var db = new FakeUserDbService { MemberToReturn = CreateMember(avatarUrl: "https://a/64.png") };
         var importService = CreateImportService(CreateMember(), db);
 
-        var result = await importService.ImportUser(1, null, "https://a/64.png");
+        var result = await importService.ImportUser(new UserIdentification(1), null, "https://a/64.png");
 
         db.UpdateCalls.ShouldBe([(1, (string?)null, "https://a/64.png", (TelegramSocialLink?)null)]);
         db.AddCalls.ShouldBeEmpty();
@@ -56,7 +56,7 @@ public class UserImportServiceTests
         var member = CreateMember(userName: "same", avatarUrl: "https://a/64.png");
         var importService = CreateImportService(member, db);
 
-        var result = await importService.ImportUser(1, "same", "https://a/64.png");
+        var result = await importService.ImportUser(new UserIdentification(1), "same", "https://a/64.png");
 
         db.UpdateCalls.ShouldBeEmpty();
         db.AddCalls.ShouldBeEmpty();
@@ -69,7 +69,7 @@ public class UserImportServiceTests
         var db = new FakeUserDbService { MemberToReturn = CreateMember(userName: "nick", avatarUrl: "") };
         var importService = CreateImportService(existingMember: null, db);
 
-        var result = await importService.ImportUser(1, "nick", null);
+        var result = await importService.ImportUser(new UserIdentification(1), "nick", null);
 
         db.AddCalls.ShouldBe([(1, "nick", "", (TelegramSocialLink?)null)]);
         db.UpdateCalls.ShouldBeEmpty();
@@ -83,7 +83,7 @@ public class UserImportServiceTests
         var db = new FakeUserDbService { MemberToReturn = created };
         var importService = CreateImportService(existingMember: null, db);
 
-        var result = await importService.ImportUser(1, "nick", "https://a/64.png");
+        var result = await importService.ImportUser(new UserIdentification(1), "nick", "https://a/64.png");
 
         db.AddCalls.ShouldBe([(1, "nick", "https://a/64.png", (TelegramSocialLink?)null)]);
         db.UpdateCalls.ShouldBeEmpty();
@@ -97,7 +97,7 @@ public class UserImportServiceTests
         var db = new FakeUserDbService { MemberToReturn = updated };
         var importService = CreateImportService(CreateMember(), db);
 
-        var result = await importService.ImportUser(1, "new", "https://a/64.png");
+        var result = await importService.ImportUser(new UserIdentification(1), "new", "https://a/64.png");
 
         db.UpdateCalls.ShouldBe([(1, "new", "https://a/64.png", (TelegramSocialLink?)null)]);
         db.AddCalls.ShouldBeEmpty();
@@ -110,7 +110,7 @@ public class UserImportServiceTests
         var db = new FakeUserDbService { MemberToReturn = CreateMember(telegram: TelegramLink(username: "new_telegram")) };
         var importService = CreateImportService(CreateMember(telegram: TelegramLink()), db);
 
-        var result = await importService.ImportUser(1, "old", "https://example.com/old.png", TelegramLink(ExistingChatId, "new_telegram"));
+        var result = await importService.ImportUser(new UserIdentification(1), "old", "https://example.com/old.png", TelegramLink(ExistingChatId, "new_telegram"));
 
         db.UpdateCalls.ShouldBe([(1, "old", "https://example.com/old.png", TelegramLink(ExistingChatId, "new_telegram"))]);
         db.AddCalls.ShouldBeEmpty();
@@ -123,7 +123,7 @@ public class UserImportServiceTests
         var db = new FakeUserDbService { MemberToReturn = CreateMember(telegram: TelegramLink(chatId: 987654321L)) };
         var importService = CreateImportService(CreateMember(telegram: TelegramLink()), db);
 
-        var result = await importService.ImportUser(1, null, null, TelegramLink(987654321L, null));
+        var result = await importService.ImportUser(new UserIdentification(1), null, null, TelegramLink(987654321L, null));
 
         db.UpdateCalls.ShouldBe([(1, (string?)null, (string?)null, TelegramLink(987654321L, null))]);
         db.AddCalls.ShouldBeEmpty();
@@ -137,7 +137,7 @@ public class UserImportServiceTests
         var member = CreateMember(telegram: TelegramLink());
         var importService = CreateImportService(member, db);
 
-        var result = await importService.ImportUser(1, null, null, TelegramLink());
+        var result = await importService.ImportUser(new UserIdentification(1), null, null, TelegramLink());
 
         db.UpdateCalls.ShouldBeEmpty();
         db.AddCalls.ShouldBeEmpty();
@@ -151,7 +151,7 @@ public class UserImportServiceTests
         var member = CreateMember(telegram: TelegramLink());
         var importService = CreateImportService(member, db);
 
-        var result = await importService.ImportUser(1, "old", "https://example.com/old.png");
+        var result = await importService.ImportUser(new UserIdentification(1), "old", "https://example.com/old.png");
 
         db.UpdateCalls.ShouldBeEmpty();
         db.AddCalls.ShouldBeEmpty();
@@ -164,7 +164,7 @@ public class UserImportServiceTests
         var db = new FakeUserDbService { MemberToReturn = CreateMember(userName: "new", telegram: TelegramLink(chatId: 987654321L)) };
         var importService = CreateImportService(CreateMember(telegram: TelegramLink()), db);
 
-        var result = await importService.ImportUser(1, "new", null, TelegramLink(987654321L, null));
+        var result = await importService.ImportUser(new UserIdentification(1), "new", null, TelegramLink(987654321L, null));
 
         db.UpdateCalls.ShouldBe([(1, "new", (string?)null, TelegramLink(987654321L, null))]);
         db.AddCalls.ShouldBeEmpty();
@@ -178,7 +178,7 @@ public class UserImportServiceTests
         var db = new FakeUserDbService { MemberToReturn = created };
         var importService = CreateImportService(existingMember: null, db);
 
-        var result = await importService.ImportUser(1, "nick", "https://a/64.png", TelegramLink(555L, "tg_user"));
+        var result = await importService.ImportUser(new UserIdentification(1), "nick", "https://a/64.png", TelegramLink(555L, "tg_user"));
 
         db.AddCalls.ShouldBe([(1, "nick", "https://a/64.png", TelegramLink(555L, "tg_user"))]);
         db.UpdateCalls.ShouldBeEmpty();
@@ -194,7 +194,7 @@ public class UserImportServiceTests
 
         // Null-ссылка — например, claim telegram_chat_id отсутствовал (сборка ссылки — в BastiliaUserLoginHandler;
         // TelegramSocialLink без chatId не строится). Привязку не трогаем.
-        var result = await importService.ImportUser(1, "old", "https://example.com/old.png", telegram: null);
+        var result = await importService.ImportUser(new UserIdentification(1), "old", "https://example.com/old.png", telegram: null);
 
         db.UpdateCalls.ShouldBeEmpty();
         db.AddCalls.ShouldBeEmpty();
@@ -209,7 +209,7 @@ public class UserImportServiceTests
         var importService = CreateImportService(member, db);
 
         // Отсутствие claim telegram не затирает имя в БД: отсутствие claim ≠ отвязка.
-        var result = await importService.ImportUser(1, "old", "https://example.com/old.png", TelegramLink(ExistingChatId, null));
+        var result = await importService.ImportUser(new UserIdentification(1), "old", "https://example.com/old.png", TelegramLink(ExistingChatId, null));
 
         db.UpdateCalls.ShouldBeEmpty();
         db.AddCalls.ShouldBeEmpty();
@@ -222,7 +222,7 @@ public class UserImportServiceTests
         var db = new FakeUserDbService { MemberToReturn = CreateMember(telegram: TelegramLink(chatId: 987654321L, username: "new_telegram")) };
         var importService = CreateImportService(CreateMember(telegram: TelegramLink()), db);
 
-        var result = await importService.ImportUserById(1, TelegramLink(987654321L, "new_telegram"));
+        var result = await importService.ImportUserById(new UserIdentification(1), TelegramLink(987654321L, "new_telegram"));
 
         db.UpdateCalls.ShouldBe([(1, (string?)null, (string?)null, TelegramLink(987654321L, "new_telegram"))]);
         db.AddCalls.ShouldBeEmpty();
@@ -236,7 +236,7 @@ public class UserImportServiceTests
         var member = CreateMember();
         var importService = CreateImportService(member, db);
 
-        var result = await importService.ImportUserById(1, telegram: null);
+        var result = await importService.ImportUserById(new UserIdentification(1), telegram: null);
 
         db.UpdateCalls.ShouldBeEmpty();
         db.AddCalls.ShouldBeEmpty();
@@ -249,7 +249,7 @@ public class UserImportServiceTests
         var db = new FakeUserDbService { MemberToReturn = CreateMember(userName: "nick", avatarUrl: "https://a/64.png", telegram: TelegramLink(chatId: 555L, username: "tg_user")) };
         var importService = CreateImportService(existingMember: null, db, CreateJoinUserInfoClient());
 
-        var result = await importService.ImportUserById(1, TelegramLink(555L, "tg_user"));
+        var result = await importService.ImportUserById(new UserIdentification(1), TelegramLink(555L, "tg_user"));
 
         db.AddCalls.ShouldBe([(1, "nick", "https://a/64.png", TelegramLink(555L, "tg_user"))]);
         db.UpdateCalls.ShouldBeEmpty();
@@ -293,13 +293,13 @@ public class UserImportServiceTests
 
         public BastiliaMember? MemberToReturn { get; set; }
 
-        public Task<BastiliaMember> AddUser(int playerId, string nickName, string avatarUrl, TelegramSocialLink? telegram = null)
+        public Task<BastiliaMember> AddUser(UserIdentification playerId, string nickName, string avatarUrl, TelegramSocialLink? telegram = null)
         {
             AddCalls.Add((playerId, nickName, avatarUrl, telegram));
             return Task.FromResult(MemberToReturn ?? throw new InvalidOperationException("MemberToReturn не задан"));
         }
 
-        public Task<BastiliaMember> UpdateUser(int playerId, string? nickName, string? avatarUrl, TelegramSocialLink? telegram = null)
+        public Task<BastiliaMember> UpdateUser(UserIdentification playerId, string? nickName, string? avatarUrl, TelegramSocialLink? telegram = null)
         {
             UpdateCalls.Add((playerId, nickName, avatarUrl, telegram));
             return Task.FromResult(MemberToReturn ?? throw new InvalidOperationException("MemberToReturn не задан"));

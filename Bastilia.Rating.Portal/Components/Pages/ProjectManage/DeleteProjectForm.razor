@@ -19,7 +19,7 @@
 
 @code {
     [Parameter, EditorRequired]
-    public int ProjectId { get; set; }
+    public BastiliaProjectId ProjectId { get; set; } = null!;
 
     [SupplyParameterFromForm]
     private DeleteViewModel? Model { get; set; }

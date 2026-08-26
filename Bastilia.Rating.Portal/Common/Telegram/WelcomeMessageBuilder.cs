@@ -16,7 +16,7 @@ public class WelcomeMessageBuilder
             return string.Join("\n\n", Greeting, unknown);
         }
 
-        var profileLink = member.Slug ?? member.JoinrpgUserId.ToString();
+        var profileLink = member.Slug ?? member.JoinrpgUserId.Value.ToString();
         var greeting = $"Здравствуйте, <b>{WebUtility.HtmlEncode(member.UserName)}</b>!";
         var profile = $"<a href=\"https://{ratingHost}/member/{profileLink}\">Твой профиль в рейтинге</a>";
 

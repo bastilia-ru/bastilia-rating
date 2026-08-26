@@ -13,7 +13,7 @@ public class BastiliaUserLoginHandlerTests
     private const string ExistingTelegramUsername = "old_telegram";
 
     private static BastiliaMember CreateMember(string userName = "old", string avatarUrl = "https://example.com/old.png", TelegramSocialLink? telegram = null) =>
-        new(42, userName, avatarUrl, "slug", false, [], [], [], null, telegram);
+        new(new UserIdentification(42), userName, avatarUrl, "slug", false, [], [], [], null, telegram);
 
     private static TelegramSocialLink TelegramLink(long chatId = ExistingChatId, string? username = ExistingTelegramUsername)
         => TelegramSocialLink.FromOptional(chatId, username)!;
@@ -152,13 +152,13 @@ public class BastiliaUserLoginHandlerTests
 
         public BastiliaMember? MemberToReturn { get; set; }
 
-        public Task<BastiliaMember> AddUser(int playerId, string nickName, string avatarUrl, TelegramSocialLink? telegram = null)
+        public Task<BastiliaMember> AddUser(UserIdentification playerId, string nickName, string avatarUrl, TelegramSocialLink? telegram = null)
         {
             AddCalls.Add((playerId, nickName, avatarUrl, telegram));
             return Task.FromResult(MemberToReturn ?? throw new InvalidOperationException("MemberToReturn не задан"));
         }
 
-        public Task<BastiliaMember> UpdateUser(int playerId, string? nickName, string? avatarUrl, TelegramSocialLink? telegram = null)
+        public Task<BastiliaMember> UpdateUser(UserIdentification playerId, string? nickName, string? avatarUrl, TelegramSocialLink? telegram = null)
         {
             UpdateCalls.Add((playerId, nickName, avatarUrl, telegram));
             return Task.FromResult(MemberToReturn ?? throw new InvalidOperationException("MemberToReturn не задан"));

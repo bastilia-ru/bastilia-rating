@@ -6,18 +6,18 @@ namespace Bastilia.Rating.Database.DbServices
 {
     internal class NewsService(AppDbContext appDbContext, ITelegramNewsSender telegramSender) : IProjectNewsService
     {
-        public async Task<ProjectNews> Publish(int projectId, UserIdentification authorUserId, string newsText)
+        public async Task<ProjectNews> Publish(BastiliaProjectId projectId, UserIdentification authorUserId, string newsText)
         {
             var project = await appDbContext.BastiliaProjects.FirstOrDefaultAsync(x => x.BastiliaProjectId == projectId)
                 ?? throw new InvalidOperationException($"Project {projectId} not found");
 
-            var author = await appDbContext.Set<User>().FindAsync(authorUserId.Value)
+            var author = await appDbContext.Set<User>().FindAsync(authorUserId)
                 ?? throw new InvalidOperationException($"User {authorUserId} not found");
 
             var newsEntity = new ProjectNewsEntity
             {
                 Project = project,
-                AuthorUserId = authorUserId.Value,
+                AuthorUserId = authorUserId,
                 Author = author,
                 CreatedAt = DateTimeOffset.UtcNow,
                 Text = newsText,

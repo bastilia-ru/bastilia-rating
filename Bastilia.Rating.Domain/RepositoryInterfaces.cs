@@ -4,7 +4,7 @@ namespace Bastilia.Rating.Domain;
 
 public interface IBastiliaMemberRepository
 {
-    Task<BastiliaMember?> GetByIdAsync(int userId);
+    Task<BastiliaMember?> GetByIdAsync(UserIdentification userId);
     Task<BastiliaMember?> GetBySlugAsync(string slug);
     Task<BastiliaMember?> GetByTelegramChatIdAsync(TelegramChatId chatId);
 
@@ -20,12 +20,12 @@ public interface IBastiliaMemberRepository
 
 public interface IBastiliaProjectRepository
 {
-    Task<BastiliaProjectWithDetails?> GetByIdAsync(int projectId);
+    Task<BastiliaProjectWithDetails?> GetByIdAsync(BastiliaProjectId projectId);
     Task<BastiliaProjectWithDetails?> GetBySlugAsync(string slug);
     Task<IReadOnlyCollection<BastiliaProject>> GetActiveProjects();
     Task<IReadOnlyCollection<BastiliaProject>> GetAllProjects();
     Task<IReadOnlyCollection<BastiliaCalendarItem>> GetProjectCalendarFor(int year);
-    Task<IReadOnlyCollection<int>> GetProjectIdsForCoordinator(int joinrpgUserId);
+    Task<IReadOnlyCollection<BastiliaProjectId>> GetProjectIdsForCoordinator(UserIdentification joinrpgUserId);
 }
 
 public interface IBastiliaTemplateRepository
@@ -40,6 +40,6 @@ public interface IBastiliaKograIgraRepository
 
 public interface IProjectNewsRepository
 {
-    Task<ProjectNews?> GetLastForProject(int projectId);
-    Task<IReadOnlyCollection<ProjectNews>> GetAllForProject(int projectId);
+    Task<ProjectNews?> GetLastForProject(BastiliaProjectId projectId);
+    Task<IReadOnlyCollection<ProjectNews>> GetAllForProject(BastiliaProjectId projectId);
 }

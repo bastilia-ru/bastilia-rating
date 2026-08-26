@@ -5,7 +5,7 @@ namespace Bastilia.Rating.Tests;
 public class NewsMessageBuilderTests
 {
     private static ProjectNews CreateNews(int projectId = 2, string text = "**текст**") =>
-        new(1, projectId, 3, "Имя Автора", DateTimeOffset.UtcNow, text, NewsSendStatus.NotSent, null);
+        new(1, new BastiliaProjectId(projectId), new UserIdentification(3), "Имя Автора", DateTimeOffset.UtcNow, text, NewsSendStatus.NotSent, null);
 
     [Fact]
     public void WithSlug_BuildsHeaderHashtagBodyFooter()

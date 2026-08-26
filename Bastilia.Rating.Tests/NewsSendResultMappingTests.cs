@@ -7,9 +7,9 @@ public class NewsSendResultMappingTests
     private static ProjectNewsEntity CreateEntity() => new()
     {
         ProjectNewsId = 1,
-        ProjectId = 2,
-        AuthorUserId = 3,
-        Author = new User { JoinRpgUserId = 3, Username = "Имя Автора", AvatarUrl = "" },
+        ProjectId = new BastiliaProjectId(2),
+        AuthorUserId = new UserIdentification(3),
+        Author = new User { JoinRpgUserId = new UserIdentification(3), Username = "Имя Автора", AvatarUrl = "" },
         CreatedAt = DateTimeOffset.UtcNow,
         Text = "**текст**",
         SendStatus = NewsSendStatus.NotSent,

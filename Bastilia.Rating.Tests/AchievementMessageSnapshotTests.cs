@@ -16,7 +16,7 @@ public class AchievementMessageSnapshotTests : VerifyBase
         var template = new AchievementTemplate(
             Project: null, Name: "Спасатель <Моржов>",
             Description: "desc", DefaultUri: false,
-            RatingValue: 0, YearlyAchievement: false, TemplateId: 7);
+            RatingValue: 0, YearlyAchievement: false, TemplateId: new TemplateId(7));
 
         var message = new AchievementMessageBuilder()
             .BuildMessage("Имя & Фамилия", template, "Проект «Рассвет»", "rassvet", "rating.bastilia.ru", participatesInRating: true);
@@ -30,7 +30,7 @@ public class AchievementMessageSnapshotTests : VerifyBase
         var template = new AchievementTemplate(
             Project: null, Name: "Спасатель <Моржов>",
             Description: "desc", DefaultUri: false,
-            RatingValue: 5, YearlyAchievement: false, TemplateId: 7);
+            RatingValue: 5, YearlyAchievement: false, TemplateId: new TemplateId(7));
 
         var message = new AchievementMessageBuilder()
             .BuildMessage("Имя & Фамилия", template, "Проект «Рассвет»", "rassvet", "rating.bastilia.ru", participatesInRating: false);

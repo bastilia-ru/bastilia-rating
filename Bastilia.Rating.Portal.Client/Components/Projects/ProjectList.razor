@@ -40,7 +40,7 @@
         <TemplateColumn Context="project" Title="Новости" SortBy="@projectNewsSort">
             @if (project.LastNewsDate is { } lastNewsDate)
             {
-                <a href="/project/@project.BastiliaProjectId/news">@lastNewsDate.ToLocalTime().ToString("dd.MM.yyyy")</a>
+                <a href="/project/@project.BastiliaProjectId.Value/news">@lastNewsDate.ToLocalTime().ToString("dd.MM.yyyy")</a>
             }
             else
             {
@@ -48,7 +48,7 @@
             }
             @if (AdminProjectIds?.Contains(project.BastiliaProjectId) == true)
             {
-                <a href="/project/@project.BastiliaProjectId/news" title="Написать новость" class="ms-1">
+                <a href="/project/@project.BastiliaProjectId.Value/news" title="Написать новость" class="ms-1">
                     <JoinIcon Icon="JoinIconType.Edit" />
                 </a>
             }
@@ -70,7 +70,7 @@
     public bool ShowNews { get; set; }
 
     [CascadingParameter]
-    private HashSet<int>? AdminProjectIds { get; set; }
+    private HashSet<BastiliaProjectId>? AdminProjectIds { get; set; }
 
     GridSort<BastiliaProject> projectNameSort = GridSort<BastiliaProject>
        .ByDescending(x => x.ProjectName);

@@ -8,5 +8,5 @@ public record ActiveUserTelegramInfo(
     string UserName,
     TelegramSocialLink? Telegram) : IUserLink
 {
-    public int JoinrpgUserId => UserId.Value;
+    public UserIdentification JoinrpgUserId => UserId;
 }

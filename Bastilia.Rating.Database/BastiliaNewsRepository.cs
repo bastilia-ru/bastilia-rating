@@ -2,7 +2,7 @@ namespace Bastilia.Rating.Database;
 
 internal class BastiliaNewsRepository(IDbContextFactory<AppDbContext> contextFactory) : BastiliaRepositoryBase, IProjectNewsRepository
 {
-    public async Task<ProjectNews?> GetLastForProject(int projectId)
+    public async Task<ProjectNews?> GetLastForProject(BastiliaProjectId projectId)
     {
         await using var context = await contextFactory.CreateDbContextAsync();
         var entity = await Query(context)
@@ -12,7 +12,7 @@ internal class BastiliaNewsRepository(IDbContextFactory<AppDbContext> contextFac
         return entity is null ? null : ToNews(entity);
     }
 
-    public async Task<IReadOnlyCollection<ProjectNews>> GetAllForProject(int projectId)
+    public async Task<IReadOnlyCollection<ProjectNews>> GetAllForProject(BastiliaProjectId projectId)
     {
         await using var context = await contextFactory.CreateDbContextAsync();
         var entities = await Query(context)

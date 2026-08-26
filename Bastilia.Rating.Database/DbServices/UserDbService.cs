@@ -5,7 +5,7 @@ namespace Bastilia.Rating.Database.DbServices
 {
     internal class UserDbService(IDbContextFactory<AppDbContext> contextFactory, ILogger<UserDbService> logger) : IUserDbService
     {
-        public async Task<BastiliaMember> AddUser(int playerId, string nickName, string avatarUrl, TelegramSocialLink? telegram = null)
+        public async Task<BastiliaMember> AddUser(UserIdentification playerId, string nickName, string avatarUrl, TelegramSocialLink? telegram = null)
         {
             logger.LogInformation("Создаём нового пользователя {JoinRpgUserId} с ником '{Username}', Telegram '{Telegram}'",
                 playerId, nickName, telegram);
@@ -29,7 +29,7 @@ namespace Bastilia.Rating.Database.DbServices
             return await rep.GetByIdAsync(playerId) ?? throw new InvalidOperationException();
         }
 
-        public async Task<BastiliaMember> UpdateUser(int playerId, string? nickName, string? avatarUrl, TelegramSocialLink? telegram = null)
+        public async Task<BastiliaMember> UpdateUser(UserIdentification playerId, string? nickName, string? avatarUrl, TelegramSocialLink? telegram = null)
         {
             await using (var appDbContext = await contextFactory.CreateDbContextAsync())
             {
