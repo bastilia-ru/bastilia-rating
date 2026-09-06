@@ -8,6 +8,7 @@ using Bastilia.Rating.Portal.Components;
 using JoinRpg.Client;
 using JoinRpg.Common.KogdaIgraClient;
 using JoinRpg.Common.WebInfrastructure;
+using JoinRpg.Common.WebInfrastructure.Auth;
 using Microsoft.AspNetCore.Mvc;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -28,7 +29,9 @@ builder.Services.AddJoinWebPlatform(
 
 builder.Services.Configure<JoinRpgHostNamesOptions>(builder.Configuration.GetSection("JoinRpgHostNames"));
 
-builder.Services.AddJoinRpgAuthentication(builder.Configuration);
+builder.Services.AddCascadingAuthenticationState();
+builder.Services.AddJoinRpgAuthentication<AppDbContext>(builder.Configuration);
+builder.Services.AddScoped<IJoinUserLoginHandler, BastiliaUserLoginHandler>();
 
 builder.Services.AddRatingDal(builder.Configuration, builder.Environment);
 builder.Services.AddLocalization();
