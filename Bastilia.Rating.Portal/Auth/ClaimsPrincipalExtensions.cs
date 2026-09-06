@@ -5,11 +5,10 @@ namespace Bastilia.Rating.Portal.Auth;
 
 internal static class ClaimsPrincipalExtensions
 {
+    // Не через extension-синтаксис (user.GetJoinrpgUserId()) — иначе имя совпадёт с этим же методом
+    // и получится бесконечная рекурсия вместо вызова JoinRpg.Common.WebInfrastructure.Auth.ClaimsPrincipalExtensions.
     public static int GetJoinrpgUserId(this ClaimsPrincipal user)
-    {
-        var value = user.FindFirstValue(ClaimTypes.NameIdentifier);
-        return int.TryParse(value, out var id) ? id : throw new InvalidOperationException("User has no valid JoinrpgUserId claim");
-    }
+        => JoinRpg.Common.WebInfrastructure.Auth.ClaimsPrincipalExtensions.GetJoinrpgUserId(user).Value;
 
     public static bool IsProjectAdmin(this ClaimsPrincipal user, BastiliaProject project)
     {
