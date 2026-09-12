@@ -1,4 +1,4 @@
-﻿using JoinRpg.Client;
+using JoinRpg.Client;
 using Microsoft.Extensions.Logging;
 
 namespace Bastilia.Rating.Domain.DomainServices;

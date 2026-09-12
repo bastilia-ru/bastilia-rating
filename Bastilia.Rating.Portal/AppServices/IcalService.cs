@@ -1,10 +1,10 @@
-﻿using Bastilia.Rating.Domain;
+using System.Text;
+using Bastilia.Rating.Domain;
 using Bastilia.Rating.Domain.DomainServices;
 using Ical.Net;
 using Ical.Net.CalendarComponents;
 using Ical.Net.DataTypes;
 using Ical.Net.Serialization;
-using System.Text;
 
 namespace Bastilia.Rating.Portal.AppServices
 {

@@ -1,4 +1,4 @@
-﻿using Bastilia.Rating.Domain.Common;
+using Bastilia.Rating.Domain.Common;
 
 namespace Bastilia.Rating.Domain
 {

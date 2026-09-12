@@ -1,4 +1,4 @@
-﻿namespace Bastilia.Rating.Portal.Client.Components.Calendar;
+namespace Bastilia.Rating.Portal.Client.Components.Calendar;
 
 internal class DateRangeHelper
 {
