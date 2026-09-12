@@ -1,4 +1,4 @@
-﻿using Bastilia.Rating.Database.Entities;
+using Bastilia.Rating.Database.Entities;
 
 namespace Bastilia.Rating.Database.DbServices
 {

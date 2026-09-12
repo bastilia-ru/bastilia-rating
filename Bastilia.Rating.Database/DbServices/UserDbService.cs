@@ -1,4 +1,4 @@
-﻿namespace Bastilia.Rating.Database.DbServices
+namespace Bastilia.Rating.Database.DbServices
 {
     internal class UserDbService(IDbContextFactory<AppDbContext> contextFactory) : IUserDbService
     {

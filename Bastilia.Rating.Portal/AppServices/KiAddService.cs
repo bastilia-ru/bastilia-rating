@@ -1,4 +1,4 @@
-﻿using Bastilia.Rating.Domain;
+using Bastilia.Rating.Domain;
 using JoinRpg.Common.KogdaIgraClient;
 
 namespace Bastilia.Rating.Portal.AppServices

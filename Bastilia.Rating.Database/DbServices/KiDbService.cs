@@ -1,4 +1,4 @@
-﻿
+
 namespace Bastilia.Rating.Database.DbServices
 {
     internal class KiDbService(IDbContextFactory<AppDbContext> contextFactory) : IKiDbService

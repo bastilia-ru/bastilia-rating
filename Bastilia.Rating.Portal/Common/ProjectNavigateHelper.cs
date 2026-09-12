@@ -1,4 +1,4 @@
-﻿using System.Security.Claims;
+using System.Security.Claims;
 using Bastilia.Rating.Domain;
 using Bastilia.Rating.Portal.Auth;
 using Microsoft.AspNetCore.Components;

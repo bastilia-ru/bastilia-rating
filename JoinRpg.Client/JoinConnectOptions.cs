@@ -1,4 +1,4 @@
-﻿namespace JoinRpg.Client
+namespace JoinRpg.Client
 {
     public class JoinConnectOptions
     {

@@ -1,4 +1,4 @@
-﻿namespace Bastilia.Rating.Domain.DomainServices;
+namespace Bastilia.Rating.Domain.DomainServices;
 
 public class CalendarService(IBastiliaMemberRepository bastiliaMemberRepository,
     IBastiliaProjectRepository bastiliaProjectRepository,

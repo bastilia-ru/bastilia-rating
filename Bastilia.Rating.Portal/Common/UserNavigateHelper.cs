@@ -1,4 +1,4 @@
-﻿using Bastilia.Rating.Domain;
+using Bastilia.Rating.Domain;
 using Bastilia.Rating.Domain.DomainServices;
 using Microsoft.AspNetCore.Components;
 
