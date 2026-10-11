@@ -3,7 +3,6 @@
   <PropertyGroup>
     <OutputType>Exe</OutputType>
 	<ContainerRuntimeIdentifier>linux-x64</ContainerRuntimeIdentifier>
-	<ContainerRegistry>cr.selcloud.ru</ContainerRegistry>
 	<ContainerRepository>joinrpg/bastilia-rating-migrator</ContainerRepository>
 	<RuntimeIdentifiers>linux-x64</RuntimeIdentifiers>
   </PropertyGroup>
