@@ -78,4 +78,4 @@ docker-compose up -d
 
 ### Деплой
 
-Контейнеры публикуются в Yandex Container Registry (`cr.yandex`). CI (GitHub Actions) собирает при пуше в `master` или по тегам, вычисляет semver через PowerShell-скрипт, запускает `dotnet publish /t:PublishContainer`, затем деплоит через `deploy-prod-auto.yml`.
+CI (GitHub Actions) собирает при пуше в `master` или по тегам, вычисляет semver через PowerShell-скрипт и собирает образы `dotnet publish /t:PublishContainer` в локальный docker (`joinrpg/<имя>:latest` и `:<версия>`, `ContainerRegistry` не задан). Дальше `docker push` публикует их в Selectel Container Registry (`cr.selcloud.ru/joinrpg`, целевой реестр) и временно в Yandex Container Registry (`cr.yandex`): деплой через `deploy-prod-auto.yml` пока берёт образы оттуда. Прямой пуш из SDK в Selectel не работает: реестр отдаёт в Location внутренний адрес.
