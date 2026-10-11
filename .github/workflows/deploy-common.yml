@@ -14,9 +14,9 @@ on:
 env:
   APP_NAME: bastilia-rating
   MIGRATOR_NAME: bastilia-rating-migrator
-  APP_IMAGE_ID: "joinrpg/bastilia-rating"
-  MIGRATOR_IMAGE_ID: "joinrpg/bastilia-rating-migrator"
-  REGISTRY_HOST: cr.selcloud.ru
+  APP_IMAGE_ID: "crp54lmmh2i4829mf2rc/bastilia-rating"
+  MIGRATOR_IMAGE_ID: "crp54lmmh2i4829mf2rc/bastilia-rating-migrator"
+  REGISTRY_HOST: cr.yandex
   
 
 jobs:
@@ -30,13 +30,11 @@ jobs:
     runs-on: ubuntu-24.04
     permissions: read-all
     steps:
-      - name: Log in to Selectel Container Registry
+      - name: Log in to Yandex Container Registry
         id: login-cr
-        uses: docker/login-action@v3
+        uses: yc-actions/yc-cr-login@v3
         with:
-            registry: cr.selcloud.ru
-            username: ${{ secrets.SELECTEL_CR_PULL_USERNAME }}
-            password: ${{ secrets.SELECTEL_CR_PULL_PASSWORD }}
+            yc-sa-json-credentials: ${{ secrets.YANDEX_CR_SA_KEY_JSON }}
 
       - name: Check images existence and fill images related env vars
         id: check_existence
@@ -81,22 +79,6 @@ jobs:
           file_name_prod: './manifests/${{ inputs.environment }}/bastilia-rating-secret.env'
           file_name_dev: './manifests/${{ inputs.environment }}/bastilia-rating-secret.env'
 
-      - name: Generate registry pull secret
-        env:
-          CR_PULL_USERNAME: ${{ secrets.SELECTEL_CR_PULL_USERNAME }}
-          CR_PULL_PASSWORD: ${{ secrets.SELECTEL_CR_PULL_PASSWORD }}
-        run: |
-            # No set -x here: the generated file contains registry credentials
-            set -euo pipefail
-            if [ -z "$CR_PULL_USERNAME" ] || [ -z "$CR_PULL_PASSWORD" ]; then
-              echo "::error::SELECTEL_CR_PULL_USERNAME or SELECTEL_CR_PULL_PASSWORD secret is not set"
-              exit 1
-            fi
-            CR_PULL_AUTH=$(printf '%s:%s' "$CR_PULL_USERNAME" "$CR_PULL_PASSWORD" | base64 -w0)
-            echo "::add-mask::${CR_PULL_AUTH}"
-            jq -n --arg host "$REGISTRY_HOST" --arg auth "$CR_PULL_AUTH" '{auths: {($host): {auth: $auth}}}' \
-              > ./manifests/${ENVIRONMENT}/selectel-cr-pull.dockerconfigjson
-
       - name: Generate environment manifests
         run: |
             set -x
@@ -107,11 +89,6 @@ jobs:
               envs:
               - bastilia-rating-secret.env
               behavior: replace
-
-            - name: selectel-cr-pull
-              type: kubernetes.io/dockerconfigjson
-              files:
-              - .dockerconfigjson=selectel-cr-pull.dockerconfigjson
 
             images:
             - name: ${APP_NAME}
@@ -135,8 +112,8 @@ jobs:
         run: |
           $ErrorActionPreference = 'Stop'
 
-          #Add new generated secrets (app config and registry pull secret), replace old migration job
-          &"kubectl" "--%" "replace --force --save-config -f ./kustomize_output/v1_secret_bastilia-rating-secret-* -f ./kustomize_output/v1_secret_selectel-cr-pull-* -f ./kustomize_output/batch_v1_job_bastilia-rating-migrator.yaml -n $env:ENVIRONMENT"
+          #Add new generated secret, replace old migration job
+          &"kubectl" "--%" "replace --force --save-config -f ./kustomize_output/v1_secret_bastilia-rating-secret-* -f ./kustomize_output/batch_v1_job_bastilia-rating-migrator.yaml -n $env:ENVIRONMENT"
           if ($LastExitCode -ne 0) {exit $LastExitCode}
 
           Write-Output "Waiting for job/bastilia-rating-migrator to be completed or failed..."

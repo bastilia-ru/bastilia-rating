@@ -96,10 +96,28 @@ jobs:
         username: ${{ secrets.SELECTEL_CR_USERNAME }}
         password: ${{ secrets.SELECTEL_CR_PASSWORD }}
 
+    # TODO: убрать, когда деплой переедет на Selectel
+    - name: Log in to Yandex Container Registry
+      if: github.event_name != 'pull_request' && github.event_name != 'merge_group'
+      id: login-yandex-cr
+      uses: yc-actions/yc-cr-login@v3
+      with:
+        yc-sa-json-credentials: ${{ secrets.YANDEX_CR_SA_KEY_JSON }}
+
     - name: Publish & push portal
       if: github.event_name != 'pull_request' && github.event_name != 'merge_group'
       run: dotnet publish --os linux --arch x64 -c Release --no-build /t:PublishContainer ${APP_PROJECT} -p:Version=${{ env.CALCULATED_VERSION }}
 
+    # TODO: убрать, когда деплой переедет на Selectel
+    - name: Publish & push portal to Yandex Container Registry
+      if: github.event_name != 'pull_request' && github.event_name != 'merge_group'
+      run: dotnet publish --os linux --arch x64 -c Release --no-build /t:PublishContainer ${APP_PROJECT} -p:Version=${{ env.CALCULATED_VERSION }} -p:ContainerRegistry=cr.yandex -p:ContainerRepository=crp54lmmh2i4829mf2rc/bastilia-rating
+
     - name: Publish & push migrator
       if: github.event_name != 'pull_request' && github.event_name != 'merge_group'
       run: dotnet publish --os linux --arch x64 -c Release --no-build /t:PublishContainer ${MIGRATOR_PROJECT} -p:Version=${{ env.CALCULATED_VERSION }}
+
+    # TODO: убрать, когда деплой переедет на Selectel
+    - name: Publish & push migrator to Yandex Container Registry
+      if: github.event_name != 'pull_request' && github.event_name != 'merge_group'
+      run: dotnet publish --os linux --arch x64 -c Release --no-build /t:PublishContainer ${MIGRATOR_PROJECT} -p:Version=${{ env.CALCULATED_VERSION }} -p:ContainerRegistry=cr.yandex -p:ContainerRepository=crp54lmmh2i4829mf2rc/bastilia-rating-migrator

@@ -78,4 +78,4 @@ docker-compose up -d
 
 ### Деплой
 
-Контейнеры публикуются в Selectel Container Registry (`cr.selcloud.ru/joinrpg`). Кластер тянет образы через pull-секрет `selectel-cr-pull`, который генерируется при деплое из секретов `SELECTEL_CR_PULL_USERNAME`/`SELECTEL_CR_PULL_PASSWORD`. CI (GitHub Actions) собирает при пуше в `master` или по тегам, вычисляет semver через PowerShell-скрипт, запускает `dotnet publish /t:PublishContainer`, затем деплоит через `deploy-prod-auto.yml`.
+Контейнеры публикуются в Selectel Container Registry (`cr.selcloud.ru/joinrpg`, целевой реестр, задан в `.csproj`) и временно, вторым прогоном `dotnet publish`, в Yandex Container Registry (`cr.yandex`): деплой пока берёт образы оттуда. CI (GitHub Actions) собирает при пуше в `master` или по тегам, вычисляет semver через PowerShell-скрипт, запускает `dotnet publish /t:PublishContainer`, затем деплоит через `deploy-prod-auto.yml`.
