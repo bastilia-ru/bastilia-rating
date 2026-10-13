@@ -14,10 +14,10 @@ on:
 env:
   APP_NAME: bastilia-rating
   MIGRATOR_NAME: bastilia-rating-migrator
-  APP_IMAGE_ID: "crp54lmmh2i4829mf2rc/bastilia-rating"
-  MIGRATOR_IMAGE_ID: "crp54lmmh2i4829mf2rc/bastilia-rating-migrator"
-  REGISTRY_HOST: cr.yandex
-  
+  APP_IMAGE_ID: "joinrpg/bastilia-rating"
+  MIGRATOR_IMAGE_ID: "joinrpg/bastilia-rating-migrator"
+  REGISTRY_HOST: cr.selcloud.ru
+
 
 jobs:
   deploy:
@@ -30,11 +30,13 @@ jobs:
     runs-on: ubuntu-24.04
     permissions: read-all
     steps:
-      - name: Log in to Yandex Container Registry
+      - name: Log in to Selectel Container Registry
         id: login-cr
-        uses: yc-actions/yc-cr-login@v3
+        uses: docker/login-action@v3
         with:
-            yc-sa-json-credentials: ${{ secrets.YANDEX_CR_SA_KEY_JSON }}
+          registry: cr.selcloud.ru
+          username: ${{ vars.SELECTEL_CR_USERNAME }}
+          password: ${{ secrets.SELECTEL_CR_PASSWORD }}
 
       - name: Check images existence and fill images related env vars
         id: check_existence
