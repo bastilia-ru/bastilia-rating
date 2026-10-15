@@ -1,5 +1,6 @@
 resources:
 - ../base
+- www-redirect.yaml
 namespace: bastilia-rating-prod
 configMapGenerator:
 - envs:
@@ -14,23 +15,11 @@ labels:
 patches:
 - patch: |-
     - op: replace
-      path: /spec/rules/0/host
+      path: /spec/hostnames/0
       value: rating.bastilia.ru
-    - op: replace
-      path: /spec/tls/0/hosts/0
-      value: rating.bastilia.ru
-    - op: add
-      path: /spec/tls/0/hosts/1
-      value: www.rating.bastilia.ru
-    - op: replace
-      path: /spec/tls/0/secretName
-      value: bastilia-rating-tls
-    - op: add
-      path: "/metadata/annotations/nginx.ingress.kubernetes.io~1from-to-www-redirect"
-      value: true
   target:
-    group: networking.k8s.io
-    kind: Ingress
+    group: gateway.networking.k8s.io
+    kind: HTTPRoute
     name: bastilia-rating
     version: v1
 - patch: |-
