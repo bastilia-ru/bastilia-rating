@@ -31,6 +31,8 @@ spec:
                   - bastilia-rating
               topologyKey: kubernetes.io/hostname
             weight: 100
+      imagePullSecrets:
+      - name: craas-auth # создаёт интеграция кластера Selectel с Container Registry
       containers:
       - name: bastilia-rating
         envFrom:

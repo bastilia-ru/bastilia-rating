@@ -1,0 +1,22 @@
+name: Deploy to prod
+on:
+  workflow_dispatch:
+    inputs:
+      deployVersion:
+        description: "Docker image to deploy"
+        required: true
+        default: latest
+
+concurrency:
+  group: prod
+  cancel-in-progress: true
+
+jobs:
+  deploy:
+    permissions: read-all
+    uses: ./.github/workflows/deploy-common.yml
+    with:
+      deployVersion: ${{ github.event.inputs.deployVersion }}
+      environment: bastilia-rating-prod
+      environment_url: https://rating.bastilia.ru
+    secrets: inherit

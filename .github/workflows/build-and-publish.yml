@@ -90,7 +90,7 @@ jobs:
     - name: Log in to Selectel Container Registry
       if: github.event_name != 'pull_request' && github.event_name != 'merge_group'
       id: login-cr
-      uses: docker/login-action@v3
+      uses: docker/login-action@v4
       with:
         registry: cr.selcloud.ru
         username: ${{ vars.SELECTEL_CR_USERNAME }}

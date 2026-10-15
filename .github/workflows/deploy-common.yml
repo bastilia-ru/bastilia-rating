@@ -14,10 +14,10 @@ on:
 env:
   APP_NAME: bastilia-rating
   MIGRATOR_NAME: bastilia-rating-migrator
-  APP_IMAGE_ID: "crp54lmmh2i4829mf2rc/bastilia-rating"
-  MIGRATOR_IMAGE_ID: "crp54lmmh2i4829mf2rc/bastilia-rating-migrator"
-  REGISTRY_HOST: cr.yandex
-  
+  APP_IMAGE_ID: "joinrpg/bastilia-rating"
+  MIGRATOR_IMAGE_ID: "joinrpg/bastilia-rating-migrator"
+  REGISTRY_HOST: cr.selcloud.ru
+
 
 jobs:
   deploy:
@@ -30,11 +30,13 @@ jobs:
     runs-on: ubuntu-24.04
     permissions: read-all
     steps:
-      - name: Log in to Yandex Container Registry
+      - name: Log in to Selectel Container Registry
         id: login-cr
-        uses: yc-actions/yc-cr-login@v3
+        uses: docker/login-action@v4
         with:
-            yc-sa-json-credentials: ${{ secrets.YANDEX_CR_SA_KEY_JSON }}
+          registry: cr.selcloud.ru
+          username: ${{ vars.SELECTEL_CR_USERNAME }}
+          password: ${{ secrets.SELECTEL_CR_PASSWORD }}
 
       - name: Check images existence and fill images related env vars
         id: check_existence
@@ -61,13 +63,15 @@ jobs:
       - name: Install kubectl
         uses: azure/setup-kubectl@v5
         with:
-          version: v1.31.0
+          version: v1.35.9
 
-      - name: Set kubeconfig
+      - name: Set kube context
         uses: azure/k8s-set-context@v5
         with:
-          method: kubeconfig
-          kubeconfig: ${{ secrets.KUBECONFIG }}
+          method: service-account
+          k8s-url: ${{ vars.SELECTEL_K8S_SERVER }}
+          # YAML объекта Secret сервис-аккаунта: kubectl -n kube-system get secret <sa>-token -o yaml
+          k8s-secret: ${{ secrets.SELECTEL_DEPLOY_SA_SECRET }}
 
       - name: Turn github secrets to .env file
         uses: shine1594/secrets-to-env-action@v1.7.0
@@ -156,7 +160,7 @@ jobs:
           #https://github.com/kubernetes/kubernetes/blob/v1.24.0/staging/src/k8s.io/kubectl/pkg/util/prune/prune.go
 
 
-          KUBECTL_PRUNE_WHITELIST="\
+          KUBECTL_PRUNE_ALLOWLIST="\
           --prune-allowlist=core/v1/ConfigMap \
           --prune-allowlist=core/v1/Endpoints \
           --prune-allowlist=core/v1/PersistentVolumeClaim \
@@ -166,12 +170,12 @@ jobs:
           --prune-allowlist=core/v1/Service \
           --prune-allowlist=batch/v1/Job \
           --prune-allowlist=batch/v1/CronJob \
-          --prune-allowlist=networking.k8s.io/v1/Ingress \
+          --prune-allowlist=gateway.networking.k8s.io/v1/HTTPRoute \
           --prune-allowlist=apps/v1/DaemonSet \
           --prune-allowlist=apps/v1/Deployment \
           --prune-allowlist=apps/v1/ReplicaSet \
           --prune-allowlist=apps/v1/StatefulSet
           "
 
-          kubectl apply -f ./kustomize_output --prune -l managed-by-kustomize=true --namespace ${ENVIRONMENT} $KUBECTL_PRUNE_WHITELIST
+          kubectl apply -f ./kustomize_output --prune -l managed-by-kustomize=true --namespace ${ENVIRONMENT} $KUBECTL_PRUNE_ALLOWLIST
           kubectl rollout status deployment/${APP_NAME} --namespace ${ENVIRONMENT}
