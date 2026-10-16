@@ -147,7 +147,7 @@ jobs:
 
 
           #Check last event for error. Must throw an error if, for instance, namespace CPU quota was exceeded
-          $LastEventForJob = &"kubectl" "--%" "get events -n $env:ENVIRONMENT --sort-by=.metadata.creationTimestamp --field-selector involvedObject.kind=Job,involvedObject.name=joinrpg-dal-migrate -o jsonpath='{.items[-1:].message}'"
+          $LastEventForJob = &"kubectl" "--%" "get events -n $env:ENVIRONMENT --sort-by=.metadata.creationTimestamp --field-selector involvedObject.kind=Job,involvedObject.name=bastilia-rating-migrator -o jsonpath='{.items[-1:].message}'"
           if ($LastEventForJob -imatch "^'Error .*") { throw $LastEventForJob }
 
           &"kubectl" "--%" "logs -n $env:ENVIRONMENT --follow job/bastilia-rating-migrator"
