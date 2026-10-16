@@ -1,11 +1,13 @@
 using Bastilia.Rating.Database.Entities;
+using Microsoft.AspNetCore.DataProtection.EntityFrameworkCore;
 using AchievementTemplate = Bastilia.Rating.Database.Entities.AchievementTemplate;
 using BastiliaProject = Bastilia.Rating.Database.Entities.BastiliaProject;
 
 namespace Bastilia.Rating.Database;
 
-public class AppDbContext(DbContextOptions<AppDbContext> options) : DbContext(options)
+public class AppDbContext(DbContextOptions<AppDbContext> options) : DbContext(options), IDataProtectionKeyContext
 {
+    public DbSet<DataProtectionKey> DataProtectionKeys { get; set; }
     public DbSet<BastiliaProject> BastiliaProjects { get; set; }
     public DbSet<ProjectAdmin> ProjectAdmins { get; set; }
     public DbSet<AchievementTemplate> AchievementTemplates { get; set; }
