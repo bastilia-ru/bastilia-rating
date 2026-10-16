@@ -20,11 +20,9 @@ builder.Services.AddRazorComponents()
     .AddInteractiveServerComponents()
     .AddInteractiveWebAssemblyComponents();
 
-builder.Services.AddJoinWebPlatform(
-    configuration: builder.Configuration,
+builder.Services.AddJoinWebPlatform<AppDbContext>(
     environment: builder.Environment,
     appName: "Bastilia.Rating.Portal",
-    dataProtectionConnectionStringName: "DataProtection",
     telemetryServiceNames: ["Bastilia.Rating.Portal"]);
 
 builder.Services.Configure<JoinRpgHostNamesOptions>(builder.Configuration.GetSection("JoinRpgHostNames"));

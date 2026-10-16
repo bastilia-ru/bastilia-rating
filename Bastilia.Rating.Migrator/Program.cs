@@ -1,5 +1,4 @@
 using Bastilia.Rating.Database;
-using JoinRpg.Common.WebInfrastructure.DataProtection;
 using JoinRpg.Common.WebInfrastructure.EfCoreMigration;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Hosting;
@@ -12,7 +11,6 @@ internal class Program
     {
         HostApplicationBuilder builder = Host.CreateApplicationBuilder(args);
         builder.Services.AddMigrationsLauncher();
-        builder.Services.RegisterMigrator<DataProtectionDbContext>(builder.Configuration, builder.Environment, "DataProtection");
         builder.Services.RegisterMigrator<AppDbContext>(builder.Configuration, builder.Environment, "BastiliaRating", options => options.UseOpenIddict());
 
         builder.Build().Run();
