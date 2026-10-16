@@ -13,7 +13,9 @@ concurrency:
 
 jobs:
   deploy:
-    permissions: read-all
+    # Не меньше, чем запрашивает deploy-common.yml, иначе он не стартует.
+    permissions:
+      contents: read
     uses: ./.github/workflows/deploy-common.yml
     with:
       deployVersion: ${{ github.event.inputs.deployVersion }}
