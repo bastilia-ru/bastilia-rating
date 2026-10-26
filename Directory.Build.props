@@ -14,6 +14,12 @@
 	  <!-- Всегда публикуем с двумя тегами: latest и версия -->
 	  <ContainerImageTags>latest;$(Version)</ContainerImageTags>
 
+	  <!--
+	  Commit sha в AssemblyInformationalVersion кладёт встроенный в SDK SourceLink, а с этим свойством —
+	  ещё и RepositoryUrl в AssemblyMetadata. По ним AppVersionInfo строит ссылку на коммит.
+	  Пакеты Microsoft.SourceLink.* не подключать: они выключают встроенный SourceLink (joinrpg/joinrpg-net#5628).
+	  -->
+	  <PublishRepositoryUrl>true</PublishRepositoryUrl>
 
   </PropertyGroup>
 	<ItemGroup>
