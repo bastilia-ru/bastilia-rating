@@ -111,5 +111,4 @@ jobs:
         uses: joinrpg/deploy-actions/apply-with-prune@v1
         with:
           namespace: ${{ inputs.environment }}
-          prune-selector: managed-by-kustomize=true
           rollout-deployments: ${{ env.APP_NAME }}
