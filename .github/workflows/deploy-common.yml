@@ -35,9 +35,8 @@ jobs:
     steps:
       - name: Log in to Selectel Container Registry
         id: login-cr
-        uses: docker/login-action@v4
+        uses: joinrpg/deploy-actions/selectel-cr-login@v1
         with:
-          registry: cr.selcloud.ru
           username: ${{ vars.SELECTEL_CR_USERNAME }}
           password: ${{ secrets.SELECTEL_CR_PASSWORD }}
 
