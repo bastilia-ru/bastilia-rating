@@ -61,10 +61,6 @@ jobs:
           secrets-json: ${{ toJSON(secrets) }}
           images-yaml: ${{ steps.check_existence.outputs.images-yaml }}
 
-# Uncomment for diagnostics. Warning! Output contains base64 encoded secrets
-#      - name: Show generated environment manifests
-#        run: cat ./kustomize_output/*
-
       - name: Apply DB migrations
         uses: joinrpg/deploy-actions/run-db-migrations@v1
         with:
