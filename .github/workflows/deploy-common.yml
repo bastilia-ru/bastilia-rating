@@ -40,24 +40,14 @@ jobs:
           username: ${{ vars.SELECTEL_CR_USERNAME }}
           password: ${{ secrets.SELECTEL_CR_PASSWORD }}
 
-      - name: Check images existence and fill images related env vars
+      - name: Resolve image digests
         id: check_existence
-        run: |
-          set -euxo pipefail
-
-          COMMON_IMAGE_VERSION=$(echo ${{ inputs.deployVersion }} | tr '[A-Z]' '[a-z]')
-
-          docker pull --quiet ${REGISTRY_HOST}/${APP_IMAGE_ID}:${COMMON_IMAGE_VERSION} > /dev/null
-          APP_IMAGE_DIGEST=$(docker inspect --format='{{index .RepoDigests 0}}' ${REGISTRY_HOST}/${APP_IMAGE_ID}:${COMMON_IMAGE_VERSION} | cut -d@ -f2)
-
-          docker pull --quiet ${REGISTRY_HOST}/${MIGRATOR_IMAGE_ID}:${COMMON_IMAGE_VERSION} > /dev/null
-          MIGRATOR_IMAGE_DIGEST=$(docker inspect --format='{{index .RepoDigests 0}}' ${REGISTRY_HOST}/${MIGRATOR_IMAGE_ID}:${COMMON_IMAGE_VERSION} | cut -d@ -f2)
-
-          #Having digest with version provides google/k8s-digester like experience and helps to avoid common pitfalls with "latest" tag
-          echo "APP_IMAGE_VERSION_WITH_DIGEST=${COMMON_IMAGE_VERSION}@${APP_IMAGE_DIGEST}" >> $GITHUB_ENV
-
-          #Having digest with version provides google/k8s-digester like experience and helps to avoid common pitfalls with "latest" tag
-          echo "MIGRATOR_IMAGE_VERSION_WITH_DIGEST=${COMMON_IMAGE_VERSION}@${MIGRATOR_IMAGE_DIGEST}" >> $GITHUB_ENV
+        uses: joinrpg/deploy-actions/resolve-image-digests@v1
+        with:
+          version: ${{ inputs.deployVersion }}
+          images: |
+            ${{ env.APP_NAME }}=${{ env.APP_IMAGE_ID }}
+            ${{ env.MIGRATOR_NAME }}=${{ env.MIGRATOR_IMAGE_ID }}
 
       - name: Checkout Repo
         uses: actions/checkout@v7
