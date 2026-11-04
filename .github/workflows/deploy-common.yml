@@ -42,8 +42,8 @@ jobs:
         with:
           version: ${{ inputs.deployVersion }}
           images: |
-            ${{ env.APP_NAME }}=${{ env.APP_IMAGE_ID }}
-            ${{ env.MIGRATOR_NAME }}=${{ env.MIGRATOR_IMAGE_ID }}
+            bastilia-rating=joinrpg/bastilia-rating
+            bastilia-rating-migrator=joinrpg/bastilia-rating-migrator
 
       - name: Checkout Repo
         uses: actions/checkout@v7
