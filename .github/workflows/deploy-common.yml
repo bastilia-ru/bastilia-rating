@@ -66,6 +66,7 @@ jobs:
         uses: joinrpg/deploy-actions/setup-kubectl-context@v1
         with:
           k8s-url: ${{ vars.SELECTEL_K8S_SERVER }}
+          # YAML объекта Secret сервис-аккаунта: kubectl -n kube-system get secret <sa>-token -o yaml
           deploy-sa-secret: ${{ secrets.SELECTEL_DEPLOY_SA_SECRET }}
 
       - name: Turn github secrets to .env file
