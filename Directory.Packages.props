@@ -5,7 +5,7 @@
     <CentralPackageVersionOverrideEnabled>false</CentralPackageVersionOverrideEnabled>
   </PropertyGroup>
   <ItemGroup>
-    <PackageVersion Include="Ical.Net" Version="5.2.3" />
+    <PackageVersion Include="Ical.Net" Version="5.2.4" />
     <PackageVersion Include="JoinRpg.Common.WebInfrastructure" Version="2026.9.217" />
     <PackageVersion Include="JoinRpg.Common.WebComponents" Version="2026.9.217" />
     <PackageVersion Include="LinqKit.Microsoft.EntityFrameworkCore" Version="10.1.1" />
