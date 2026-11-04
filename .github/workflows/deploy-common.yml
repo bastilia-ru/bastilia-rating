@@ -21,8 +21,6 @@ jobs:
       name: ${{ inputs.environment }}
       url: ${{ inputs.environment_url }}
     name: deploy
-    env:
-      ENVIRONMENT: ${{ inputs.environment }}
     runs-on: ubuntu-24.04
     # GITHUB_TOKEN нужен только actions/checkout; реестр и кластер — через секреты.
     # Права вызывающего job'а ограничивают эти, поэтому менять вместе с deploy-prod.yml.
@@ -68,44 +66,12 @@ jobs:
 #        run: cat ./kustomize_output/*
 
       - name: Apply DB migrations
-        run: |
-          $ErrorActionPreference = 'Stop'
-
-          #Add new generated secret, replace old migration job
-          &"kubectl" "--%" "replace --force --save-config -f ./kustomize_output/v1_secret_bastilia-rating-secret-* -f ./kustomize_output/batch_v1_job_bastilia-rating-migrator.yaml -n $env:ENVIRONMENT"
-          if ($LastExitCode -ne 0) {exit $LastExitCode}
-
-          Write-Output "Waiting for job/bastilia-rating-migrator to be completed or failed..."
-
-          #Keep waiting while job is not completed or failed
-          while ($true){
-
-          $status = &"kubectl" "--%" "get job bastilia-rating-migrator -n $env:ENVIRONMENT -o json" | ConvertFrom-Json
-          if ($LastExitCode -ne 0) {exit $LastExitCode}
-          $conditions = $status.status.conditions
-          if ($conditions) {
-              foreach ($condition in $conditions) {
-              if ($condition.type -eq "Complete" -and $condition.status -eq "True") {
-                  Write-Output "✅ Job завершен успешно!"
-                  exit 0
-              }
-              elseif ($condition.type -eq "Failed" -and $condition.status -eq "True") {
-                  Write-Output "Migration has failed. Migration's job pod info:"
-                  &"kubectl" "--%"  "get pods -n $env:ENVIRONMENT --selector=job-name=bastilia-rating-migrator -o=yaml"
-                  exit 1
-              }
-              }
-          }
-
-
-          #Check last event for error. Must throw an error if, for instance, namespace CPU quota was exceeded
-          $LastEventForJob = &"kubectl" "--%" "get events -n $env:ENVIRONMENT --sort-by=.metadata.creationTimestamp --field-selector involvedObject.kind=Job,involvedObject.name=bastilia-rating-migrator -o jsonpath='{.items[-1:].message}'"
-          if ($LastEventForJob -imatch "^'Error .*") { throw $LastEventForJob }
-
-          &"kubectl" "--%" "logs -n $env:ENVIRONMENT --follow job/bastilia-rating-migrator"
-          Start-Sleep 3
-          }
-        shell: pwsh
+        uses: joinrpg/deploy-actions/run-db-migrations@v1
+        with:
+          namespace: ${{ inputs.environment }}
+          job-name: bastilia-rating-migrator
+          secret-glob: ./kustomize_output/v1_secret_bastilia-rating-secret-*
+          migration-manifest: ./kustomize_output/batch_v1_job_bastilia-rating-migrator.yaml
 
       - name: Deploy to k8s
         uses: joinrpg/deploy-actions/apply-with-prune@v1
