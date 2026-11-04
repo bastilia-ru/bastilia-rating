@@ -13,10 +13,6 @@ on:
         type: string
 env:
   APP_NAME: bastilia-rating
-  MIGRATOR_NAME: bastilia-rating-migrator
-  APP_IMAGE_ID: "joinrpg/bastilia-rating"
-  MIGRATOR_IMAGE_ID: "joinrpg/bastilia-rating-migrator"
-  REGISTRY_HOST: cr.selcloud.ru
 
 
 jobs:
@@ -60,39 +56,18 @@ jobs:
           deploy-sa-secret: ${{ secrets.SELECTEL_DEPLOY_SA_SECRET }}
 
       - name: Turn github secrets to .env file
-        uses: shine1594/secrets-to-env-action@v1.7.0
+        uses: joinrpg/deploy-actions/secrets-to-kustomize-env@v1
         with:
-          secrets: ${{ toJSON(secrets) }}
-          secrets_env: all
-          prefix_prod: 'KUBESECRET_'
-          prefix_dev: 'KUBESECRET_'
-          file_name_prod: './manifests/${{ inputs.environment }}/bastilia-rating-secret.env'
-          file_name_dev: './manifests/${{ inputs.environment }}/bastilia-rating-secret.env'
+          secrets-json: ${{ toJSON(secrets) }}
+          output-file: ./manifests/${{ inputs.environment }}/bastilia-rating-secret.env
 
       - name: Generate environment manifests
-        run: |
-            set -x
-            cat <<EOF >> ./manifests/${ENVIRONMENT}/kustomization.yaml
-
-            secretGenerator:
-            - name: bastilia-rating-secret
-              envs:
-              - bastilia-rating-secret.env
-              behavior: replace
-
-            images:
-            - name: ${APP_NAME}
-              newName: ${REGISTRY_HOST}/${{ env.APP_IMAGE_ID }}
-              newTag: ${{ env.APP_IMAGE_VERSION_WITH_DIGEST }}
-
-            - name: ${MIGRATOR_NAME}
-              newName: ${REGISTRY_HOST}/${{ env.MIGRATOR_IMAGE_ID }}
-              newTag: ${{ env.MIGRATOR_IMAGE_VERSION_WITH_DIGEST }}
-
-            EOF
-            #folder must present to let kustomize generate separate files
-            mkdir kustomize_output
-            kubectl kustomize ./manifests/${ENVIRONMENT}/ -o kustomize_output
+        uses: joinrpg/deploy-actions/render-kustomize@v1
+        with:
+          overlay-path: ./manifests/${{ inputs.environment }}
+          secret-name: bastilia-rating-secret
+          secret-env-file: ./manifests/${{ inputs.environment }}/bastilia-rating-secret.env
+          images-yaml: ${{ steps.check_existence.outputs.images-yaml }}
 
 # Uncomment for diagnostics. Warning! Output contains base64 encoded secrets
 #      - name: Show generated environment manifests
