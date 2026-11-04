@@ -55,18 +55,12 @@ jobs:
           # YAML объекта Secret сервис-аккаунта: kubectl -n kube-system get secret <sa>-token -o yaml
           deploy-sa-secret: ${{ secrets.SELECTEL_DEPLOY_SA_SECRET }}
 
-      - name: Turn github secrets to .env file
-        uses: joinrpg/deploy-actions/secrets-to-kustomize-env@v1
-        with:
-          secrets-json: ${{ toJSON(secrets) }}
-          output-file: ./manifests/${{ inputs.environment }}/bastilia-rating-secret.env
-
       - name: Generate environment manifests
-        uses: joinrpg/deploy-actions/render-kustomize@v1
+        uses: joinrpg/deploy-actions/render-deploy-manifests@v1
         with:
           overlay-path: ./manifests/${{ inputs.environment }}
           secret-name: bastilia-rating-secret
-          secret-env-file: ./manifests/${{ inputs.environment }}/bastilia-rating-secret.env
+          secrets-json: ${{ toJSON(secrets) }}
           images-yaml: ${{ steps.check_existence.outputs.images-yaml }}
 
 # Uncomment for diagnostics. Warning! Output contains base64 encoded secrets
