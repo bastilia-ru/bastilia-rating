@@ -1,23 +1,19 @@
 @switch (Status)
 {
     case BastiliaFinalStatus.Active:
-        <span class="badge bg-success">
+        <JoinBadge Variation="VariationStyleEnum.Success">
             Бастилец
-        </span>
+        </JoinBadge>
         break;
     case BastiliaFinalStatus.Retired:
-        <Tooltip Title="Бывший бастилец">
-        <span class="badge bg-secondary">
+        <JoinBadge Variation="VariationStyleEnum.None" Title="Бывший бастилец">
             Досрочно-освобожденный
-        </span>
-        </Tooltip>
+        </JoinBadge>
         break;
     case BastiliaFinalStatus.Mate:
-        <Tooltip Title="Есть хотя бы 1 активное достижение">
-            <span class="badge bg-info" title="Есть ">
-                Прибастиленный
-            </span>
-        </Tooltip>
+        <JoinBadge Variation="VariationStyleEnum.Info" Title="Есть хотя бы 1 активное достижение">
+            Прибастиленный
+        </JoinBadge>
         break;
     default:
         break;

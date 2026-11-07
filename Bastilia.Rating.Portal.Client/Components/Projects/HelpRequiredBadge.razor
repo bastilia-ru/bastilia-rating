@@ -1,11 +1,6 @@
-@if (Required)
-{
-    <Tooltip Title="@HowToHelp">
-        <span class="badge bg-warning">
-            ДА
-        </span>
-    </Tooltip>
-}
+<JoinBadge For="Required" Variation="VariationStyleEnum.Warning" Title="@HowToHelp">
+    ДА
+</JoinBadge>
 @code
 {
     [Parameter, EditorRequired]

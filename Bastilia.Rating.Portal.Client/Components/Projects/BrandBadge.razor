@@ -1,22 +1,22 @@
 @switch (Type)
 {
     case BrandType.Bastilia:
-        <span class="badge bg-success">
+        <JoinBadge Variation="VariationStyleEnum.Success">
             Бастилия и друзья
-        </span>
+        </JoinBadge>
         break;
     case BrandType.PubliclySupported:
-        <span class="badge bg-success">
+        <JoinBadge Variation="VariationStyleEnum.Success">
             Поддерживаем проект
-        </span>
+        </JoinBadge>
         break;
     case BrandType.PrivatelySupported:
     case BrandType.JustTracked:
         break;
     default:
-        <span class="badge bg-light text-dark">
+        <JoinBadge Variation="VariationStyleEnum.None">
             Не определен
-        </span>
+        </JoinBadge>
         break;
 }
 
