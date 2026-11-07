@@ -52,17 +52,22 @@ namespace Bastilia.Rating.Database.DbServices
             return BastiliaNewsRepository.ToNews(newsEntity);
         }
 
-        private static void ApplySendResult(ProjectNewsEntity newsEntity, NewsSendResult result)
+        internal static void ApplySendResult(ProjectNewsEntity newsEntity, NewsSendResult result)
         {
-            if (result.Sent)
+            switch (result.Outcome)
             {
-                newsEntity.SendStatus = NewsSendStatus.Sent;
-                newsEntity.TelegramError = null;
-            }
-            else
-            {
-                newsEntity.SendStatus = NewsSendStatus.NotSent;
-                newsEntity.TelegramError = result.ErrorMessage;
+                case NewsSendOutcome.Sent:
+                    newsEntity.SendStatus = NewsSendStatus.Sent;
+                    newsEntity.TelegramError = null;
+                    break;
+                case NewsSendOutcome.Skipped:
+                    newsEntity.SendStatus = NewsSendStatus.NotSent;
+                    newsEntity.TelegramError = result.ErrorMessage;
+                    break;
+                case NewsSendOutcome.Failed:
+                    newsEntity.SendStatus = NewsSendStatus.Failed;
+                    newsEntity.TelegramError = result.ErrorMessage;
+                    break;
             }
         }
     }
