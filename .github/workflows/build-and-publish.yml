@@ -104,3 +104,16 @@ jobs:
         projects: |
           joinrpg/bastilia-rating=./Bastilia.Rating.Portal/Bastilia.Rating.Portal.csproj
           joinrpg/bastilia-rating-migrator=./Bastilia.Rating.Migrator/Bastilia.Rating.Migrator.csproj
+
+    # deploy-prod-auto берёт отсюда версию и деплоит её, а не latest, который мог уже уйти вперёд
+    # при пачке пушей в master.
+    - name: Save image version
+      run: echo "${{ env.CALCULATED_VERSION }}" > image-version.txt
+
+    - name: Upload image version
+      uses: actions/upload-artifact@v7
+      with:
+        name: image-version
+        path: image-version.txt
+        # Артефакты общие для всех попыток прогона: без overwrite повторный запуск publish упадёт с 409.
+        overwrite: true
