@@ -4,6 +4,7 @@ using Bastilia.Rating.Domain.DomainServices;
 using Bastilia.Rating.Portal.AppServices;
 using Bastilia.Rating.Portal.Auth;
 using Bastilia.Rating.Portal.Common;
+using Bastilia.Rating.Portal.Common.Telegram;
 using Bastilia.Rating.Portal.Components;
 using JoinRpg.Client;
 using JoinRpg.Common.KogdaIgraClient;
@@ -44,6 +45,7 @@ builder.Services.AddTransient<CalendarService>();
 
 builder.Services.AddTransient<ICalService>();
 builder.Services.AddTransient<KiAddService>();
+builder.Services.AddTelegramNewsSender();
 
 
 builder.Services.AddHttpClient<JoinUserInfoClient>();

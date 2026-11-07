@@ -19,6 +19,7 @@
 	  <PackageReference Include="JoinRpg.Common.KogdaIgraClient" />
 	<PackageReference Include="Markdig" />
 	<PackageReference Include="Vereyon.Web.HtmlSanitizer" />
+	<PackageReference Include="Telegram.Bot" />
 	<PackageReference Include="Microsoft.EntityFrameworkCore.Design">
 		<PrivateAssets>all</PrivateAssets>
 		<IncludeAssets>runtime; build; native; contentfiles; analyzers</IncludeAssets>
