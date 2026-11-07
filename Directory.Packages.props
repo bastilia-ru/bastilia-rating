@@ -27,5 +27,7 @@
     <PackageVersion Include="xunit.runner.visualstudio" Version="4.0.1" />
     <PackageVersion Include="JoinRpg.Common.KogdaIgraClient" Version="2026.9.651" />
     <PackageVersion Include="OpenIddict.EntityFrameworkCore" Version="7.8.0" />
+    <PackageVersion Include="Markdig" Version="1.4.0" />
+    <PackageVersion Include="Vereyon.Web.HtmlSanitizer" Version="1.8.1" />
   </ItemGroup>
 </Project>
