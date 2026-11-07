@@ -1,0 +1,20 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(dotnet build*)",
+      "Bash(dotnet run*)",
+      "Bash(dotnet test*)",
+      "Bash(dotnet format*)",
+      "Bash(dotnet restore*)",
+      "Bash(dotnet publish*)",
+      "Bash(dotnet ef*)",
+      "Bash(dotnet tool restore*)",
+      "Bash(gh pr:*)",
+      "Bash(gh issue:*)",
+      "Bash(gh run view:*)",
+      "mcp__cwm-roslyn-navigator__*",
+      "WebFetch",
+      "WebSearch"
+    ]
+  }
+}

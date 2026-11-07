@@ -1,81 +1,21 @@
 # CLAUDE.md
 
-This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
+Все инструкции для агентов живут в [AGENTS.md](AGENTS.md). Прочитай его полностью и следуй ему.
 
-## Команды
+## Агенты — симлинки
 
-```bash
-# Восстановить зависимости
-dotnet restore
-
-# Собрать
-dotnet build
-dotnet build -c Release -r linux-x64 ./Bastilia.Rating.Portal/Bastilia.Rating.Portal.csproj
-
-# Запустить все тесты
-dotnet test
-
-# Запустить один тест
-dotnet test --filter "FullyQualifiedName~JsonRoundTripTests"
-
-# Проверить форматирование (CI требует отсутствия изменений с --severity error)
-dotnet format --no-restore --verify-no-changes --severity error
-
-# Применить форматирование
-dotnet format
-
-# Запустить портал локально
-dotnet run --project ./Bastilia.Rating.Portal/Bastilia.Rating.Portal.csproj
-
-# Добавить миграцию EF Core
-dotnet ef migrations add <НазваниеМиграции> --project ./Bastilia.Rating.Database/Bastilia.Rating.Database.csproj --startup-project ./Bastilia.Rating.Portal/Bastilia.Rating.Portal.csproj
-```
-
-## Локальная база данных
-
-PostgreSQL запускается через Docker Compose (порт 6432):
+`.claude/agents` — симлинк на общий для нескольких инструментов каталог
+[`.agents/agents/`](.agents/agents/). Если ты **не видишь** агента `pr-reviewer`
+(каталог отсутствует или вместо него текстовый файл-заглушка с путём) — клонирование,
+вероятно, прошло без `core.symlinks` (на Windows — без режима разработчика). Ссылку нужно
+восстановить:
 
 ```bash
-docker-compose up -d
+rm .claude/agents
+MSYS=winsymlinks:nativestrict ln -s ../.agents/agents .claude/agents
 ```
 
-Ключ строки подключения — `BastiliaRating`. Настраивается через `appsettings.json` или user secrets (UserSecretsId: `763c5644-5459-415e-bc3a-37ce53120f08` в проекте Portal).
-
-## Правила кода
-
-- **Program.cs должен быть компактным.** Не добавляй многострочный код в `Program.cs` — оборачивай в extension-методы и выноси в отдельные файлы (пример: `Auth/AuthRegistration.cs`, `Common/HealthChecks.cs`).
-- **Всегда используй типизированные опции.** Не читай конфигурацию через `IConfiguration.GetSection(...)["Key"]` — создавай класс опций и привязывай через `AddOptions<T>().BindConfiguration(...)` или `IConfiguration.GetSection(...).Get<T>()`.
-- **Не зашивай URL и адреса внешних сервисов в код.** Выноси в конфигурацию (`appsettings.json` / user secrets) и читай через типизированные опции.
-
-## Архитектура
-
-Решение — Blazor Web App (гибрид SSR + WASM) на .NET 10, база данных PostgreSQL через Entity Framework Core. Система ведёт учёт рейтинга и достижений членов LARP-клуба «Бастилия».
-
-### Проекты
-
-| Проект | Роль |
-|---|---|
-| `Bastilia.Rating.Portal` | Хост ASP.NET Core: серверные Blazor-страницы, минимальные API-эндпоинты, регистрация DI |
-| `Bastilia.Rating.Portal.Client` | WebAssembly-проект: общие Razor-компоненты, рендерящиеся на клиенте |
-| `Bastilia.Rating.Domain` | Доменные модели (records), интерфейсы репозиториев и сервисов, доменная логика |
-| `Bastilia.Rating.Database` | EF Core `AppDbContext`, сущности, реализации репозиториев и сервисов, миграции |
-| `Bastilia.Rating.Migrator` | Консольное приложение для применения миграций при деплое |
-| `JoinRpg.Client` | HTTP-клиент для внешнего API JoinRPG (импорт пользователей) |
-| `JoinRpg.XGameApi.Contract` | DTO-контракты для XGame API JoinRPG |
-| `Bastilia.Rating.Tests` | xUnit-тесты с Shouldly; охватывают JSON round-trip для доменных моделей |
-
-### Слои
-
-- **Domain** (`Bastilia.Rating.Domain`) определяет интерфейсы (`IBastiliaMemberRepository`, `IBastiliaProjectRepository` и др.) и чистые доменные записи (`BastiliaMember`, `BastiliaProject` и др.) с вычисляемыми свойствами (расчёт рейтинга, вычисление статуса). Нет зависимостей на EF или инфраструктуру.
-- **Database** (`Bastilia.Rating.Database`) реализует эти интерфейсы. Сущности — в `Entities/`, репозитории — в отдельных файлах, write-сервисы — в `DbServices/`. Регистрируются через `Registration.AddRatingDal()`.
-- **Portal** потребляет интерфейсы домена и регистрирует всё в DI. Серверные компоненты — в `Components/Pages/` (SSR); общие UI-компоненты — в `Bastilia.Rating.Portal.Client/Components/` (WASM).
-
-### Внешние интеграции
-
-- **JoinRPG** — данные пользователей/персонажей импортируются через `JoinUserInfoClient` (настройка: `JoinConnectOptions`).
-- **КогдаИгра** — данные игрового календаря через `JoinRpg.Common.KogdaIgraClient` (настройка: секция `KogdaIgra`).
-- **iCal** — экспорт календаря: `GET /api/calendar/ical`.
-
-### Деплой
-
-CI (GitHub Actions) собирает при пуше в `master` или по тегам, вычисляет semver через PowerShell-скрипт и собирает образы `dotnet publish /t:PublishContainer` в локальный docker (`joinrpg/<имя>:latest` и `:<версия>`, `ContainerRegistry` не задан). Дальше `docker push` публикует их в Selectel Container Registry (`cr.selcloud.ru/joinrpg`, целевой реестр) и временно в Yandex Container Registry (`cr.yandex`). Деплой запускается вручную (`deploy-prod.yml`, workflow_dispatch с версией образа, по умолчанию `latest`) и берёт образы из Selectel; кластер тянет их через секрет `craas-auth`, который создаёт интеграция кластера с Container Registry. Прямой пуш из SDK в Selectel не работает: реестр отдаёт в Location внутренний адрес.
+либо переклонировать репозиторий (`git config --global core.symlinks true` + режим
+разработчика на Windows). Если симлинк на месте, а `pr-reviewer` всё равно отсутствует —
+проверь, что `.agents/` закоммичен (`git ls-files .agents/`): без него ссылка будет
+пустой. Подробности — [docs/kimi-setup.md](docs/kimi-setup.md).
