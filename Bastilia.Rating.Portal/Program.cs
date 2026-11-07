@@ -61,11 +61,6 @@ else
     app.UseExceptionHandler("/Error", createScopeForErrors: true);
 }
 
-if (!app.Environment.IsDevelopment())
-{
-    app.UseForwardedHeaders();
-}
-
 app.UseOpenTelemetryPrometheusScrapingEndpoint();
 app.UseJoinRequestLogging();
 
