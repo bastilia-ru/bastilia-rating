@@ -32,4 +32,10 @@ namespace Bastilia.Rating.Domain
 
         Task UpdateAchievementTemplate(int templateId, string name, string description);
     }
+
+    public interface IProjectNewsService
+    {
+        Task<ProjectNews> Publish(int projectId, int authorUserId, string authorName, string newsText);
+        Task<ProjectNews> RetrySend(int newsId);
+    }
 }
