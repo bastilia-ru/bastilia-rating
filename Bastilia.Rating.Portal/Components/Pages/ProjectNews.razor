@@ -1,0 +1,144 @@
+@page "/project/{projectId}/news"
+@using Bastilia.Rating.Portal.Auth
+@using Bastilia.Rating.Portal.Common.Telegram
+@using Microsoft.AspNetCore.Components.Authorization
+@using System.ComponentModel.DataAnnotations
+@rendermode InteractiveServer
+@inject ProjectNavigateHelper projectNavigateHelper
+@inject IProjectNewsRepository newsRepository
+@inject IProjectNewsService newsService
+
+<PageTitle>Новости проекта @project?.ProjectName</PageTitle>
+
+@if (project is null)
+{
+    <LoadingSpinner />
+    return;
+}
+
+<p><a href="/project/@ProjectId">← Назад к проекту @project.ProjectName</a></p>
+
+@if (sendErrorAlert is not null)
+{
+    <Alert>@sendErrorAlert</Alert>
+}
+
+@if (isAdmin)
+{
+    <Card>
+        <Header>Опубликовать новость</Header>
+        <Body>
+            <EditForm FormName="PublishNewsForm" Model="NewsModel" OnValidSubmit="Publish">
+                <DataAnnotationsValidator />
+                <div>
+                    <InputTextArea @bind-Value="NewsModel!.Text" class="form-control" rows="8" maxlength="3000" />
+                    <div class="text-muted small">@($"{NewsModel!.Text.Length}/3000")</div>
+                </div>
+                <div>
+                    <JoinButton Submit Preset="ButtonPreset.Add" />
+                </div>
+            </EditForm>
+        </Body>
+    </Card>
+}
+
+@if (newsList.Count == 0)
+{
+    <Alert>Здесь пока нет ни одной новости.</Alert>
+}
+else
+{
+    foreach (var news in newsList)
+    {
+        <Card>
+            <Body>
+                <div class="text-muted small">@news.CreatedAt.ToLocalTime().ToString("g") — @news.AuthorName</div>
+                <div>@((MarkupString)NewsHtmlRenderer.RenderMarkdownToTelegramHtml(news.Text))</div>
+                @if (news.SendStatus != NewsSendStatus.Sent && isAdmin)
+                {
+                    @if (!string.IsNullOrWhiteSpace(news.TelegramError))
+                    {
+                        <Alert>Не удалось отправить в Telegram: @news.TelegramError</Alert>
+                    }
+                    <button class="btn btn-outline-secondary" @onclick="() => Retry(news.Id)">Отправить в Telegram повторно</button>
+                }
+            </Body>
+        </Card>
+    }
+}
+
+@code {
+    [Parameter]
+    public string ProjectId { get; set; } = null!;
+
+    [CascadingParameter]
+    private Task<AuthenticationState>? AuthenticationStateTask { get; set; }
+
+    [SupplyParameterFromForm]
+    private NewsViewModel? NewsModel { get; set; }
+
+    private BastiliaProjectWithDetails? project;
+    private IReadOnlyCollection<Bastilia.Rating.Domain.ProjectNews> newsList = [];
+    private bool isAdmin;
+    private string? sendErrorAlert;
+
+    protected override void OnInitialized()
+    {
+        NewsModel ??= new NewsViewModel();
+        base.OnInitialized();
+    }
+
+    protected override async Task OnParametersSetAsync()
+    {
+        project = await projectNavigateHelper.LoadProjectWithCheck(ProjectId);
+        if (project is null)
+        {
+            return;
+        }
+
+        var authState = await AuthenticationStateTask!;
+        var user = authState.User;
+        if (user.Identity?.IsAuthenticated == true)
+        {
+            isAdmin = user.IsProjectAdmin(project);
+        }
+
+        await ReloadNews();
+    }
+
+    private async Task Publish()
+    {
+        sendErrorAlert = null;
+        var authState = await AuthenticationStateTask!;
+        var user = authState.User;
+        var result = await newsService.Publish(project!.BastiliaProjectId, user.GetJoinrpgUserId(), user.Identity?.Name ?? "", NewsModel!.Text);
+        NewsModel = new NewsViewModel();
+        await ReloadNews();
+        if (result.SendStatus == NewsSendStatus.Failed)
+        {
+            sendErrorAlert = $"Новость сохранена, но не удалось отправить её в Telegram: {result.TelegramError}";
+        }
+    }
+
+    private async Task Retry(int newsId)
+    {
+        sendErrorAlert = null;
+        var result = await newsService.RetrySend(newsId);
+        await ReloadNews();
+        if (result.SendStatus == NewsSendStatus.Failed)
+        {
+            sendErrorAlert = $"Не удалось отправить новость в Telegram повторно: {result.TelegramError}";
+        }
+    }
+
+    private async Task ReloadNews()
+    {
+        newsList = await newsRepository.GetAllForProject(project!.BastiliaProjectId);
+    }
+
+    private class NewsViewModel
+    {
+        [Required, StringLength(3000, MinimumLength = 1)]
+        public string Text { get; set; } = "";
+    }
+}
