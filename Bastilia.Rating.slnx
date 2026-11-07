@@ -10,7 +10,7 @@
   </Folder>
   <Folder Name="/Solution Items/.github/">
     <File Path=".github/dependabot.yml" />
-    <File Path=".github/workflows/build_and_publish.yml" />
+    <File Path=".github/workflows/build-and-publish.yml" />
     <File Path=".github/workflows/deploy-common.yml" />
     <File Path=".github/workflows/deploy-prod.yml" />
     <File Path=".github/workflows/vaildate-dependabot.yml" />
