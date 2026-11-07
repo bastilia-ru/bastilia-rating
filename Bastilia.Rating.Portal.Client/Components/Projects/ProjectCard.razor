@@ -22,7 +22,7 @@
                     <ProjectLinks Project="Project" />
                     @if (ShowAdminLink)
                     {
-                        <a href="/admin/project/@Project.BastiliaProjectId" class="btn btn-outline-secondary btn-sm">Управление проектом</a>
+                        <JoinButton Link="@($"/admin/project/{Project.BastiliaProjectId}")" Label="Управление проектом" Size="SizeStyleEnum.Small" />
                     }
                 </p>
             </div>
