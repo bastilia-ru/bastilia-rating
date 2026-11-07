@@ -11,6 +11,20 @@ public static class ProjectLevelExtensions
         _ => throw new ArgumentOutOfRangeException(nameof(level), level, null)
     };
 
+    public static IReadOnlyList<int> GetAchievementRatingValues(this ProjectLevel? level)
+        => (level ?? throw new InvalidOperationException("У проекта не проставлен уровень")).GetAchievementRatingValues();
+
+    public static void ValidateTemplateCount(this ProjectLevel level, int templateCount)
+    {
+        var ratingValues = level.GetAchievementRatingValues();
+        if (templateCount != ratingValues.Count)
+        {
+            throw new ArgumentException(
+                $"Для уровня {level} требуется {ratingValues.Count} шаблонов ачивок, передано {templateCount}",
+                nameof(templateCount));
+        }
+    }
+
     public static string GetSizeDescription(this ProjectLevel level) =>
         level switch
         {

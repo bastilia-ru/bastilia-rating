@@ -74,13 +74,18 @@ else if (project.EndDate is not null)
     <Alert>Здесь нет ни одной ачивки. Скорее всего данные об этом проекте еще восстанавливаются с архивов.</Alert>
 }
 
-@if (project.EndDate is null && project.ProjectMemberAchievements.Count == 0)
+@if (project.EndDate is null && project.ProjectMemberAchievements.Count == 0 && isPresident)
 {
     <CompleteProjectForm ProjectId="project.BastiliaProjectId" OnCompleted="ReloadProject" />
 }
-else if (project.EndDate is not null && project.Templates.Count == 0)
+else if (project.EndDate is not null && project.Templates.Count == 0 && project.ProjectLevel is not null)
 {
-    <AddTemplatesForm ProjectId="project.BastiliaProjectId" OnCompleted="ReloadProject" />
+    <AddTemplatesForm ProjectId="project.BastiliaProjectId" ProjectLevel="project.ProjectLevel.Value" OnCompleted="ReloadProject" />
+}
+
+@if (isPresident)
+{
+    <SetProjectLevelForm ProjectId="project.BastiliaProjectId" CurrentLevel="project.ProjectLevel" OnCompleted="ReloadProject" />
 }
 
 <EditCoordinatorsForm ProjectId="project.BastiliaProjectId" Coordinators="project.Coordinators" OnCompleted="ReloadProject" />
@@ -97,6 +102,7 @@ else if (project.EndDate is not null && project.Templates.Count == 0)
 
     private BastiliaProjectWithDetails? project;
     private bool addedSuccess = false;
+    private bool isPresident = false;
     private int currentUserId;
     private int addFormResetKey;
 
@@ -105,6 +111,7 @@ else if (project.EndDate is not null && project.Templates.Count == 0)
         var authState = await AuthenticationStateTask!;
         var user = authState.User;
         currentUserId = user.GetJoinrpgUserId();
+        isPresident = user.IsInRole(BastiliaRoles.President);
 
         project = await projectNavigateHelper.LoadProjectForAdmin(ProjectId!, user);
     }

@@ -24,7 +24,9 @@ namespace Bastilia.Rating.Domain
 
         Task CompleteProject(int projectId, DateOnly endDate, ProjectLevel projectLevel, IReadOnlyList<AchievementTemplateInput> achievementTemplates);
 
-        Task AddAchievementTemplates(int projectId, ProjectLevel projectLevel, IReadOnlyList<AchievementTemplateInput> achievementTemplates);
+        Task AddAchievementTemplates(int projectId, IReadOnlyList<AchievementTemplateInput> achievementTemplates);
+
+        Task SetProjectLevel(int projectId, ProjectLevel projectLevel);
 
         Task UpdateCoordinators(int projectId, IReadOnlyList<UserIdentification> coordinators);
 

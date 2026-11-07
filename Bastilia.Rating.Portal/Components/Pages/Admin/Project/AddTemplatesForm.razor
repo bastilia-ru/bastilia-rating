@@ -5,7 +5,7 @@
     <Header>Добавить шаблоны ачивок</Header>
     <Body>
         <EditForm FormName="AddTemplatesForm" Model="Model" OnValidSubmit="Complete">
-            <AchievementTemplateNamesInput @bind-ProjectLevel="Model!.ProjectLevel" @bind-Templates="Model!.Templates" />
+            <AchievementTemplateNamesInput ProjectLevel="ProjectLevel" Templates="Model!.Templates" LevelSelectable="false" />
             @if (error is not null)
             {
                 <Alert>@error</Alert>
@@ -21,6 +21,9 @@
     [Parameter, EditorRequired]
     public int ProjectId { get; set; }
 
+    [Parameter, EditorRequired]
+    public ProjectLevel ProjectLevel { get; set; }
+
     [Parameter]
     public EventCallback OnCompleted { get; set; }
 
@@ -31,7 +34,7 @@
 
     protected override void OnInitialized()
     {
-        Model ??= new AddTemplatesViewModel();
+        Model ??= new AddTemplatesViewModel { Templates = AchievementTemplateInputHelper.CreateDefaults(ProjectLevel) };
         base.OnInitialized();
     }
 
@@ -44,14 +47,13 @@
         }
         error = null;
 
-        await projectService.AddAchievementTemplates(ProjectId, Model.ProjectLevel, Model.Templates);
+        await projectService.AddAchievementTemplates(ProjectId, Model.Templates);
         await OnCompleted.InvokeAsync();
         navigationManager.NavigateTo(navigationManager.Uri, forceLoad: true);
     }
 
     private class AddTemplatesViewModel
     {
-        public ProjectLevel ProjectLevel { get; set; } = ProjectLevel.XS;
-        public AchievementTemplateInput[] Templates { get; set; } = AchievementTemplateInputHelper.CreateDefaults(ProjectLevel.XS);
+        public AchievementTemplateInput[] Templates { get; set; } = [];
     }
 }

@@ -59,6 +59,10 @@ public class AppDbContext(DbContextOptions<AppDbContext> options) : DbContext(op
             .HasConversion<string>();
 
         modelBuilder.Entity<BastiliaProject>()
+            .Property(p => p.ProjectLevel)
+            .HasConversion<string>();
+
+        modelBuilder.Entity<BastiliaProject>()
             .Property(p => p.ProjectIconUri)
             .HasDefaultValue("https://static.rating.bastilia.ru/bastilia-logo.jpg");
 

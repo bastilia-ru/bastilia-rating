@@ -9,6 +9,7 @@ namespace Bastilia.Rating.Domain
                                           IReadOnlyCollection<MemberAchievement> ProjectMemberAchievements,
                                           IReadOnlyCollection<AchievementTemplate> Templates,
                                           DateOnly? endDate,
+                                          ProjectLevel? projectLevel,
                                           string HowToHelp,
                                           string ProjectDescription,
                                           Uri ProjectIconUri,
@@ -18,7 +19,7 @@ namespace Bastilia.Rating.Domain
                                           DateOnly? plannedEndDate
                                           )
             : base(BastiliaProjectId, ProjectName, ProjectType, BrandType, OngoingProject, ProjectOfTheYear,
-                   JoinrpgProjectId, KogdaIgraProjectId, ProjectUri, Coordinators, endDate, HowToHelp, ProjectIconUri, slug, deletedAt, lastUpdatedAt,
+                   JoinrpgProjectId, KogdaIgraProjectId, ProjectUri, Coordinators, endDate, projectLevel, HowToHelp, ProjectIconUri, slug, deletedAt, lastUpdatedAt,
                    plannedEndDate, Templates.Count, ProjectMemberAchievements.Count)
         {
             this.ProjectMemberAchievements = ProjectMemberAchievements;

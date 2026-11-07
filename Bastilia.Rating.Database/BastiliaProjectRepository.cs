@@ -86,6 +86,7 @@ internal class BastiliaProjectRepository(IDbContextFactory<AppDbContext> context
            [.. project.AchievementTemplates.SelectMany(a => a.Achievements).Select(ToMemberAchievement)],
            [.. project.AchievementTemplates.Select(ToTemplate)],
            project.EndDate,
+           project.ProjectLevel,
            project.HowToHelp,
            project.ProjectDescription,
            new Uri(project.ProjectIconUri),

@@ -49,18 +49,29 @@ namespace Bastilia.Rating.Database.DbServices
 
             entity.EndDate = endDate;
             entity.OngoingProject = false;
+            entity.ProjectLevel = projectLevel;
 
-            AddTemplateEntities(entity, projectLevel, achievementTemplates);
+            AddTemplateEntities(entity, achievementTemplates);
 
             await appDbContext.SaveChangesAsync();
         }
 
-        public async Task AddAchievementTemplates(int projectId, ProjectLevel projectLevel, IReadOnlyList<AchievementTemplateInput> achievementTemplates)
+        public async Task AddAchievementTemplates(int projectId, IReadOnlyList<AchievementTemplateInput> achievementTemplates)
         {
             var entity = await appDbContext.Set<Entities.BastiliaProject>()
                 .FirstOrDefaultAsync(x => x.BastiliaProjectId == projectId) ?? throw new InvalidOperationException();
 
-            AddTemplateEntities(entity, projectLevel, achievementTemplates);
+            AddTemplateEntities(entity, achievementTemplates);
+
+            await appDbContext.SaveChangesAsync();
+        }
+
+        public async Task SetProjectLevel(int projectId, ProjectLevel projectLevel)
+        {
+            var entity = await appDbContext.Set<Entities.BastiliaProject>()
+                .FirstOrDefaultAsync(x => x.BastiliaProjectId == projectId) ?? throw new InvalidOperationException();
+
+            entity.ProjectLevel = projectLevel;
 
             await appDbContext.SaveChangesAsync();
         }
@@ -76,15 +87,11 @@ namespace Bastilia.Rating.Database.DbServices
             await appDbContext.SaveChangesAsync();
         }
 
-        private void AddTemplateEntities(Entities.BastiliaProject entity, ProjectLevel projectLevel, IReadOnlyList<AchievementTemplateInput> achievementTemplates)
+        private void AddTemplateEntities(Entities.BastiliaProject entity, IReadOnlyList<AchievementTemplateInput> achievementTemplates)
         {
+            var projectLevel = entity.ProjectLevel ?? throw new InvalidOperationException("У проекта не проставлен уровень");
+            projectLevel.ValidateTemplateCount(achievementTemplates.Count);
             var ratingValues = projectLevel.GetAchievementRatingValues();
-            if (achievementTemplates.Count != ratingValues.Count)
-            {
-                throw new ArgumentException(
-                    $"Для уровня {projectLevel} требуется {ratingValues.Count} шаблонов ачивок, передано {achievementTemplates.Count}",
-                    nameof(achievementTemplates));
-            }
 
             for (var i = 0; i < achievementTemplates.Count; i++)
             {

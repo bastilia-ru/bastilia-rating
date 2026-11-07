@@ -17,7 +17,7 @@ namespace Bastilia.Rating.Database.Migrations
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "10.0.13")
+                .HasAnnotation("ProductVersion", "10.0.14")
                 .HasAnnotation("Relational:MaxIdentifierLength", 63);
 
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
@@ -166,6 +166,9 @@ namespace Bastilia.Rating.Database.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("text")
                         .HasDefaultValue("https://static.rating.bastilia.ru/bastilia-logo.jpg");
+
+                    b.Property<string>("ProjectLevel")
+                        .HasColumnType("text");
 
                     b.Property<string>("ProjectName")
                         .IsRequired()

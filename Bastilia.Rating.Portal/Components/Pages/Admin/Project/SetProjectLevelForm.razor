@@ -1,0 +1,73 @@
+@using Microsoft.AspNetCore.Components.Authorization
+@inject IProjectService projectService
+@inject NavigationManager navigationManager
+@inject AuthenticationStateProvider AuthenticationStateProvider
+
+<Card>
+    <Header>Уровень проекта</Header>
+    <Body>
+        <EditForm FormName="SetProjectLevelForm" Model="Model" OnValidSubmit="Save">
+            <div>
+                <label>
+                    Уровень:
+                    <InputSelect @bind-Value="Model!.ProjectLevel" class="form-select">
+                        <option value="@ProjectLevel.XS">XS</option>
+                        <option value="@ProjectLevel.S">S</option>
+                        <option value="@ProjectLevel.M">M</option>
+                        <option value="@ProjectLevel.L">L</option>
+                    </InputSelect>
+                </label>
+            </div>
+            <div class="alert alert-info">@Model!.ProjectLevel.GetSizeDescription()</div>
+            @if (error is not null)
+            {
+                <Alert>@error</Alert>
+            }
+            <div>
+                <input type="submit" value="Сохранить уровень" class="btn btn-danger" />
+            </div>
+        </EditForm>
+    </Body>
+</Card>
+
+@code {
+    [Parameter, EditorRequired]
+    public int ProjectId { get; set; }
+
+    [Parameter]
+    public ProjectLevel? CurrentLevel { get; set; }
+
+    [Parameter]
+    public EventCallback OnCompleted { get; set; }
+
+    [SupplyParameterFromForm]
+    private SetLevelViewModel? Model { get; set; }
+
+    private string? error;
+
+    protected override void OnInitialized()
+    {
+        Model ??= new SetLevelViewModel { ProjectLevel = CurrentLevel ?? ProjectLevel.XS };
+        base.OnInitialized();
+    }
+
+    private async Task Save()
+    {
+        var authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
+        if (!authState.User.IsInRole(BastiliaRoles.President))
+        {
+            error = "Уровень проекта может изменить только председатель";
+            return;
+        }
+        error = null;
+
+        await projectService.SetProjectLevel(ProjectId, Model!.ProjectLevel);
+        await OnCompleted.InvokeAsync();
+        navigationManager.NavigateTo(navigationManager.Uri, forceLoad: true);
+    }
+
+    private class SetLevelViewModel
+    {
+        public ProjectLevel ProjectLevel { get; set; }
+    }
+}
