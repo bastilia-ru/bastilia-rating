@@ -149,3 +149,6 @@ appsettings.Development.json
 
 # kimi-code local overrides
 .kimi-code/local.toml
+
+# superpowers implementation plans (local working documents)
+docs/superpowers/
