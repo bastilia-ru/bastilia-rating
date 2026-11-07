@@ -1,5 +1,5 @@
 using Bastilia.Rating.Database.DbServices;
-using JoinRpg.Common.WebInfrastructure;
+using JoinRpg.Common.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
