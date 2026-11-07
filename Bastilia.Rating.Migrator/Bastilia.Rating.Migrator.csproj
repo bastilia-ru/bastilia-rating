@@ -12,6 +12,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <PackageReference Include="JoinRpg.Common.WebInfrastructure" />
     <ProjectReference Include="..\Bastilia.Rating.Database\Bastilia.Rating.Database.csproj" />
   </ItemGroup>
 
