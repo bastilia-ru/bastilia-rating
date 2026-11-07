@@ -16,6 +16,7 @@ public class AppDbContext(DbContextOptions<AppDbContext> options) : DbContext(op
     public DbSet<UsersBastiliaStatus> UsersBastiliaStatuses { get; set; }
     public DbSet<ClubEvent> ClubEvents { get; set; }
     public DbSet<KogdaIgraGame> KogdaIgraGames { get; set; }
+    public DbSet<ProjectNewsEntity> ProjectNews { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -86,6 +87,21 @@ public class AppDbContext(DbContextOptions<AppDbContext> options) : DbContext(op
                 .WithMany()
                 .HasForeignKey(e => e.ProjectId)
                 .IsRequired(false);
+        });
+
+        modelBuilder.Entity<ProjectNewsEntity>(entity =>
+        {
+            entity.HasKey(x => x.ProjectNewsId);
+
+            entity.HasIndex(x => new { x.ProjectId, x.CreatedAt });
+
+            entity.HasOne(x => x.Project)
+                .WithMany()
+                .HasForeignKey(x => x.ProjectId)
+                .OnDelete(DeleteBehavior.Restrict);
+
+            entity.Property(x => x.SendStatus)
+                .HasConversion<string>();
         });
     }
 

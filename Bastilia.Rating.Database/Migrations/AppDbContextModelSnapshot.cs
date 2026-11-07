@@ -278,6 +278,45 @@ namespace Bastilia.Rating.Database.Migrations
                     b.ToTable("ProjectAdmins");
                 });
 
+            modelBuilder.Entity("Bastilia.Rating.Database.Entities.ProjectNewsEntity", b =>
+                {
+                    b.Property<int>("ProjectNewsId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("ProjectNewsId"));
+
+                    b.Property<string>("AuthorName")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<int>("AuthorUserId")
+                        .HasColumnType("integer");
+
+                    b.Property<DateTimeOffset>("CreatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<int>("ProjectId")
+                        .HasColumnType("integer");
+
+                    b.Property<string>("SendStatus")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("TelegramError")
+                        .HasColumnType("text");
+
+                    b.Property<string>("Text")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.HasKey("ProjectNewsId");
+
+                    b.HasIndex("ProjectId", "CreatedAt");
+
+                    b.ToTable("ProjectNews");
+                });
+
             modelBuilder.Entity("Bastilia.Rating.Database.Entities.User", b =>
                 {
                     b.Property<int>("JoinRpgUserId")
@@ -636,6 +675,17 @@ namespace Bastilia.Rating.Database.Migrations
                     b.Navigation("Project");
 
                     b.Navigation("User");
+                });
+
+            modelBuilder.Entity("Bastilia.Rating.Database.Entities.ProjectNewsEntity", b =>
+                {
+                    b.HasOne("Bastilia.Rating.Database.Entities.BastiliaProject", "Project")
+                        .WithMany()
+                        .HasForeignKey("ProjectId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("Project");
                 });
 
             modelBuilder.Entity("Bastilia.Rating.Database.Entities.UsersBastiliaStatus", b =>
