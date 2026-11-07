@@ -16,6 +16,7 @@ public class BastiliaProject
     public DateOnly? PlannedEndDate { get; set; }
     public DateOnly? EndDate { get; set; }
     public bool? ProjectOfTheYear { get; set; }
+    public ProjectLevel? ProjectLevel { get; set; }
 
     public int? JoinrpgProjectId { get; set; }
     public int? KogdaIgraProjectId { get; set; }

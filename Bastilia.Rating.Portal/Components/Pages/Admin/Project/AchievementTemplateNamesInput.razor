@@ -1,14 +1,17 @@
-<div>
-    <label>
-        Уровень проекта:
-        <InputSelect TValue="ProjectLevel" Value="ProjectLevel" ValueChanged="OnProjectLevelChanged" ValueExpression="() => ProjectLevel" class="form-select">
-            <option value="@ProjectLevel.XS">XS</option>
-            <option value="@ProjectLevel.S">S</option>
-            <option value="@ProjectLevel.M">M</option>
-            <option value="@ProjectLevel.L">L</option>
-        </InputSelect>
-    </label>
-</div>
+@if (LevelSelectable)
+{
+    <div>
+        <label>
+            Уровень проекта:
+            <InputSelect TValue="ProjectLevel" Value="ProjectLevel" ValueChanged="OnProjectLevelChanged" ValueExpression="() => ProjectLevel" class="form-select">
+                <option value="@ProjectLevel.XS">XS</option>
+                <option value="@ProjectLevel.S">S</option>
+                <option value="@ProjectLevel.M">M</option>
+                <option value="@ProjectLevel.L">L</option>
+            </InputSelect>
+        </label>
+    </div>
+}
 <div class="alert alert-info">@ProjectLevel.GetSizeDescription()</div>
 @{ var ratingValues = ProjectLevel.GetAchievementRatingValues(); }
 @for (var i = 0; i < ratingValues.Count; i++)
@@ -37,6 +40,9 @@
 
     [Parameter]
     public EventCallback<ProjectLevel> ProjectLevelChanged { get; set; }
+
+    [Parameter]
+    public bool LevelSelectable { get; set; } = true;
 
     [Parameter, EditorRequired]
     public AchievementTemplateInput[] Templates { get; set; } = [];

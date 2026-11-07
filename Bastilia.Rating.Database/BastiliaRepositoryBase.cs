@@ -30,6 +30,7 @@ internal abstract class BastiliaRepositoryBase
             project.ProjectUri,
             [.. project.ProjectAdmins.Where(pa => pa.RemoveDate == null).Select(pa => ToUserLink(pa.User))],
             project.EndDate,
+            project.ProjectLevel,
             project.HowToHelp,
             new Uri(project.ProjectIconUri),
             project.Slug,

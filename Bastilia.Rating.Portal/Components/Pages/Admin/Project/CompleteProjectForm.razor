@@ -1,5 +1,7 @@
+@using Microsoft.AspNetCore.Components.Authorization
 @inject IProjectService projectService
 @inject NavigationManager navigationManager
+@inject AuthenticationStateProvider AuthenticationStateProvider
 
 <Card>
     <Header>Завершить проект</Header>
@@ -43,6 +45,13 @@
 
     private async Task Complete()
     {
+        var authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
+        if (!authState.User.IsInRole(BastiliaRoles.President))
+        {
+            error = "Завершить проект может только председатель";
+            return;
+        }
+
         if (Model!.Templates.Any(t => string.IsNullOrWhiteSpace(t.Name)))
         {
             error = "Заполните название для каждой ачивки уровня";
