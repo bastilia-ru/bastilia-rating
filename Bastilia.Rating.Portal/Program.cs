@@ -61,6 +61,12 @@ else
     app.UseExceptionHandler("/Error", createScopeForErrors: true);
 }
 
+// API-путям нужен ответ без HTML-страницы: их читают программы.
+app.UseWhen(context => !context.Request.Path.StartsWithSegments("/api"),
+    branch => branch.UseStatusCodePagesWithReExecute("/Error/{0}", createScopeForStatusCodePages: true));
+
+app.UseErrorPageReExecuteAsGet();
+
 app.UseOpenTelemetryPrometheusScrapingEndpoint();
 app.UseJoinRequestLogging();
 
