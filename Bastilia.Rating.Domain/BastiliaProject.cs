@@ -26,7 +26,7 @@ public record BastiliaProject(int BastiliaProjectId,
     public bool IsActive => Status != ProjectStatus.Completed && Status != ProjectStatus.Deleted;
     public ProjectStatus Status { get; } = CalculateStatus(OngoingProject, EndDate, DeletedAt);
     public bool HelpRequired => !string.IsNullOrWhiteSpace(HowToHelp) && IsActive;
-    public ProjectProblem Problems => CalculateProblems(PlannedEndDate, EndDate, Status, TemplatesCount, AchievementsCount, DateOnly.FromDateTime(DateTime.UtcNow));
+    public ProjectProblem Problems => CalculateProblems(PlannedEndDate, EndDate, Status, TemplatesCount, AchievementsCount, ProjectLevel, DateOnly.FromDateTime(DateTime.UtcNow));
     public bool HasProblems => Problems != ProjectProblem.None;
 
     private static ProjectStatus CalculateStatus(bool ongoingProject, DateOnly? endDate, DateTimeOffset? deletedAt)
@@ -41,7 +41,7 @@ public record BastiliaProject(int BastiliaProjectId,
         };
     }
 
-    private static ProjectProblem CalculateProblems(DateOnly? plannedEndDate, DateOnly? endDate, ProjectStatus status, int templatesCount, int achievementsCount, DateOnly today)
+    private static ProjectProblem CalculateProblems(DateOnly? plannedEndDate, DateOnly? endDate, ProjectStatus status, int templatesCount, int achievementsCount, ProjectLevel? projectLevel, DateOnly today)
     {
         var problems = ProjectProblem.None;
         if (endDate is null && plannedEndDate is not null && plannedEndDate < today)
@@ -51,6 +51,10 @@ public record BastiliaProject(int BastiliaProjectId,
         if (status == ProjectStatus.Completed && templatesCount == 0)
         {
             problems |= ProjectProblem.CompletedWithoutTemplates;
+        }
+        if (status == ProjectStatus.Completed && projectLevel is null)
+        {
+            problems |= ProjectProblem.CompletedWithoutLevel;
         }
         if (templatesCount > 0 && achievementsCount == 0)
         {
@@ -74,5 +78,6 @@ public enum ProjectProblem
     None = 0,
     PlannedEndDatePassed = 1,
     CompletedWithoutTemplates = 2,
-    TemplatesWithoutAchievements = 4,
+    CompletedWithoutLevel = 4,
+    TemplatesWithoutAchievements = 8,
 }

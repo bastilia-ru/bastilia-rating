@@ -21,6 +21,10 @@
         {
             yield return "У проекта нет шаблонов ачивок";
         }
+        if (Project.Problems.HasFlag(ProjectProblem.CompletedWithoutLevel))
+        {
+            yield return "У проекта не выставлен уровень";
+        }
         if (Project.Problems.HasFlag(ProjectProblem.TemplatesWithoutAchievements))
         {
             yield return "У проекта нет ачивок";
