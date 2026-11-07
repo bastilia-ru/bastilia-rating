@@ -32,6 +32,23 @@ public class NewsHtmlRendererTests
     }
 
     [Fact]
+    public void JavascriptLink_HrefIsRemoved()
+    {
+        var result = NewsHtmlRenderer.RenderMarkdownToTelegramHtml("[клик](javascript:alert(1))");
+
+        result.ShouldNotContain("javascript:");
+        result.ShouldContain("клик");
+    }
+
+    [Fact]
+    public void MailtoLink_HrefPassesThrough()
+    {
+        var result = NewsHtmlRenderer.RenderMarkdownToTelegramHtml("[почта](mailto:test@example.com)");
+
+        result.ShouldContain("<a href=\"mailto:test@example.com\">почта</a>");
+    }
+
+    [Fact]
     public void TwoParagraphs_SeparatedByNewline()
     {
         var result = NewsHtmlRenderer.RenderMarkdownToTelegramHtml("один\n\nдва");

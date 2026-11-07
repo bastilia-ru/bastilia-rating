@@ -1,3 +1,4 @@
+using HtmlAgilityPack;
 using Markdig;
 using Vereyon.Web;
 
@@ -38,7 +39,7 @@ public static class NewsHtmlRenderer
             sanitizer.Tag(tag);
         }
 
-        sanitizer.Tag("a").AllowAttributes("href");
+        sanitizer.Tag("a").SanitizeAttributes("href", new HrefSchemeSanitizer());
 
         foreach (var tag in new[] { "p", "div", "span", "ul", "ol", "li" })
         {
@@ -46,5 +47,35 @@ public static class NewsHtmlRenderer
         }
 
         return sanitizer;
+    }
+
+    private sealed class HrefSchemeSanitizer : IHtmlAttributeSanitizer
+    {
+        private static readonly HashSet<string> AllowedSchemes = new(StringComparer.OrdinalIgnoreCase)
+        {
+            "http", "https", "mailto",
+        };
+
+        public SanitizerOperation SanitizeAttribute(HtmlAttribute attribute, HtmlSanitizerTagRule tagRule)
+        {
+            // Браузеры игнорируют ASCII-пробельные символы внутри схемы (java\tscript:), убираем их до проверки.
+            var value = attribute.Value.Trim().Replace("\t", string.Empty).Replace("\r", string.Empty).Replace("\n", string.Empty);
+
+            var colonIndex = value.IndexOf(':');
+            if (colonIndex <= 0 || !char.IsAsciiLetter(value[0]))
+            {
+                return SanitizerOperation.DoNothing; // относительный URL без схемы
+            }
+
+            var scheme = value[..colonIndex];
+            if (scheme.Any(c => !char.IsAsciiLetterOrDigit(c) && c is not ('+' or '-' or '.')))
+            {
+                return SanitizerOperation.DoNothing; // двоеточие в query/path, не схема
+            }
+
+            return AllowedSchemes.Contains(scheme)
+                ? SanitizerOperation.DoNothing
+                : SanitizerOperation.RemoveAttribute;
+        }
     }
 }
