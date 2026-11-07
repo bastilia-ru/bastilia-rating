@@ -45,6 +45,7 @@ namespace Bastilia.Rating.Database.DbServices
         public async Task CompleteProject(int projectId, DateOnly endDate, ProjectLevel projectLevel, IReadOnlyList<AchievementTemplateInput> achievementTemplates)
         {
             var entity = await appDbContext.Set<Entities.BastiliaProject>()
+                .Include(x => x.AchievementTemplates)
                 .FirstOrDefaultAsync(x => x.BastiliaProjectId == projectId) ?? throw new InvalidOperationException();
 
             entity.EndDate = endDate;
@@ -59,6 +60,7 @@ namespace Bastilia.Rating.Database.DbServices
         public async Task AddAchievementTemplates(int projectId, IReadOnlyList<AchievementTemplateInput> achievementTemplates)
         {
             var entity = await appDbContext.Set<Entities.BastiliaProject>()
+                .Include(x => x.AchievementTemplates)
                 .FirstOrDefaultAsync(x => x.BastiliaProjectId == projectId) ?? throw new InvalidOperationException();
 
             AddTemplateEntities(entity, achievementTemplates);
@@ -90,7 +92,8 @@ namespace Bastilia.Rating.Database.DbServices
         private void AddTemplateEntities(Entities.BastiliaProject entity, IReadOnlyList<AchievementTemplateInput> achievementTemplates)
         {
             var projectLevel = entity.ProjectLevel ?? throw new InvalidOperationException("У проекта не проставлен уровень");
-            var ratingValues = Enumerable.Range(0, achievementTemplates.Count)
+            var startIndex = entity.AchievementTemplates.Count(t => t.DeletedDate == null);
+            var ratingValues = Enumerable.Range(startIndex, achievementTemplates.Count)
                 .Select(i => projectLevel.GetAchievementRatingValue(i))
                 .ToList();
             projectLevel.ValidateRatingValues(ratingValues);
