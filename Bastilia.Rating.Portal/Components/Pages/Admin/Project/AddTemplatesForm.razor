@@ -47,7 +47,16 @@
         }
         error = null;
 
-        await projectService.AddAchievementTemplates(ProjectId, Model.Templates);
+        try
+        {
+            await projectService.AddAchievementTemplates(ProjectId, Model.Templates);
+        }
+        catch (Exception exception) when (exception is ArgumentException or InvalidOperationException)
+        {
+            error = exception.Message;
+            return;
+        }
+
         await OnCompleted.InvokeAsync();
         navigationManager.NavigateTo(navigationManager.Uri, forceLoad: true);
     }

@@ -11,6 +11,7 @@
                 <label>
                     Уровень:
                     <InputSelect @bind-Value="Model!.ProjectLevel" class="form-select">
+                        <option value="">— выберите уровень —</option>
                         <option value="@ProjectLevel.XS">XS</option>
                         <option value="@ProjectLevel.S">S</option>
                         <option value="@ProjectLevel.M">M</option>
@@ -18,7 +19,10 @@
                     </InputSelect>
                 </label>
             </div>
-            <div class="alert alert-info">@Model!.ProjectLevel.GetSizeDescription()</div>
+            @if (Model!.ProjectLevel is not null)
+            {
+                <div class="alert alert-info">@Model.ProjectLevel.Value.GetSizeDescription()</div>
+            }
             @if (error is not null)
             {
                 <Alert>@error</Alert>
@@ -47,7 +51,7 @@
 
     protected override void OnInitialized()
     {
-        Model ??= new SetLevelViewModel { ProjectLevel = CurrentLevel ?? ProjectLevel.XS };
+        Model ??= new SetLevelViewModel { ProjectLevel = CurrentLevel };
         base.OnInitialized();
     }
 
@@ -59,15 +63,29 @@
             error = "Уровень проекта может изменить только председатель";
             return;
         }
+        if (Model!.ProjectLevel is null)
+        {
+            error = "Выберите уровень проекта";
+            return;
+        }
         error = null;
 
-        await projectService.SetProjectLevel(ProjectId, Model!.ProjectLevel);
+        try
+        {
+            await projectService.SetProjectLevel(ProjectId, Model.ProjectLevel.Value);
+        }
+        catch (ArgumentException exception)
+        {
+            error = exception.Message;
+            return;
+        }
+
         await OnCompleted.InvokeAsync();
         navigationManager.NavigateTo(navigationManager.Uri, forceLoad: true);
     }
 
     private class SetLevelViewModel
     {
-        public ProjectLevel ProjectLevel { get; set; }
+        public ProjectLevel? ProjectLevel { get; set; }
     }
 }

@@ -69,7 +69,14 @@ namespace Bastilia.Rating.Database.DbServices
         public async Task SetProjectLevel(int projectId, ProjectLevel projectLevel)
         {
             var entity = await appDbContext.Set<Entities.BastiliaProject>()
+                .Include(x => x.AchievementTemplates)
                 .FirstOrDefaultAsync(x => x.BastiliaProjectId == projectId) ?? throw new InvalidOperationException();
+
+            var templatesCount = entity.AchievementTemplates.Count(t => t.DeletedDate == null);
+            if (templatesCount > 0)
+            {
+                projectLevel.ValidateTemplateCount(templatesCount);
+            }
 
             entity.ProjectLevel = projectLevel;
 
