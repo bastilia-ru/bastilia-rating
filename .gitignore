@@ -146,3 +146,6 @@ appsettings.Development.json
 *.received.*
 *.received/
 /.claude/settings.local.json
+
+# kimi-code local overrides
+.kimi-code/local.toml
