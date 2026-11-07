@@ -14,14 +14,24 @@ public static class ProjectLevelExtensions
     public static IReadOnlyList<int> GetAchievementRatingValues(this ProjectLevel? level)
         => (level ?? throw new InvalidOperationException("У проекта не проставлен уровень")).GetAchievementRatingValues();
 
-    public static void ValidateTemplateCount(this ProjectLevel level, int templateCount)
+    public static int GetAchievementRatingValue(this ProjectLevel level, int templateIndex)
     {
         var ratingValues = level.GetAchievementRatingValues();
-        if (templateCount != ratingValues.Count)
+        return ratingValues[Math.Min(templateIndex, ratingValues.Count - 1)];
+    }
+
+    public static void ValidateRatingValues(this ProjectLevel level, IReadOnlyList<int> ratingValues)
+    {
+        if (ratingValues.Count == 0)
+        {
+            throw new ArgumentException("Нужно добавить хотя бы один шаблон ачивки", nameof(ratingValues));
+        }
+        var maxAllowed = level.GetAchievementRatingValue(0);
+        if (ratingValues.Max() > maxAllowed)
         {
             throw new ArgumentException(
-                $"Для уровня {level} требуется {ratingValues.Count} шаблонов ачивок, передано {templateCount}",
-                nameof(templateCount));
+                $"Максимальный балл шаблона для уровня {level} — {maxAllowed}, передан балл {ratingValues.Max()}",
+                nameof(ratingValues));
         }
     }
 

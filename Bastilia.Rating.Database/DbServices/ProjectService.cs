@@ -90,8 +90,10 @@ namespace Bastilia.Rating.Database.DbServices
         private void AddTemplateEntities(Entities.BastiliaProject entity, IReadOnlyList<AchievementTemplateInput> achievementTemplates)
         {
             var projectLevel = entity.ProjectLevel ?? throw new InvalidOperationException("У проекта не проставлен уровень");
-            projectLevel.ValidateTemplateCount(achievementTemplates.Count);
-            var ratingValues = projectLevel.GetAchievementRatingValues();
+            var ratingValues = Enumerable.Range(0, achievementTemplates.Count)
+                .Select(i => projectLevel.GetAchievementRatingValue(i))
+                .ToList();
+            projectLevel.ValidateRatingValues(ratingValues);
 
             for (var i = 0; i < achievementTemplates.Count; i++)
             {

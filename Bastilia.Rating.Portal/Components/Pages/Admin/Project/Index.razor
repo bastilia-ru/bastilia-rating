@@ -78,7 +78,7 @@ else if (project.EndDate is not null)
 {
     <CompleteProjectForm ProjectId="project.BastiliaProjectId" OnCompleted="ReloadProject" />
 }
-else if (project.EndDate is not null && project.Templates.Count == 0 && project.ProjectLevel is not null)
+@if (project.EndDate is not null && project.ProjectLevel is not null)
 {
     <AddTemplatesForm ProjectId="project.BastiliaProjectId" ProjectLevel="project.ProjectLevel.Value" OnCompleted="ReloadProject" />
 }
