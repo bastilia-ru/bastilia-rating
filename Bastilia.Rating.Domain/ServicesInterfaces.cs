@@ -35,7 +35,7 @@ namespace Bastilia.Rating.Domain
 
     public interface IProjectNewsService
     {
-        Task<ProjectNews> Publish(int projectId, int authorUserId, string newsText);
+        Task<ProjectNews> Publish(int projectId, UserIdentification authorUserId, string newsText);
         Task<ProjectNews> RetrySend(int newsId);
     }
 }
