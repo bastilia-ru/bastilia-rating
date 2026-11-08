@@ -6,11 +6,11 @@
   </PropertyGroup>
   <ItemGroup>
     <PackageVersion Include="Ical.Net" Version="5.2.4" />
-    <PackageVersion Include="JoinRpg.Common.WebInfrastructure" Version="2026.9.668" />
+    <PackageVersion Include="JoinRpg.Common.WebInfrastructure" Version="2026.9.680" />
     <PackageVersion Include="Microsoft.AspNetCore.DataProtection.EntityFrameworkCore" Version="10.0.14" />
-    <PackageVersion Include="JoinRpg.Common.EntityFrameworkCore" Version="2026.9.668" />
-    <PackageVersion Include="JoinRpg.Common.PrimitiveTypes" Version="2026.9.668" />
-    <PackageVersion Include="JoinRpg.Common.WebComponents" Version="2026.9.668" />
+    <PackageVersion Include="JoinRpg.Common.EntityFrameworkCore" Version="2026.9.680" />
+    <PackageVersion Include="JoinRpg.Common.PrimitiveTypes" Version="2026.9.680" />
+    <PackageVersion Include="JoinRpg.Common.WebComponents" Version="2026.9.680" />
     <PackageVersion Include="LinqKit.Microsoft.EntityFrameworkCore" Version="10.1.1" />
     <PackageVersion Include="Microsoft.AspNetCore.Components.QuickGrid" Version="10.0.14" />
     <PackageVersion Include="Microsoft.Extensions.Hosting" Version="10.0.7" />
@@ -27,10 +27,10 @@
     <PackageVersion Include="xunit" Version="2.9.3" />
     <PackageVersion Include="xunit.runner.visualstudio" Version="4.0.1" />
     <PackageVersion Include="Verify.Xunit" Version="28.16.0" />
-    <PackageVersion Include="JoinRpg.Common.KogdaIgraClient" Version="2026.9.668" />
+    <PackageVersion Include="JoinRpg.Common.KogdaIgraClient" Version="2026.9.680" />
     <PackageVersion Include="OpenIddict.EntityFrameworkCore" Version="7.8.0" />
     <PackageVersion Include="Markdig" Version="1.4.0" />
-    <PackageVersion Include="JoinRpg.Common.WebInfrastructure.Interfaces" Version="2026.9.668" />
+    <PackageVersion Include="JoinRpg.Common.WebInfrastructure.Interfaces" Version="2026.9.680" />
     <PackageVersion Include="Telegram.Bot" Version="22.10.2.1" />
   </ItemGroup>
 </Project>
