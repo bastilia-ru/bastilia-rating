@@ -27,6 +27,8 @@ public class TelegramNewsSenderTests
 
             return Task.CompletedTask;
         }
+
+        public Task<string?> GetMyUserNameAsync(CancellationToken cancellationToken = default) => Task.FromResult<string?>("bastilia_bot");
     }
 
     private static TelegramNewsSender CreateSender(TelegramBotOptions telegramOptions, FakeTelegramBotApi fake) =>

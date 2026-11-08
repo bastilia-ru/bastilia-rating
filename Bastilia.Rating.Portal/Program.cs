@@ -33,6 +33,7 @@ builder.Services.AddJoinRpgAuthentication<AppDbContext>(builder.Configuration);
 builder.Services.AddScoped<IJoinUserLoginHandler, BastiliaUserLoginHandler>();
 
 builder.Services.AddRatingDal(builder.Configuration, builder.Environment);
+builder.Services.AddDatabaseHealthCheck(builder.Configuration);
 builder.Services.AddLocalization();
 
 builder.Services.AddOptions<JoinConnectOptions>().BindConfiguration("JoinConnectOptions");

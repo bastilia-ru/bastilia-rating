@@ -9,7 +9,8 @@ namespace Bastilia.Rating.Portal.Common.Telegram;
 internal class TelegramBotApi(IOptions<TelegramBotOptions> options) : ITelegramBotApi
 {
     private readonly Lazy<TelegramBotClient> client = new(() =>
-        new TelegramBotClient($"{options.Value.BotId}:{options.Value.BotSecret}"));
+        new TelegramBotClient($"{options.Value.BotId}:{options.Value.BotSecret}",
+            TelegramHttpClientFactory.Create(options.Value.Proxy)));
 
     public async Task SendHtmlMessageAsync(TelegramChatId chatId, TelegramHtmlString html, CancellationToken cancellationToken = default)
         => await client.Value.SendMessage(
@@ -18,4 +19,10 @@ internal class TelegramBotApi(IOptions<TelegramBotOptions> options) : ITelegramB
             ParseMode.Html,
             linkPreviewOptions: new LinkPreviewOptions { IsDisabled = true },
             cancellationToken: cancellationToken);
+
+    public async Task<string?> GetMyUserNameAsync(CancellationToken cancellationToken = default)
+    {
+        var me = await client.Value.GetMe(cancellationToken);
+        return me.Username;
+    }
 }
