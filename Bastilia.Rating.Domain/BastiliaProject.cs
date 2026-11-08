@@ -19,7 +19,8 @@ public record BastiliaProject(int BastiliaProjectId,
                               DateTimeOffset? LastUpdatedAt,
                               DateOnly? PlannedEndDate,
                               int TemplatesCount,
-                              int AchievementsCount
+                              int AchievementsCount,
+                              DateTimeOffset? LastNewsDate
                               ) : IBastiliaProjectLink
 {
 
