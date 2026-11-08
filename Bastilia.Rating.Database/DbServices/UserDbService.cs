@@ -21,5 +21,25 @@ namespace Bastilia.Rating.Database.DbServices
             var rep = new BastiliaMemberRepository(contextFactory);
             return await rep.GetByIdAsync(playerId) ?? throw new InvalidOperationException();
         }
+
+        public async Task<BastiliaMember> UpdateUser(int playerId, string? nickName, string? avatarUrl)
+        {
+            await using (var appDbContext = await contextFactory.CreateDbContextAsync())
+            {
+                var user = await appDbContext.Set<Entities.User>().SingleAsync(u => u.JoinRpgUserId == playerId);
+                if (nickName is not null)
+                {
+                    user.Username = nickName;
+                }
+                if (avatarUrl is not null)
+                {
+                    user.AvatarUrl = avatarUrl;
+                }
+                await appDbContext.SaveChangesAsync();
+            }
+
+            var rep = new BastiliaMemberRepository(contextFactory);
+            return await rep.GetByIdAsync(playerId) ?? throw new InvalidOperationException();
+        }
     }
 }

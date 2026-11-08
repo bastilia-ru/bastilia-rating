@@ -10,6 +10,8 @@ namespace Bastilia.Rating.Domain
     public interface IUserDbService
     {
         Task<BastiliaMember> AddUser(int playerId, string nickName, string avatarUrl);
+
+        Task<BastiliaMember> UpdateUser(int playerId, string? nickName, string? avatarUrl);
     }
 
     public interface IKiDbService

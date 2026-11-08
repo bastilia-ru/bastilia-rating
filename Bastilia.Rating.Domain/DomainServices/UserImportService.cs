@@ -23,4 +23,24 @@ public class UserImportService(IBastiliaMemberRepository bastiliaMemberRepositor
         logger.LogWarning("Не удалось загрузить пользователя {userId}", userId);
         return null;
     }
+
+    public async Task<BastiliaMember?> ImportUser(int userId, string? nickName, string? avatarUrl)
+    {
+        var user = await bastiliaMemberRepository.GetByIdAsync(userId);
+        if (user is not null)
+        {
+            if ((nickName is not null && nickName != user.UserName) || (avatarUrl is not null && avatarUrl != user.AvatarUrl))
+            {
+                return await userDbService.UpdateUser(userId, nickName, avatarUrl);
+            }
+            return user;
+        }
+
+        if (nickName is not null)
+        {
+            return await userDbService.AddUser(userId, nickName, avatarUrl ?? "");
+        }
+
+        return await ImportUser(userId);
+    }
 }
