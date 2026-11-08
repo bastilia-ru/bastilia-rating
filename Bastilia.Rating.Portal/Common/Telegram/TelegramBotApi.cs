@@ -19,4 +19,10 @@ internal class TelegramBotApi(IOptions<TelegramBotOptions> options) : ITelegramB
             ParseMode.Html,
             linkPreviewOptions: new LinkPreviewOptions { IsDisabled = true },
             cancellationToken: cancellationToken);
+
+    public async Task<string?> GetMyUserNameAsync(CancellationToken cancellationToken = default)
+    {
+        var me = await client.Value.GetMe(cancellationToken);
+        return me.Username;
+    }
 }
