@@ -32,3 +32,9 @@ public interface IBastiliaKograIgraRepository
 {
     Task<IReadOnlyCollection<BastiliaCalendarItem>> GetGameCalendarFor(int year);
 }
+
+public interface IProjectNewsRepository
+{
+    Task<ProjectNews?> GetLastForProject(int projectId);
+    Task<IReadOnlyCollection<ProjectNews>> GetAllForProject(int projectId);
+}
