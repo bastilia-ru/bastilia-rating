@@ -29,53 +29,22 @@ public static class NewsHtmlRenderer
 
     private static HtmlSanitizer CreateSanitizer()
     {
-        var sanitizer = new HtmlSanitizer();
-
-        foreach (var tag in new[]
+        var sanitizer = new HtmlSanitizer
         {
-            "b", "strong", "i", "em", "u", "ins", "s", "strike", "del", "code", "pre", "blockquote",
-        })
-        {
-            sanitizer.Tag(tag);
-        }
-
-        sanitizer.Tag("a").SanitizeAttributes("href", new HrefSchemeSanitizer());
-
-        foreach (var tag in new[] { "p", "div", "span", "ul", "ol", "li" })
-        {
-            sanitizer.Tag(tag).Flatten();
-        }
-
-        return sanitizer;
-    }
-
-    private sealed class HrefSchemeSanitizer : IHtmlAttributeSanitizer
-    {
-        private static readonly HashSet<string> AllowedSchemes = new(StringComparer.OrdinalIgnoreCase)
-        {
-            "http", "https", "mailto",
+            WhiteListMode = true,
         };
 
-        public SanitizerOperation SanitizeAttribute(HtmlAttribute attribute, HtmlSanitizerTagRule tagRule)
-        {
-            // Браузеры игнорируют ASCII-пробельные символы внутри схемы (java\tscript:), убираем их до проверки.
-            var value = attribute.Value.Trim().Replace("\t", string.Empty).Replace("\r", string.Empty).Replace("\n", string.Empty);
+        sanitizer.Tags("b", "strong", "i", "em", "u", "ins", "s", "strike", "del").RemoveEmpty();
 
-            var colonIndex = value.IndexOf(':');
-            if (colonIndex <= 0 || !char.IsAsciiLetter(value[0]))
-            {
-                return SanitizerOperation.DoNothing; // относительный URL без схемы
-            }
+        sanitizer.Tag("a").SetAttribute("target", "_blank").SetAttribute("rel", "nofollow")
+            .CheckAttributeUrl("href")
+            .RemoveEmpty()
+            .NoAttributes(SanitizerOperation.FlattenTag);
 
-            var scheme = value[..colonIndex];
-            if (scheme.Any(c => !char.IsAsciiLetterOrDigit(c) && c is not ('+' or '-' or '.')))
-            {
-                return SanitizerOperation.DoNothing; // двоеточие в query/path, не схема
-            }
+        sanitizer.Tags("code", "pre", "blockquote").RemoveEmpty();
 
-            return AllowedSchemes.Contains(scheme)
-                ? SanitizerOperation.DoNothing
-                : SanitizerOperation.RemoveAttribute;
-        }
+        sanitizer.Tags("p", "div", "span", "ul", "ol", "li").Flatten();
+
+        return sanitizer;
     }
 }

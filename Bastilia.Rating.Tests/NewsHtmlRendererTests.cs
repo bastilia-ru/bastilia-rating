@@ -18,7 +18,7 @@ public class NewsHtmlRendererTests
     {
         var result = NewsHtmlRenderer.RenderMarkdownToTelegramHtml("[текст](https://example.com)");
 
-        result.ShouldContain("<a href=\"https://example.com\">текст</a>");
+        result.ShouldContain("<a href=\"https://example.com/\" target=\"_blank\" rel=\"nofollow\">текст</a>");
     }
 
     [Fact]
@@ -45,7 +45,7 @@ public class NewsHtmlRendererTests
     {
         var result = NewsHtmlRenderer.RenderMarkdownToTelegramHtml("[почта](mailto:test@example.com)");
 
-        result.ShouldContain("<a href=\"mailto:test@example.com\">почта</a>");
+        result.ShouldContain("<a href=\"mailto:test@example.com\" target=\"_blank\" rel=\"nofollow\">почта</a>");
     }
 
     [Fact]
