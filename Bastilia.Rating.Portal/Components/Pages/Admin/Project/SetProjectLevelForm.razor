@@ -3,9 +3,9 @@
 @inject NavigationManager navigationManager
 @inject AuthenticationStateProvider AuthenticationStateProvider
 
-<Card>
+<JoinCollapsePanel>
     <Header>Уровень проекта</Header>
-    <Body>
+    <ChildContent>
         <EditForm FormName="SetProjectLevelForm" Model="Model" OnValidSubmit="Save">
             <div>
                 <label>
@@ -31,8 +31,8 @@
                 <JoinButton Submit Preset="ButtonPreset.Save" Label="Сохранить уровень" />
             </div>
         </EditForm>
-    </Body>
-</Card>
+    </ChildContent>
+</JoinCollapsePanel>
 
 @code {
     [Parameter, EditorRequired]

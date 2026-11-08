@@ -3,9 +3,9 @@
 @inject UserLoaderHelper userLoaderHelper
 @inject NavigationManager navigationManager
 
-<Card>
+<JoinCollapsePanel>
     <Header>Координаторы проекта</Header>
-    <Body>
+    <ChildContent>
         <EditForm FormName="EditCoordinatorsForm" Model="Model" OnValidSubmit="Submit">
             <div>
                 <MultiUserInput Label="Координаторы проекта:" @bind-Value="Model!.Coordinators" />
@@ -14,8 +14,8 @@
                 <JoinButton Submit Preset="ButtonPreset.Save" />
             </div>
         </EditForm>
-    </Body>
-</Card>
+    </ChildContent>
+</JoinCollapsePanel>
 
 @code {
     [Parameter, EditorRequired]

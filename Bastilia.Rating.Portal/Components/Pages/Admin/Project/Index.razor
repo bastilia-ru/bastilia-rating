@@ -23,67 +23,69 @@
     <Alert>Успешно добавлена ачивка</Alert>
 }
 
-@if (project.Templates.Count > 0)
-{
-    <Card>
-        <Header>Добавление ачивки</Header>
-        <Body>
-            <EditForm FormName="AddAchievemntForm" Model="AddModel" OnValidSubmit="Add">
-                <div>
-                    <MultiUserInput @key="addFormResetKey" Label="Пользователь:" @bind-Value="AddModel!.UserId" />
-                </div>
-                <div>
-                    <label>
-                        Ачивка:
-                        <InputSelect @bind-Value="AddModel!.TemplateId" class="form-select">
-                            @foreach (var template in project.Templates)
-                            {
-                                <option value="@template.TemplateId">@template.Name</option>
-                            }
-                        </InputSelect>
-                    </label>
-                </div>
-                <div>
-                    <JoinButton Submit Preset="ButtonPreset.Add" />
-                </div>
-            </EditForm>
-        </Body>
-    </Card>
-}
-
-@if (project.Templates.Count > 0)
-{
-    <Card>
-        <Header>Шаблоны ачивок проекта</Header>
-        <Body>
-            @foreach (var template in project.Templates)
-            {
-                <EditTemplateForm Template="template" OnCompleted="ReloadProject" />
-            }
-        </Body>
-    </Card>
-}
-
 @if (project.ProjectMemberAchievements.Count == 0 && project.EndDate is not null)
 {
     <Alert>Здесь нет ни одной ачивки. Скорее всего данные об этом проекте еще восстанавливаются с архивов.</Alert>
 }
 
-@if (project.EndDate is null && project.ProjectMemberAchievements.Count == 0 && isPresident)
-{
-    <CompleteProjectForm ProjectId="project.BastiliaProjectId" OnCompleted="ReloadProject" />
-}
-@if (project.EndDate is not null && project.ProjectLevel is not null)
-{
-    <AddTemplatesForm ProjectId="project.BastiliaProjectId" ProjectLevel="project.ProjectLevel.Value" OnCompleted="ReloadProject" />
-}
+<JoinCollapsePanelGroup>
+    @if (project.Templates.Count > 0)
+    {
+        <JoinCollapsePanel Open="true">
+            <Header>Добавление ачивки</Header>
+            <ChildContent>
+                <EditForm FormName="AddAchievemntForm" Model="AddModel" OnValidSubmit="Add">
+                    <div>
+                        <MultiUserInput @key="addFormResetKey" Label="Пользователь:" @bind-Value="AddModel!.UserId" />
+                    </div>
+                    <div>
+                        <label>
+                            Ачивка:
+                            <InputSelect @bind-Value="AddModel!.TemplateId" class="form-select">
+                                @foreach (var template in project.Templates)
+                                {
+                                    <option value="@template.TemplateId">@template.Name</option>
+                                }
+                            </InputSelect>
+                        </label>
+                    </div>
+                    <div>
+                        <JoinButton Submit Preset="ButtonPreset.Add" />
+                    </div>
+                </EditForm>
+            </ChildContent>
+        </JoinCollapsePanel>
+    }
 
-@if (isPresident)
-{
-    <SetProjectLevelForm ProjectId="project.BastiliaProjectId" CurrentLevel="project.ProjectLevel" OnCompleted="ReloadProject" />
-}
+    @if (project.Templates.Count > 0)
+    {
+        <JoinCollapsePanel>
+            <Header>Шаблоны ачивок проекта</Header>
+            <ChildContent>
+                @foreach (var template in project.Templates)
+                {
+                    <EditTemplateForm Template="template" OnCompleted="ReloadProject" />
+                }
+            </ChildContent>
+        </JoinCollapsePanel>
+    }
 
-<EditCoordinatorsForm ProjectId="project.BastiliaProjectId" Coordinators="project.Coordinators" OnCompleted="ReloadProject" />
+    @if (project.EndDate is null && project.ProjectMemberAchievements.Count == 0 && isPresident)
+    {
+        <CompleteProjectForm ProjectId="project.BastiliaProjectId" OnCompleted="ReloadProject" />
+    }
+    @if (project.EndDate is not null && project.ProjectLevel is not null)
+    {
+        <AddTemplatesForm ProjectId="project.BastiliaProjectId" ProjectLevel="project.ProjectLevel.Value" OnCompleted="ReloadProject" />
+    }
+
+    @if (isPresident)
+    {
+        <SetProjectLevelForm ProjectId="project.BastiliaProjectId" CurrentLevel="project.ProjectLevel" OnCompleted="ReloadProject" />
+    }
+
+    <EditCoordinatorsForm ProjectId="project.BastiliaProjectId" Coordinators="project.Coordinators" OnCompleted="ReloadProject" />
+</JoinCollapsePanelGroup>
 
 @code {
     [Parameter]
