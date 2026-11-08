@@ -42,6 +42,10 @@
             {
                 <a href="/project/@project.BastiliaProjectId/news">@lastNewsDate.ToLocalTime().ToString("dd.MM.yyyy")</a>
             }
+            else
+            {
+                <span class="text-muted">нет</span>
+            }
             @if (AdminProjectIds?.Contains(project.BastiliaProjectId) == true)
             {
                 <a href="/project/@project.BastiliaProjectId/news" title="Написать новость" class="ms-1">
