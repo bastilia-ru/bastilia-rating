@@ -9,6 +9,7 @@
     <PackageVersion Include="JoinRpg.Common.WebInfrastructure" Version="2026.9.651" />
     <PackageVersion Include="Microsoft.AspNetCore.DataProtection.EntityFrameworkCore" Version="10.0.14" />
     <PackageVersion Include="JoinRpg.Common.EntityFrameworkCore" Version="2026.9.651" />
+    <PackageVersion Include="JoinRpg.Common.PrimitiveTypes" Version="2026.9.651" />
     <PackageVersion Include="JoinRpg.Common.WebComponents" Version="2026.9.651" />
     <PackageVersion Include="LinqKit.Microsoft.EntityFrameworkCore" Version="10.1.1" />
     <PackageVersion Include="Microsoft.AspNetCore.Components.QuickGrid" Version="10.0.14" />

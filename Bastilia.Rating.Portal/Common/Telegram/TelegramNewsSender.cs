@@ -1,4 +1,5 @@
 using Bastilia.Rating.Domain;
+using JoinRpg.Common.PrimitiveTypes;
 using JoinRpg.Common.WebInfrastructure;
 using Microsoft.Extensions.Options;
 
@@ -25,7 +26,7 @@ internal class TelegramNewsSender(
 
         try
         {
-            await botApi.SendHtmlMessageAsync(options.Value.ChatId, message);
+            await botApi.SendHtmlMessageAsync(new TelegramChatId(options.Value.ChatId), new TelegramHtmlString(message));
             return NewsSendResult.Success;
         }
         catch (Exception exception)

@@ -1,3 +1,4 @@
+using JoinRpg.Common.PrimitiveTypes;
 using Microsoft.Extensions.Options;
 using Telegram.Bot;
 using Telegram.Bot.Types;
@@ -10,10 +11,10 @@ internal class TelegramBotApi(IOptions<TelegramBotOptions> options) : ITelegramB
     private readonly Lazy<TelegramBotClient> client = new(() =>
         new TelegramBotClient($"{options.Value.BotId}:{options.Value.BotSecret}"));
 
-    public async Task SendHtmlMessageAsync(long chatId, string html, CancellationToken cancellationToken = default)
+    public async Task SendHtmlMessageAsync(TelegramChatId chatId, TelegramHtmlString html, CancellationToken cancellationToken = default)
         => await client.Value.SendMessage(
-            chatId,
-            html,
+            chatId.Value,
+            html.Contents,
             ParseMode.Html,
             linkPreviewOptions: new LinkPreviewOptions { IsDisabled = true },
             cancellationToken: cancellationToken);

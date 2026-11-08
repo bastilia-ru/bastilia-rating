@@ -1,4 +1,5 @@
 using Bastilia.Rating.Portal.Common.Telegram;
+using JoinRpg.Common.PrimitiveTypes;
 using JoinRpg.Common.WebInfrastructure;
 using Microsoft.Extensions.Options;
 using Telegram.Bot.Exceptions;
@@ -10,11 +11,11 @@ public class TelegramNewsSenderTests
     private sealed class FakeTelegramBotApi : ITelegramBotApi
     {
         public bool WasCalled { get; private set; }
-        public long CapturedChatId { get; private set; }
-        public string? CapturedHtml { get; private set; }
+        public TelegramChatId? CapturedChatId { get; private set; }
+        public TelegramHtmlString? CapturedHtml { get; private set; }
         public Exception? ExceptionToThrow { get; set; }
 
-        public Task SendHtmlMessageAsync(long chatId, string html, CancellationToken cancellationToken = default)
+        public Task SendHtmlMessageAsync(TelegramChatId chatId, TelegramHtmlString html, CancellationToken cancellationToken = default)
         {
             WasCalled = true;
             CapturedChatId = chatId;
@@ -109,7 +110,8 @@ public class TelegramNewsSenderTests
         result.Retryable.ShouldBeFalse();
         result.ErrorMessage.ShouldBeNull();
         fake.WasCalled.ShouldBeTrue();
-        fake.CapturedChatId.ShouldBe(100);
-        fake.CapturedHtml.ShouldContain("<b>");
+        fake.CapturedChatId.ShouldBe(new TelegramChatId(100));
+        fake.CapturedHtml.ShouldNotBeNull();
+        fake.CapturedHtml.Contents.ShouldContain("<b>");
     }
 }
