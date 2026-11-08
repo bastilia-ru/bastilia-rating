@@ -96,7 +96,7 @@ public class AppDbContext(DbContextOptions<AppDbContext> options) : DbContext(op
             entity.HasIndex(x => new { x.ProjectId, x.CreatedAt });
 
             entity.HasOne(x => x.Project)
-                .WithMany()
+                .WithMany(p => p.ProjectNews)
                 .HasForeignKey(x => x.ProjectId)
                 .OnDelete(DeleteBehavior.Restrict);
 

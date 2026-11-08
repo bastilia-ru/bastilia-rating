@@ -26,6 +26,7 @@ public class BastiliaProject
 
     public ICollection<ProjectAdmin> ProjectAdmins { get; set; } = [];
     public ICollection<AchievementTemplate> AchievementTemplates { get; set; } = [];
+    public ICollection<ProjectNewsEntity> ProjectNews { get; set; } = [];
     public required string ProjectIconUri { get; set; }
     public DateTimeOffset? DeletedAt { get; set; }
     public DateTimeOffset? LastUpdatedAt { get; set; }

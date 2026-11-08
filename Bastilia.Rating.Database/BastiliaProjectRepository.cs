@@ -40,11 +40,12 @@ internal class BastiliaProjectRepository(IDbContextFactory<AppDbContext> context
                     {
                         Project = p,
                         TemplatesCount = p.AchievementTemplates.Count,
-                        AchievementsCount = p.AchievementTemplates.SelectMany(t => t.Achievements).Count()
+                        AchievementsCount = p.AchievementTemplates.SelectMany(t => t.Achievements).Count(),
+                        LastNewsDate = p.ProjectNews.Max(n => (DateTimeOffset?)n.CreatedAt)
                     })
                     .ToListAsync();
 
-        return [.. projects.Select(x => ToProject(x.Project, x.TemplatesCount, x.AchievementsCount))];
+        return [.. projects.Select(x => ToProject(x.Project, x.TemplatesCount, x.AchievementsCount, x.LastNewsDate))];
     }
 
     private static IQueryable<Entities.BastiliaProject> Query(AppDbContext context)
@@ -71,6 +72,11 @@ internal class BastiliaProjectRepository(IDbContextFactory<AppDbContext> context
 
         if (project == null) { return null; }
 
+        var lastNewsDate = await context.ProjectNews
+            .Where(n => n.ProjectId == project.BastiliaProjectId)
+            .OrderByDescending(n => n.CreatedAt)
+            .Select(n => (DateTimeOffset?)n.CreatedAt)
+            .FirstOrDefaultAsync();
 
         return new BastiliaProjectWithDetails(
            project.BastiliaProjectId,
@@ -93,7 +99,8 @@ internal class BastiliaProjectRepository(IDbContextFactory<AppDbContext> context
            project.Slug,
            project.DeletedAt,
            project.LastUpdatedAt,
-           project.PlannedEndDate
+           project.PlannedEndDate,
+           lastNewsDate
            );
     }
 }
