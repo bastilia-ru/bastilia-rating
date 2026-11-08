@@ -3,10 +3,12 @@
 @using Bastilia.Rating.Portal.Client.Components.BastiliaUsers
 @using Bastilia.Rating.Portal.Client.Components.Projects
 @using Bastilia.Rating.Portal.Auth
+@using Bastilia.Rating.Portal.Common.Telegram
 @using Microsoft.AspNetCore.Components.Authorization
 @using Microsoft.AspNetCore.Components.QuickGrid
 
 @inject ProjectNavigateHelper projectNavigateHelper
+@inject IProjectNewsRepository newsRepository
 <PageTitle>Проект @project?.ProjectName</PageTitle>
 @if (project is null)
 {
@@ -14,6 +16,22 @@
     return;
 }
 <ProjectCard Project="project" ShowAdminLink="isAdmin" />
+
+@if (lastNews is not null)
+{
+    <Card>
+        <Header>Новости</Header>
+        <Body>
+            <div class="text-muted small">@lastNews.CreatedAt.ToLocalTime().ToString("g") — @lastNews.AuthorName</div>
+            <div>@((MarkupString)NewsHtmlRenderer.RenderMarkdownToTelegramHtml(lastNews.Text))</div>
+            <a href="/project/@ProjectId/news">Все новости →</a>
+        </Body>
+    </Card>
+}
+else if (isAdmin)
+{
+    <p><a href="/project/@ProjectId/news">Все новости →</a> Напишите первую новость проекта!</p>
+}
 
 @if (project.ProjectMemberAchievements.Count > 0)
 {
@@ -32,6 +50,7 @@ else if (project.EndDate is not null)
     private Task<AuthenticationState>? AuthenticationStateTask { get; set; }
 
     private BastiliaProjectWithDetails? project;
+    private Bastilia.Rating.Domain.ProjectNews? lastNews;
     private bool isAdmin;
 
     protected override async Task OnParametersSetAsync()
@@ -48,5 +67,7 @@ else if (project.EndDate is not null)
         {
             isAdmin = user.IsProjectAdmin(project);
         }
+
+        lastNews = await newsRepository.GetLastForProject(project.BastiliaProjectId);
     }
 }

@@ -1,12 +1,21 @@
 namespace Bastilia.Rating.Domain;
 
-public record NewsSendResult(bool Sent, bool Retryable, string? ErrorMessage)
+public enum NewsSendOutcome
 {
-    public static NewsSendResult Success { get; } = new(true, false, null);
+    Sent,
+    Skipped,
+    Failed,
+}
 
-    public static NewsSendResult Skipped(string reason) => new(false, false, reason);
+public record NewsSendResult(NewsSendOutcome Outcome, bool Retryable, string? ErrorMessage)
+{
+    public bool Sent => Outcome == NewsSendOutcome.Sent;
 
-    public static NewsSendResult Failure(string error, bool retryable) => new(false, retryable, error);
+    public static NewsSendResult Success { get; } = new(NewsSendOutcome.Sent, false, null);
+
+    public static NewsSendResult Skipped(string reason) => new(NewsSendOutcome.Skipped, false, reason);
+
+    public static NewsSendResult Failure(string error, bool retryable) => new(NewsSendOutcome.Failed, retryable, error);
 }
 
 public interface ITelegramNewsSender

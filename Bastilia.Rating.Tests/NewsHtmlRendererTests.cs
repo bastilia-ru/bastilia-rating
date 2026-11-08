@@ -55,4 +55,14 @@ public class NewsHtmlRendererTests
 
         Regex.IsMatch(result, "один\n+два").ShouldBeTrue();
     }
+
+    [Fact]
+    public void ListItems_SeparatedByNewline()
+    {
+        var result = NewsHtmlRenderer.RenderMarkdownToTelegramHtml("- один\n- два");
+
+        result.ShouldContain("один");
+        result.ShouldContain("два");
+        Regex.IsMatch(result, "один\n+два").ShouldBeTrue();
+    }
 }

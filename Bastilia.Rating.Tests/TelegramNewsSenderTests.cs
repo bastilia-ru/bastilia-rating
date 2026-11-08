@@ -56,6 +56,7 @@ public class TelegramNewsSenderTests
 
         var result = await sender.Send(CreateNews(), "Мой проект", "my-project");
 
+        result.Outcome.ShouldBe(NewsSendOutcome.Skipped);
         result.Sent.ShouldBeFalse();
         result.ErrorMessage.ShouldBe("Telegram не настроен");
         fake.WasCalled.ShouldBeFalse();
@@ -69,6 +70,7 @@ public class TelegramNewsSenderTests
 
         var result = await sender.Send(CreateNews(), "Мой проект", "my-project");
 
+        result.Outcome.ShouldBe(NewsSendOutcome.Skipped);
         result.Sent.ShouldBeFalse();
         result.ErrorMessage.ShouldBe("ChatId не настроен");
         fake.WasCalled.ShouldBeFalse();
@@ -82,6 +84,7 @@ public class TelegramNewsSenderTests
 
         var result = await sender.Send(CreateNews(), "Мой проект", "my-project");
 
+        result.Outcome.ShouldBe(NewsSendOutcome.Failed);
         result.Sent.ShouldBeFalse();
         result.Retryable.ShouldBeFalse();
         result.ErrorMessage.ShouldBe("bot was kicked");
@@ -95,6 +98,7 @@ public class TelegramNewsSenderTests
 
         var result = await sender.Send(CreateNews(), "Мой проект", "my-project");
 
+        result.Outcome.ShouldBe(NewsSendOutcome.Failed);
         result.Sent.ShouldBeFalse();
         result.Retryable.ShouldBeTrue();
         result.ErrorMessage.ShouldBe("internal error");
@@ -108,6 +112,7 @@ public class TelegramNewsSenderTests
 
         var result = await sender.Send(CreateNews(), "Мой проект", "my-project");
 
+        result.Outcome.ShouldBe(NewsSendOutcome.Sent);
         result.Sent.ShouldBeTrue();
         result.Retryable.ShouldBeFalse();
         result.ErrorMessage.ShouldBeNull();
