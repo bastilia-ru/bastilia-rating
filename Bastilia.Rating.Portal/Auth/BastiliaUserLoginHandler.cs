@@ -12,7 +12,14 @@ internal class BastiliaUserLoginHandler(UserImportService userImportService, ILo
     {
         var logger = loggerFactory.CreateLogger("Auth");
 
-        var member = await userImportService.ImportUser(userId.Value);
+        var nickName = externalPrincipal.FindFirst("preferred_username")?.Value;
+        var avatarUrl = externalPrincipal.FindFirst("picture")?.Value;
+
+        var member = (nickName, avatarUrl) switch
+        {
+            (null, null) => await userImportService.ImportUser(userId.Value),
+            _ => await userImportService.ImportUser(userId.Value, nickName, avatarUrl),
+        };
         if (member is null)
         {
             logger.LogWarning("Не удалось загрузить пользователя {userId} с id.joinrpg.ru", userId);
