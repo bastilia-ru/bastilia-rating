@@ -1,6 +1,7 @@
 @page "/project/{projectId}/news"
 @using Bastilia.Rating.Portal.Auth
 @using Bastilia.Rating.Portal.Common.Telegram
+@using Bastilia.Rating.Domain.Common
 @using Microsoft.AspNetCore.Components.Authorization
 @using System.ComponentModel.DataAnnotations
 @rendermode InteractiveServer
@@ -60,7 +61,7 @@ else
                     {
                         <Alert>Не удалось отправить в Telegram: @news.TelegramError</Alert>
                     }
-                    <button class="btn btn-outline-secondary" @onclick="() => Retry(news.Id)">Отправить в Telegram повторно</button>
+                    <JoinButton Preset="ButtonPreset.Publish" Label="Отправить в Telegram повторно" OnClick="() => Retry(news.Id)" />
                 }
             </Body>
         </Card>
@@ -111,7 +112,7 @@ else
         sendErrorAlert = null;
         var authState = await AuthenticationStateTask!;
         var user = authState.User;
-        var result = await newsService.Publish(project!.BastiliaProjectId, user.GetJoinrpgUserId(), NewsModel!.Text);
+        var result = await newsService.Publish(project!.BastiliaProjectId, new UserIdentification(user.GetJoinrpgUserId()), NewsModel!.Text);
         NewsModel = new NewsViewModel();
         await ReloadNews();
         if (result.SendStatus == NewsSendStatus.Failed)
