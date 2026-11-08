@@ -1,4 +1,4 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <TargetFramework>net10.0</TargetFramework>
@@ -13,11 +13,13 @@
     <PackageReference Include="Shouldly" />
     <PackageReference Include="xunit" />
     <PackageReference Include="xunit.runner.visualstudio" />
+    <PackageReference Include="Verify.Xunit" />
   </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\Bastilia.Rating.Domain\Bastilia.Rating.Domain.csproj" />
     <ProjectReference Include="..\Bastilia.Rating.Database\Bastilia.Rating.Database.csproj" />
+    <ProjectReference Include="..\Bastilia.Rating.Portal\Bastilia.Rating.Portal.csproj" />
   </ItemGroup>
 
   <ItemGroup>

@@ -17,10 +17,16 @@
     <PackageReference Include="Ical.Net" />
     <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly.Server" />
 	  <PackageReference Include="JoinRpg.Common.KogdaIgraClient" />
+	<PackageReference Include="Markdig" />
+	<PackageReference Include="Vereyon.Web.HtmlSanitizer" />
 	<PackageReference Include="Microsoft.EntityFrameworkCore.Design">
 		<PrivateAssets>all</PrivateAssets>
 		<IncludeAssets>runtime; build; native; contentfiles; analyzers</IncludeAssets>
 	</PackageReference>
+  </ItemGroup>
+
+  <ItemGroup>
+    <InternalsVisibleTo Include="Bastilia.Rating.Tests" />
   </ItemGroup>
 
 </Project>

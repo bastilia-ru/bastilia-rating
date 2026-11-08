@@ -1,0 +1,9 @@
+﻿<b>Мой проект</b> #my-project
+
+<strong>Важная новость!</strong>
+
+Первый абзац с <a href="https://example.com/" target="_blank" rel="nofollow">ссылкой</a>.
+
+Второй абзац со <em>курсивом</em>.
+
+— Имя Автора · <a href="https://rating.bastilia.ru/project/my-project">rating.bastilia.ru/project/my-project</a>

@@ -1,0 +1,5 @@
+﻿<strong>Важная новость!</strong>
+
+Первый абзац с <a href="https://example.com/" target="_blank" rel="nofollow">ссылкой</a>.
+
+Второй абзац со <em>курсивом</em>.
