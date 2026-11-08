@@ -1,5 +1,4 @@
 @page "/admin/project/{ProjectId}"
-@using Bastilia.Rating.Portal.Client.Components.Achievements
 @using Bastilia.Rating.Portal.Client.Components.Projects
 @using Bastilia.Rating.Portal.Auth
 @using Microsoft.AspNetCore.Authorization
@@ -65,11 +64,7 @@
     </Card>
 }
 
-@if (project.ProjectMemberAchievements.Count > 0)
-{
-    <AchievementList Project="project" />
-}
-else if (project.EndDate is not null)
+@if (project.ProjectMemberAchievements.Count == 0 && project.EndDate is not null)
 {
     <Alert>Здесь нет ни одной ачивки. Скорее всего данные об этом проекте еще восстанавливаются с архивов.</Alert>
 }
