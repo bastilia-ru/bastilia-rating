@@ -8,7 +8,7 @@ public class ProjectProblemsTests
         ProjectLevel? projectLevel = null,
         int templatesCount = 0,
         int achievementsCount = 0)
-        => new(1, "Test", ProjectType.MasteringGame, BrandType.Bastilia, false, null, null, null, null, [], endDate, projectLevel, "", new Uri("https://example.com"), null, null, null, plannedEndDate, templatesCount, achievementsCount);
+        => new(1, "Test", ProjectType.MasteringGame, BrandType.Bastilia, false, null, null, null, null, [], endDate, projectLevel, "", new Uri("https://example.com"), null, null, null, plannedEndDate, templatesCount, achievementsCount, null);
 
     [Fact]
     public void CompletedProject_WithoutLevel_HasCompletedWithoutLevelProblem()

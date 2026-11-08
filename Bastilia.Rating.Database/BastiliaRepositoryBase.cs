@@ -16,7 +16,7 @@ internal abstract class BastiliaRepositoryBase
         }
         return a.Template.AchievementName;
     }
-    protected static BastiliaProject ToProject(Entities.BastiliaProject project, int templatesCount, int achievementsCount)
+    protected static BastiliaProject ToProject(Entities.BastiliaProject project, int templatesCount, int achievementsCount, DateTimeOffset? lastNewsDate)
     {
         return new BastiliaProject(
             project.BastiliaProjectId,
@@ -38,7 +38,8 @@ internal abstract class BastiliaRepositoryBase
             project.LastUpdatedAt,
             project.PlannedEndDate,
             templatesCount,
-            achievementsCount
+            achievementsCount,
+            lastNewsDate
             );
     }
 
