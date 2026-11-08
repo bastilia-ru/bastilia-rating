@@ -6,26 +6,41 @@ namespace Bastilia.Rating.Portal.Common.Telegram;
 
 public static class NewsHtmlRenderer
 {
+    private static readonly MarkdownPipeline MarkdownPipeline = new MarkdownPipelineBuilder()
+        .UseAdvancedExtensions()
+        .UseAutoLinks()
+        .DisableHtml()
+        .Build();
+
     private static readonly HtmlSanitizer Sanitizer = CreateSanitizer();
 
     public static string RenderMarkdownToTelegramHtml(string markdown)
     {
-        var html = Markdown.ToHtml(markdown, new MarkdownPipelineBuilder()
-            .UseAdvancedExtensions()
-            .UseAutoLinks()
-            .DisableHtml()
-            .Build());
+        var html = Markdown.ToHtml(markdown, MarkdownPipeline);
 
-        html = html
-            .Replace("</p>", "\n")
-            .Replace("</li>", "\n")
+        return Sanitizer.Sanitize(ToTelegramHtmlString(html));
+    }
+
+    /// <summary>
+    /// Эквивалент ToTelegramHtmlString из JoinRpg.Markdown (MarkDownRendererFacade):
+    /// Telegram не понимает блочные теги, а наш санитайзер выбрасывает их содержимое-теги
+    /// (p, ul, ol, li), поэтому переносы строк вставляем заранее, пока закрывающие теги ещё на месте.
+    /// </summary>
+    /// <remarks>
+    /// Отличия от joinrpg: там заменяется только <c>&lt;/p&gt;</c> (плюс TrimEnd) и финальная
+    /// telegram-санитизация с флэттингом происходит отдельным этапом при отправке; у нас обёртки
+    /// списков (ul/ol) убираются здесь же, а пункты (li) разделяются переносом, чтобы после
+    /// флэттинга пункты и абзацы не слипались.
+    /// </remarks>
+    private static string ToTelegramHtmlString(string html)
+        => html
+            .Replace("</p>", "</p>\n")
+            .Replace("</li>", "</li>\n")
             .Replace("<ul>", string.Empty)
             .Replace("</ul>", string.Empty)
             .Replace("<ol>", string.Empty)
-            .Replace("</ol>", string.Empty);
-
-        return Sanitizer.Sanitize(html);
-    }
+            .Replace("</ol>", string.Empty)
+            .Trim();
 
     private static HtmlSanitizer CreateSanitizer()
     {
