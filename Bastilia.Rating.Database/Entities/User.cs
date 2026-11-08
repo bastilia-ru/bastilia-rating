@@ -13,6 +13,10 @@ public class User
 
     public DateOnly? BirthDay { get; set; }
 
+    public long? TelegramChatId { get; set; }
+
+    public string? TelegramUsername { get; set; }
+
     public ICollection<ProjectAdmin> ProjectAdmins { get; set; } = [];
     public ICollection<AchievementTemplate> OwnedAchievementTemplates { get; set; } = [];
     public ICollection<Achievement> Achievements { get; set; } = [];

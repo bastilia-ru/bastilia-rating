@@ -6,7 +6,7 @@ namespace Bastilia.Rating.Tests;
 public class UserImportServiceTests
 {
     private static BastiliaMember CreateMember(string userName = "old", string avatarUrl = "https://example.com/old.png") =>
-        new(1, userName, avatarUrl, "slug", true, [], [], [], null);
+        new(1, userName, avatarUrl, "slug", true, [], [], [], null, null);
 
     [Fact]
     public async Task ExistingUser_NickChanged_UpdatesNickOnly()

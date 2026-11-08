@@ -1,3 +1,4 @@
+using JoinRpg.Common.PrimitiveTypes;
 using LinqKit;
 
 namespace Bastilia.Rating.Database;
@@ -137,6 +138,7 @@ internal class BastiliaMemberRepository(IDbContextFactory<AppDbContext> contextF
                 .Select(a => ToMemberAchievement(a))
                 .ToList()
                 .AsReadOnly(),
-            BirthDay: user.BirthDay);
+            BirthDay: user.BirthDay,
+            Telegram: TelegramSocialLink.FromOptional(user.TelegramChatId, PrefferedName.FromOptional(user.TelegramUsername)));
     }
 }

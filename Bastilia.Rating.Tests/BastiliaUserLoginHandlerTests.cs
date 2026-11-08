@@ -11,7 +11,7 @@ public class BastiliaUserLoginHandlerTests
     private const string NewAvatar = "https://a/64.png";
 
     private static BastiliaMember CreateMember(string userName = "old", string avatarUrl = "https://example.com/old.png") =>
-        new(42, userName, avatarUrl, "slug", false, [], [], [], null);
+        new(42, userName, avatarUrl, "slug", false, [], [], [], null, null);
 
     [Fact]
     public async Task NoUserInfoClaims_UsesLegacyXApiPath()

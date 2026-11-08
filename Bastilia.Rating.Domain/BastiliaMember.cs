@@ -1,4 +1,6 @@
 
+using JoinRpg.Common.PrimitiveTypes;
+
 namespace Bastilia.Rating.Domain;
 
 // Domain Models
@@ -10,7 +12,8 @@ public record BastiliaMember(
     bool ParticipateInRating,
     IReadOnlyCollection<BastiliaStatusHistory> StatusHistory,
     IReadOnlyCollection<ProjectAdminInfo> HisProjects,
-    IReadOnlyCollection<MemberAchievement> Achievements, DateOnly? BirthDay) : IUserLink
+    IReadOnlyCollection<MemberAchievement> Achievements, DateOnly? BirthDay,
+    TelegramSocialLink? Telegram) : IUserLink
 {
     public BastiliaFinalStatus CurrentStatus { get; } = CalculateStatus(StatusHistory, Achievements);
 

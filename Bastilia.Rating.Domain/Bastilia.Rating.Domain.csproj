@@ -1,4 +1,4 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
 
@@ -6,6 +6,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\JoinRpg.Client\JoinRpg.Client.csproj" />
+    <PackageReference Include="JoinRpg.Common.PrimitiveTypes" />
   </ItemGroup>
 
 </Project>
