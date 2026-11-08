@@ -4,7 +4,7 @@ public class BastiliaMemberRolesTests
 {
     private static BastiliaMember CreateMember(params BastiliaStatusHistory[] statuses) =>
         new(1, "test", "https://example.com/avatar.png", "test", true,
-            statuses, [], [], null);
+            statuses, [], [], null, null);
 
     [Fact]
     public void NoStatuses_NotActiveMember_NotPresident()
