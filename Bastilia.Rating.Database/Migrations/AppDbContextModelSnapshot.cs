@@ -286,10 +286,6 @@ namespace Bastilia.Rating.Database.Migrations
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("ProjectNewsId"));
 
-                    b.Property<string>("AuthorName")
-                        .IsRequired()
-                        .HasColumnType("text");
-
                     b.Property<int>("AuthorUserId")
                         .HasColumnType("integer");
 
@@ -311,6 +307,8 @@ namespace Bastilia.Rating.Database.Migrations
                         .HasColumnType("text");
 
                     b.HasKey("ProjectNewsId");
+
+                    b.HasIndex("AuthorUserId");
 
                     b.HasIndex("ProjectId", "CreatedAt");
 
@@ -679,11 +677,19 @@ namespace Bastilia.Rating.Database.Migrations
 
             modelBuilder.Entity("Bastilia.Rating.Database.Entities.ProjectNewsEntity", b =>
                 {
+                    b.HasOne("Bastilia.Rating.Database.Entities.User", "Author")
+                        .WithMany()
+                        .HasForeignKey("AuthorUserId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
                     b.HasOne("Bastilia.Rating.Database.Entities.BastiliaProject", "Project")
                         .WithMany()
                         .HasForeignKey("ProjectId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
+
+                    b.Navigation("Author");
 
                     b.Navigation("Project");
                 });

@@ -24,7 +24,8 @@ internal class BastiliaNewsRepository(IDbContextFactory<AppDbContext> contextFac
 
     private static IQueryable<Entities.ProjectNewsEntity> Query(AppDbContext context)
     {
-        return context.ProjectNews.AsNoTracking();
+        return context.ProjectNews.AsNoTracking()
+            .Include(x => x.Author);
     }
 
     internal static ProjectNews ToNews(Entities.ProjectNewsEntity entity)
@@ -33,7 +34,7 @@ internal class BastiliaNewsRepository(IDbContextFactory<AppDbContext> contextFac
             entity.ProjectNewsId,
             entity.ProjectId,
             entity.AuthorUserId,
-            entity.AuthorName,
+            entity.Author.Username,
             entity.CreatedAt,
             entity.Text,
             entity.SendStatus,

@@ -20,7 +20,6 @@ namespace Bastilia.Rating.Database.Migrations
                         .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
                     ProjectId = table.Column<int>(type: "integer", nullable: false),
                     AuthorUserId = table.Column<int>(type: "integer", nullable: false),
-                    AuthorName = table.Column<string>(type: "text", nullable: false),
                     CreatedAt = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: false),
                     Text = table.Column<string>(type: "text", nullable: false),
                     SendStatus = table.Column<string>(type: "text", nullable: false),
@@ -35,7 +34,18 @@ namespace Bastilia.Rating.Database.Migrations
                         principalTable: "BastiliaProjects",
                         principalColumn: "BastiliaProjectId",
                         onDelete: ReferentialAction.Restrict);
+                    table.ForeignKey(
+                        name: "FK_ProjectNews_Users_AuthorUserId",
+                        column: x => x.AuthorUserId,
+                        principalTable: "Users",
+                        principalColumn: "JoinRpgUserId",
+                        onDelete: ReferentialAction.Restrict);
                 });
+
+            migrationBuilder.CreateIndex(
+                name: "IX_ProjectNews_AuthorUserId",
+                table: "ProjectNews",
+                column: "AuthorUserId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_ProjectNews_ProjectId_CreatedAt",
