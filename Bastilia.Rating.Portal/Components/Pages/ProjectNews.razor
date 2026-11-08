@@ -61,7 +61,7 @@ else
                     {
                         <Alert>Не удалось отправить в Telegram: @news.TelegramError</Alert>
                     }
-                    <JoinButton Preset="ButtonPreset.Publish" Label="Отправить в Telegram повторно" OnClick="() => Retry(news.Id)" />
+                    <JoinButton Preset="ButtonPreset.Publish" Label="Отправить в Telegram повторно" OnClick="args => Retry(news.Id, args)" />
                 }
             </Body>
         </Card>
@@ -121,14 +121,21 @@ else
         }
     }
 
-    private async Task Retry(int newsId)
+    private async Task Retry(int newsId, ButtonClickEventArgs args)
     {
         sendErrorAlert = null;
-        var result = await newsService.RetrySend(newsId);
-        await ReloadNews();
-        if (result.SendStatus == NewsSendStatus.Failed)
+        try
         {
-            sendErrorAlert = $"Не удалось отправить новость в Telegram повторно: {result.TelegramError}";
+            var result = await newsService.RetrySend(newsId);
+            await ReloadNews();
+            if (result.SendStatus == NewsSendStatus.Failed)
+            {
+                sendErrorAlert = $"Не удалось отправить новость в Telegram повторно: {result.TelegramError}";
+            }
+        }
+        finally
+        {
+            args.ExitProgressState = true;
         }
     }
 
