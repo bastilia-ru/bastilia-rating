@@ -3,9 +3,9 @@
 @inject NavigationManager navigationManager
 @inject AuthenticationStateProvider AuthenticationStateProvider
 
-<Card>
+<JoinCollapsePanel>
     <Header>Завершить проект</Header>
-    <Body>
+    <ChildContent>
         <EditForm FormName="CompleteProjectForm" Model="Model" OnValidSubmit="Complete">
             <div>
                 <label>
@@ -22,8 +22,8 @@
                 <JoinButton Submit Label="Завершить проект" Style="VariationStyleEnum.Danger" />
             </div>
         </EditForm>
-    </Body>
-</Card>
+    </ChildContent>
+</JoinCollapsePanel>
 
 @code {
     [Parameter, EditorRequired]

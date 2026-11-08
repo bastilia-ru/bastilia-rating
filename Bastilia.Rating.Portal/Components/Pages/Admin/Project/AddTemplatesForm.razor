@@ -1,9 +1,9 @@
 @inject IProjectService projectService
 @inject NavigationManager navigationManager
 
-<Card>
+<JoinCollapsePanel>
     <Header>Добавить шаблоны ачивок</Header>
-    <Body>
+    <ChildContent>
         <EditForm FormName="AddTemplatesForm" Model="Model" OnValidSubmit="Complete">
             <AchievementTemplateNamesInput ProjectLevel="ProjectLevel" Templates="Model!.Templates" LevelSelectable="false" />
             @if (error is not null)
@@ -14,8 +14,8 @@
                 <JoinButton Submit Preset="ButtonPreset.Add" Label="Добавить шаблоны" />
             </div>
         </EditForm>
-    </Body>
-</Card>
+    </ChildContent>
+</JoinCollapsePanel>
 
 @code {
     [Parameter, EditorRequired]
