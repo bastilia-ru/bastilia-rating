@@ -111,7 +111,7 @@ else
         sendErrorAlert = null;
         var authState = await AuthenticationStateTask!;
         var user = authState.User;
-        var result = await newsService.Publish(project!.BastiliaProjectId, user.GetJoinrpgUserId(), user.Identity?.Name ?? "", NewsModel!.Text);
+        var result = await newsService.Publish(project!.BastiliaProjectId, user.GetJoinrpgUserId(), NewsModel!.Text);
         NewsModel = new NewsViewModel();
         await ReloadNews();
         if (result.SendStatus == NewsSendStatus.Failed)

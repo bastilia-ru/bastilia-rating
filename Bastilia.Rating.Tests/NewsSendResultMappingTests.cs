@@ -9,7 +9,7 @@ public class NewsSendResultMappingTests
         ProjectNewsId = 1,
         ProjectId = 2,
         AuthorUserId = 3,
-        AuthorName = "Имя Автора",
+        Author = new User { JoinRpgUserId = 3, Username = "Имя Автора", AvatarUrl = "" },
         CreatedAt = DateTimeOffset.UtcNow,
         Text = "**текст**",
         SendStatus = NewsSendStatus.NotSent,
