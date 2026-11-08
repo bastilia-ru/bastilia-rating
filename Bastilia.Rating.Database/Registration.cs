@@ -21,6 +21,7 @@ namespace Bastilia.Rating.Database
             services.AddTransient<IUserDbService, UserDbService>();
             services.AddTransient<IKiDbService, KiDbService>();
             services.AddTransient<IProjectService, ProjectService>();
+            services.AddTransient<IProjectNewsRepository, BastiliaNewsRepository>();
         }
     }
 }
