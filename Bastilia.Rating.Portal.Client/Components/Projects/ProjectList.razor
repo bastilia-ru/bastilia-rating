@@ -35,6 +35,21 @@
             <text><BastiliaUserLink Member="@user" /> &nbsp;</text>
         }
     </TemplateColumn>
+    @if (ShowNews)
+    {
+        <TemplateColumn Context="project" Title="Новости" SortBy="@projectNewsSort">
+            @if (project.LastNewsDate is { } lastNewsDate)
+            {
+                <a href="/project/@project.BastiliaProjectId/news">@lastNewsDate.ToLocalTime().ToString("dd.MM.yyyy")</a>
+            }
+            @if (AdminProjectIds?.Contains(project.BastiliaProjectId) == true)
+            {
+                <a href="/project/@project.BastiliaProjectId/news" title="Написать новость" class="ms-1">
+                    <JoinIcon Icon="JoinIconType.Edit" />
+                </a>
+            }
+        </TemplateColumn>
+    }
     <TemplateColumn Context="project" Title="Ссылки">
         <ProjectLinks Project="project" />
     </TemplateColumn>
@@ -47,10 +62,18 @@
     [Parameter]
     public bool ShowYear { get; set; }
 
+    [Parameter]
+    public bool ShowNews { get; set; }
+
+    [CascadingParameter]
+    private HashSet<int>? AdminProjectIds { get; set; }
+
     GridSort<BastiliaProject> projectNameSort = GridSort<BastiliaProject>
        .ByDescending(x => x.ProjectName);
 
     GridSort<BastiliaProject> projectEndSort = GridSort<BastiliaProject>.ByAscending(x => x.EndDate);
+
+    GridSort<BastiliaProject> projectNewsSort = GridSort<BastiliaProject>.ByDescending(x => x.LastNewsDate);
 
 }
 
