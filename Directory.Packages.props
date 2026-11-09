@@ -31,6 +31,6 @@
     <PackageVersion Include="OpenIddict.EntityFrameworkCore" Version="7.8.0" />
     <PackageVersion Include="Markdig" Version="1.4.0" />
     <PackageVersion Include="JoinRpg.Common.WebInfrastructure.Interfaces" Version="2026.9.680" />
-    <PackageVersion Include="Telegram.Bot" Version="22.10.2.1" />
+    <PackageVersion Include="Telegram.Bot" Version="22.10.3.4" />
   </ItemGroup>
 </Project>
