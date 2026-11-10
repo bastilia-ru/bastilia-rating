@@ -1,9 +1,12 @@
+using JoinRpg.Common.PrimitiveTypes;
+
 namespace Bastilia.Rating.Domain;
 
 public interface IBastiliaMemberRepository
 {
     Task<BastiliaMember?> GetByIdAsync(int userId);
     Task<BastiliaMember?> GetBySlugAsync(string slug);
+    Task<BastiliaMember?> GetByTelegramChatIdAsync(TelegramChatId chatId);
 
     Task<IReadOnlyCollection<BastiliaMember>> GetAllAsync();
 

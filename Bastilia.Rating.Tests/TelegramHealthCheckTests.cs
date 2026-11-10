@@ -88,6 +88,12 @@ public class TelegramHealthCheckTests
             => ExceptionToThrow is null
                 ? Task.FromResult(UserName)
                 : Task.FromException<string?>(ExceptionToThrow);
+
+        public Task SetWebhookAsync(string url, string secret, CancellationToken cancellationToken = default)
+            => throw new NotSupportedException();
+
+        public Task DeleteWebhookAsync(CancellationToken cancellationToken = default)
+            => throw new NotSupportedException();
     }
 
     /// <summary>Ненастроенный Telegram не должен резолвить клиента вообще.</summary>
@@ -97,6 +103,12 @@ public class TelegramHealthCheckTests
             => throw new NotSupportedException();
 
         public Task<string?> GetMyUserNameAsync(CancellationToken cancellationToken = default)
+            => throw new InvalidOperationException("Ненастроенный Telegram не должен создавать клиент");
+
+        public Task SetWebhookAsync(string url, string secret, CancellationToken cancellationToken = default)
+            => throw new InvalidOperationException("Ненастроенный Telegram не должен создавать клиент");
+
+        public Task DeleteWebhookAsync(CancellationToken cancellationToken = default)
             => throw new InvalidOperationException("Ненастроенный Telegram не должен создавать клиент");
     }
 
