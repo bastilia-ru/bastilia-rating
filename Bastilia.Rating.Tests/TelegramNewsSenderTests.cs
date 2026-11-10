@@ -6,8 +6,10 @@ using Telegram.Bot.Exceptions;
 
 namespace Bastilia.Rating.Tests;
 
-public class TelegramNewsSenderTests
+public class TelegramNewsSenderTests : IDisposable
 {
+    private readonly MeterListenerCollector collector = new(TelegramMetrics.MeterName);
+
     private sealed class FakeTelegramBotApi : ITelegramBotApi
     {
         public bool WasCalled { get; private set; }
@@ -49,6 +51,13 @@ public class TelegramNewsSenderTests
             fake,
             TelegramTestFactory.CreateMessageBuilder());
 
+    private void AssertNewsSendRecorded(string result, string? reason = null, string? retryable = null)
+        => collector.Measurements.ShouldContain(m => m.Instrument == "telegram.sends"
+            && Equals(m.Tags.GetValueOrDefault("kind"), "news")
+            && Equals(m.Tags.GetValueOrDefault("result"), result)
+            && (reason == null || Equals(m.Tags.GetValueOrDefault("reason"), reason))
+            && (retryable == null || Equals(m.Tags.GetValueOrDefault("retryable"), retryable)));
+
     private static ProjectNews CreateNews() =>
         new(1, 2, 3, "Имя Автора", DateTimeOffset.UtcNow, "**текст**", NewsSendStatus.NotSent, null);
 
@@ -67,6 +76,8 @@ public class TelegramNewsSenderTests
         result.Sent.ShouldBeFalse();
         result.ErrorMessage.ShouldBe("Telegram не настроен");
         fake.WasCalled.ShouldBeFalse();
+
+        AssertNewsSendRecorded("skipped", reason: "Telegram не настроен");
     }
 
     [Fact]
@@ -81,6 +92,8 @@ public class TelegramNewsSenderTests
         result.Sent.ShouldBeFalse();
         result.ErrorMessage.ShouldBe("ChatId не настроен");
         fake.WasCalled.ShouldBeFalse();
+
+        AssertNewsSendRecorded("skipped", reason: "ChatId не настроен");
     }
 
     [Fact]
@@ -95,6 +108,8 @@ public class TelegramNewsSenderTests
         result.Sent.ShouldBeFalse();
         result.Retryable.ShouldBeFalse();
         result.ErrorMessage.ShouldBe("bot was kicked");
+
+        AssertNewsSendRecorded("failure", reason: "bot was kicked", retryable: false.ToString());
     }
 
     [Fact]
@@ -109,6 +124,8 @@ public class TelegramNewsSenderTests
         result.Sent.ShouldBeFalse();
         result.Retryable.ShouldBeTrue();
         result.ErrorMessage.ShouldBe("internal error");
+
+        AssertNewsSendRecorded("failure", reason: "internal error", retryable: true.ToString());
     }
 
     [Fact]
@@ -127,5 +144,13 @@ public class TelegramNewsSenderTests
         fake.CapturedChatId.ShouldBe(new TelegramChatId(100));
         fake.CapturedHtml.ShouldNotBeNull();
         fake.CapturedHtml.Contents.ShouldContain("<b>");
+
+        AssertNewsSendRecorded("success");
+        collector.Measurements.ShouldNotContain(m => m.Instrument == "telegram.sends"
+            && Equals(m.Tags.GetValueOrDefault("kind"), "news")
+            && Equals(m.Tags.GetValueOrDefault("result"), "success")
+            && (m.Tags.ContainsKey("reason") || m.Tags.ContainsKey("retryable")));
     }
+
+    public void Dispose() => collector.Dispose();
 }
