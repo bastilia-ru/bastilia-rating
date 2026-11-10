@@ -6,8 +6,10 @@ using Telegram.Bot.Exceptions;
 
 namespace Bastilia.Rating.Tests;
 
-public class TelegramNewsSenderTests
+public class TelegramNewsSenderTests : IDisposable
 {
+    private readonly MeterListenerCollector collector = new(TelegramMetrics.MeterName);
+
     private sealed class FakeTelegramBotApi : ITelegramBotApi
     {
         public bool WasCalled { get; private set; }
@@ -49,6 +51,11 @@ public class TelegramNewsSenderTests
             fake,
             TelegramTestFactory.CreateMessageBuilder());
 
+    private IReadOnlyDictionary<string, object?> FindNewsSendMeasurement()
+        => collector.Measurements
+            .Single(m => m.Instrument == "telegram.sends" && Equals(m.Tags.GetValueOrDefault("kind"), "news"))
+            .Tags;
+
     private static ProjectNews CreateNews() =>
         new(1, 2, 3, "Имя Автора", DateTimeOffset.UtcNow, "**текст**", NewsSendStatus.NotSent, null);
 
@@ -67,6 +74,10 @@ public class TelegramNewsSenderTests
         result.Sent.ShouldBeFalse();
         result.ErrorMessage.ShouldBe("Telegram не настроен");
         fake.WasCalled.ShouldBeFalse();
+
+        var tags = FindNewsSendMeasurement();
+        tags["result"].ShouldBe("skipped");
+        tags["reason"].ShouldBe("Telegram не настроен");
     }
 
     [Fact]
@@ -81,6 +92,10 @@ public class TelegramNewsSenderTests
         result.Sent.ShouldBeFalse();
         result.ErrorMessage.ShouldBe("ChatId не настроен");
         fake.WasCalled.ShouldBeFalse();
+
+        var tags = FindNewsSendMeasurement();
+        tags["result"].ShouldBe("skipped");
+        tags["reason"].ShouldBe("ChatId не настроен");
     }
 
     [Fact]
@@ -95,6 +110,11 @@ public class TelegramNewsSenderTests
         result.Sent.ShouldBeFalse();
         result.Retryable.ShouldBeFalse();
         result.ErrorMessage.ShouldBe("bot was kicked");
+
+        var tags = FindNewsSendMeasurement();
+        tags["result"].ShouldBe("failure");
+        tags["reason"].ShouldBe("bot was kicked");
+        tags["retryable"].ShouldBe(false.ToString());
     }
 
     [Fact]
@@ -109,6 +129,11 @@ public class TelegramNewsSenderTests
         result.Sent.ShouldBeFalse();
         result.Retryable.ShouldBeTrue();
         result.ErrorMessage.ShouldBe("internal error");
+
+        var tags = FindNewsSendMeasurement();
+        tags["result"].ShouldBe("failure");
+        tags["reason"].ShouldBe("internal error");
+        tags["retryable"].ShouldBe(true.ToString());
     }
 
     [Fact]
@@ -127,5 +152,12 @@ public class TelegramNewsSenderTests
         fake.CapturedChatId.ShouldBe(new TelegramChatId(100));
         fake.CapturedHtml.ShouldNotBeNull();
         fake.CapturedHtml.Contents.ShouldContain("<b>");
+
+        var tags = FindNewsSendMeasurement();
+        tags["result"].ShouldBe("success");
+        tags.ShouldNotContainKey("reason");
+        tags.ShouldNotContainKey("retryable");
     }
+
+    public void Dispose() => collector.Dispose();
 }
