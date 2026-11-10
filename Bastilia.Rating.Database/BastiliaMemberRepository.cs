@@ -9,6 +9,8 @@ internal class BastiliaMemberRepository(IDbContextFactory<AppDbContext> contextF
 
     public async Task<BastiliaMember?> GetBySlugAsync(string slug) => (await GetMemberImpl(u => u.Slug == slug)).FirstOrDefault();
 
+    public async Task<BastiliaMember?> GetByTelegramChatIdAsync(long chatId) => (await GetMemberImpl(u => u.TelegramChatId == chatId)).FirstOrDefault();
+
     public Task<IReadOnlyCollection<BastiliaMember>> GetAllAsync() => GetMemberImpl(u => true);
 
     public async Task<IReadOnlyCollection<BastiliaMember>> GetActualAsync()

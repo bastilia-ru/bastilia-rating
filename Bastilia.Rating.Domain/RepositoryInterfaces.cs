@@ -4,6 +4,7 @@ public interface IBastiliaMemberRepository
 {
     Task<BastiliaMember?> GetByIdAsync(int userId);
     Task<BastiliaMember?> GetBySlugAsync(string slug);
+    Task<BastiliaMember?> GetByTelegramChatIdAsync(long chatId);
 
     Task<IReadOnlyCollection<BastiliaMember>> GetAllAsync();
 

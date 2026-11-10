@@ -100,6 +100,8 @@ public class UserImportServiceTests
 
         public Task<BastiliaMember?> GetBySlugAsync(string slug) => throw new NotImplementedException();
 
+        public Task<BastiliaMember?> GetByTelegramChatIdAsync(long chatId) => throw new NotImplementedException();
+
         public Task<IReadOnlyCollection<BastiliaMember>> GetAllAsync() => throw new NotImplementedException();
 
         public Task<IReadOnlyCollection<BastiliaMember>> GetActualAsync() => throw new NotImplementedException();
