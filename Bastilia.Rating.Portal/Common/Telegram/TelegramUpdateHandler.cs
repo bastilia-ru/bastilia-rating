@@ -19,6 +19,7 @@ internal class TelegramUpdateHandler(
         if (text is null || (text != "/start" && !text.StartsWith("/start@") && !text.StartsWith("/start ")))
         {
             logger.LogDebug("Апдейт Telegram не содержит команду /start, игнорируем");
+            TelegramMetrics.WebhookSkipped("not_start_command");
             return;
         }
 
@@ -29,10 +30,12 @@ internal class TelegramUpdateHandler(
         try
         {
             await botApi.SendHtmlMessageAsync(new TelegramChatId(chatId), new TelegramHtmlString(message), cancellationToken);
+            TelegramMetrics.SendSucceeded("welcome");
         }
         catch (Exception exception)
         {
             var (retryable, errorMessage) = TelegramErrorClassifier.Classify(exception);
+            TelegramMetrics.SendFailed("welcome", errorMessage, retryable);
             logger.LogWarning(exception, "Не удалось отправить приветствие на /start в Telegram (повторяемая ошибка: {Retryable}): {ErrorMessage}", retryable, errorMessage);
         }
     }

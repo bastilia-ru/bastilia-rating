@@ -7,8 +7,10 @@ using Telegram.Bot.Types;
 
 namespace Bastilia.Rating.Tests;
 
-public class TelegramUpdateHandlerTests
+public class TelegramUpdateHandlerTests : IDisposable
 {
+    private readonly MeterListenerCollector collector = new(TelegramMetrics.MeterName);
+
     private static readonly JoinRpgHostNamesOptions HostNames = new()
     {
         MainHost = "joinrpg.ru",
@@ -28,6 +30,9 @@ public class TelegramUpdateHandlerTests
         fake.WasCalled.ShouldBeTrue();
         fake.CapturedChatId.ShouldBe(new TelegramChatId(123));
         fake.CapturedHtml!.Contents.ShouldContain("https://rating.bastilia.ru/member/leo");
+
+        var tags = FindWelcomeSendMeasurement();
+        tags["result"].ShouldBe("success");
     }
 
     [Fact]
@@ -41,6 +46,9 @@ public class TelegramUpdateHandlerTests
         fake.WasCalled.ShouldBeTrue();
         fake.CapturedChatId.ShouldBe(new TelegramChatId(999));
         fake.CapturedHtml!.Contents.ShouldNotContain("/member/");
+
+        var tags = FindWelcomeSendMeasurement();
+        tags["result"].ShouldBe("success");
     }
 
     [Fact]
@@ -67,6 +75,9 @@ public class TelegramUpdateHandlerTests
         await handler.HandleStartCommandAsync(update);
 
         fake.WasCalled.ShouldBeFalse();
+
+        FindWebhookMeasurement("skipped", "not_start_command");
+        collector.Measurements.ShouldNotContain(m => m.Instrument == "telegram.sends" && Equals(m.Tags.GetValueOrDefault("kind"), "welcome"));
     }
 
     [Fact]
@@ -78,6 +89,8 @@ public class TelegramUpdateHandlerTests
         await handler.HandleStartCommandAsync(new Update());
 
         fake.WasCalled.ShouldBeFalse();
+
+        FindWebhookMeasurement("skipped", "not_start_command");
     }
 
     [Fact]
@@ -87,7 +100,24 @@ public class TelegramUpdateHandlerTests
         var handler = CreateHandler(fake, CreateMember(slug: "leo"));
 
         await handler.HandleStartCommandAsync(CreateStartUpdate(123));
+
+        var tags = FindWelcomeSendMeasurement();
+        tags["result"].ShouldBe("failure");
+        tags["reason"].ShouldBe("bot was blocked");
+        tags["retryable"].ShouldBe(false.ToString());
     }
+
+    private IReadOnlyDictionary<string, object?> FindWelcomeSendMeasurement()
+        => collector.Measurements
+            .Single(m => m.Instrument == "telegram.sends" && Equals(m.Tags.GetValueOrDefault("kind"), "welcome"))
+            .Tags;
+
+    private IReadOnlyDictionary<string, object?> FindWebhookMeasurement(string result, string reason)
+        => collector.Measurements
+            .Single(m => m is { Instrument: "telegram.webhooks" }
+                && Equals(m.Tags.GetValueOrDefault("result"), result)
+                && Equals(m.Tags.GetValueOrDefault("reason"), reason))
+            .Tags;
 
     private static Update CreateStartUpdate(long chatId) => new()
     {
@@ -141,4 +171,6 @@ public class TelegramUpdateHandlerTests
         public Task SetWebhookAsync(string url, string secret, CancellationToken cancellationToken = default) => throw new NotSupportedException();
         public Task DeleteWebhookAsync(CancellationToken cancellationToken = default) => throw new NotSupportedException();
     }
+
+    public void Dispose() => collector.Dispose();
 }
