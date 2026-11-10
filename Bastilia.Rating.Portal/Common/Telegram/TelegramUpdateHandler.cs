@@ -23,7 +23,7 @@ internal class TelegramUpdateHandler(
         }
 
         var chatId = update.Message!.Chat.Id;
-        var member = await memberRepository.GetByTelegramChatIdAsync(chatId);
+        var member = await memberRepository.GetByTelegramChatIdAsync(new TelegramChatId(chatId));
         var message = welcomeMessageBuilder.BuildMessage(member, hostNames.Value.RatingHost);
 
         try

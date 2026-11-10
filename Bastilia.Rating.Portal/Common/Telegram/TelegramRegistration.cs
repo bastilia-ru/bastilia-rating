@@ -8,6 +8,8 @@ public static class TelegramRegistration
     public static IServiceCollection AddTelegramNewsSender(this IServiceCollection services)
     {
         services.AddOptions<TelegramBotOptions>().BindConfiguration("Telegram");
+        // Десериализация Update из тела webhook (snake_case) средствами Telegram.Bot.
+        services.ConfigureTelegramBot<Microsoft.AspNetCore.Http.Json.JsonOptions>(opt => opt.SerializerOptions);
         services.AddSingleton<ITelegramBotApi, TelegramBotApi>();
         services.AddTransient<ITelegramNewsSender, TelegramNewsSender>();
         services.AddTransient<NewsMessageBuilder>();
