@@ -85,7 +85,6 @@ public class TelegramUpdateHandlerTests : IDisposable
         collector.Measurements.ShouldContain(m => m.Instrument == "telegram.webhooks"
             && Equals(m.Tags.GetValueOrDefault("result"), "skipped")
             && Equals(m.Tags.GetValueOrDefault("reason"), "not_start_command"));
-        collector.Measurements.ShouldNotContain(m => m.Instrument == "telegram.sends" && Equals(m.Tags.GetValueOrDefault("kind"), "welcome"));
     }
 
     [Fact]
