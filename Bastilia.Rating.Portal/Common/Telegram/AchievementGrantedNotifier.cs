@@ -28,7 +28,7 @@ internal class AchievementGrantedNotifier(
             return;
         }
 
-        var message = builder.BuildMessage(member.UserName, template, projectName, projectSlug, hostNames.Value.RatingHost);
+        var message = builder.BuildMessage(member.UserName, template, projectName, projectSlug, hostNames.Value.RatingHost, member.ParticipateInRating);
 
         try
         {

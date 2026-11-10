@@ -19,7 +19,21 @@ public class AchievementMessageSnapshotTests : VerifyBase
             RatingValue: 0, YearlyAchievement: false, TemplateId: 7);
 
         var message = new AchievementMessageBuilder()
-            .BuildMessage("Имя & Фамилия", template, "Проект «Рассвет»", "rassvet", "rating.bastilia.ru");
+            .BuildMessage("Имя & Фамилия", template, "Проект «Рассвет»", "rassvet", "rating.bastilia.ru", participatesInRating: true);
+
+        return Verify(message);
+    }
+
+    [Fact]
+    public Task BuildMessage_NotParticipatingInRating_OmitsRatingPoints()
+    {
+        var template = new AchievementTemplate(
+            Project: null, Name: "Спасатель <Моржов>",
+            Description: "desc", DefaultUri: false,
+            RatingValue: 5, YearlyAchievement: false, TemplateId: 7);
+
+        var message = new AchievementMessageBuilder()
+            .BuildMessage("Имя & Фамилия", template, "Проект «Рассвет»", "rassvet", "rating.bastilia.ru", participatesInRating: false);
 
         return Verify(message);
     }
