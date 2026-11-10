@@ -6,9 +6,11 @@ namespace Bastilia.Rating.Tests;
 /// Собирает измерения инструментов meter'а с заданным именем.
 /// Ассерты — на наличие измерения с точным набором тегов, не на суммы:
 /// статические инструменты разделяются между параллельно идущими тест-классами.
+/// Потокобезопасен: callback измерений прилетает с потоков параллельных тестов.
 /// </summary>
 internal sealed class MeterListenerCollector : IDisposable
 {
+    private readonly object sync = new();
     private readonly MeterListener listener = new();
     private readonly List<(string Instrument, long Value, IReadOnlyDictionary<string, object?> Tags)> measurements = [];
 
@@ -29,12 +31,24 @@ internal sealed class MeterListenerCollector : IDisposable
                 tagSnapshot[tag.Key] = tag.Value;
             }
 
-            measurements.Add((instrument.Name, measurement, tagSnapshot));
+            lock (sync)
+            {
+                measurements.Add((instrument.Name, measurement, tagSnapshot));
+            }
         });
         listener.Start();
     }
 
-    public IReadOnlyList<(string Instrument, long Value, IReadOnlyDictionary<string, object?> Tags)> Measurements => measurements;
+    public IReadOnlyList<(string Instrument, long Value, IReadOnlyDictionary<string, object?> Tags)> Measurements
+    {
+        get
+        {
+            lock (sync)
+            {
+                return measurements.ToArray();
+            }
+        }
+    }
 
     public void Dispose() => listener.Dispose();
 }

@@ -31,8 +31,11 @@ public class TelegramUpdateHandlerTests : IDisposable
         fake.CapturedChatId.ShouldBe(new TelegramChatId(123));
         fake.CapturedHtml!.Contents.ShouldContain("https://rating.bastilia.ru/member/leo");
 
-        var tags = FindWelcomeSendMeasurement();
-        tags["result"].ShouldBe("success");
+        AssertWelcomeSendRecorded("success");
+        collector.Measurements.ShouldNotContain(m => m.Instrument == "telegram.sends"
+            && Equals(m.Tags.GetValueOrDefault("kind"), "welcome")
+            && Equals(m.Tags.GetValueOrDefault("result"), "success")
+            && (m.Tags.ContainsKey("reason") || m.Tags.ContainsKey("retryable")));
     }
 
     [Fact]
@@ -47,8 +50,11 @@ public class TelegramUpdateHandlerTests : IDisposable
         fake.CapturedChatId.ShouldBe(new TelegramChatId(999));
         fake.CapturedHtml!.Contents.ShouldNotContain("/member/");
 
-        var tags = FindWelcomeSendMeasurement();
-        tags["result"].ShouldBe("success");
+        AssertWelcomeSendRecorded("success");
+        collector.Measurements.ShouldNotContain(m => m.Instrument == "telegram.sends"
+            && Equals(m.Tags.GetValueOrDefault("kind"), "welcome")
+            && Equals(m.Tags.GetValueOrDefault("result"), "success")
+            && (m.Tags.ContainsKey("reason") || m.Tags.ContainsKey("retryable")));
     }
 
     [Fact]
@@ -76,7 +82,9 @@ public class TelegramUpdateHandlerTests : IDisposable
 
         fake.WasCalled.ShouldBeFalse();
 
-        FindWebhookMeasurement("skipped", "not_start_command");
+        collector.Measurements.ShouldContain(m => m.Instrument == "telegram.webhooks"
+            && Equals(m.Tags.GetValueOrDefault("result"), "skipped")
+            && Equals(m.Tags.GetValueOrDefault("reason"), "not_start_command"));
         collector.Measurements.ShouldNotContain(m => m.Instrument == "telegram.sends" && Equals(m.Tags.GetValueOrDefault("kind"), "welcome"));
     }
 
@@ -90,7 +98,9 @@ public class TelegramUpdateHandlerTests : IDisposable
 
         fake.WasCalled.ShouldBeFalse();
 
-        FindWebhookMeasurement("skipped", "not_start_command");
+        collector.Measurements.ShouldContain(m => m.Instrument == "telegram.webhooks"
+            && Equals(m.Tags.GetValueOrDefault("result"), "skipped")
+            && Equals(m.Tags.GetValueOrDefault("reason"), "not_start_command"));
     }
 
     [Fact]
@@ -101,23 +111,15 @@ public class TelegramUpdateHandlerTests : IDisposable
 
         await handler.HandleStartCommandAsync(CreateStartUpdate(123));
 
-        var tags = FindWelcomeSendMeasurement();
-        tags["result"].ShouldBe("failure");
-        tags["reason"].ShouldBe("bot was blocked");
-        tags["retryable"].ShouldBe(false.ToString());
+        AssertWelcomeSendRecorded("failure", reason: "bot was blocked", retryable: false.ToString());
     }
 
-    private IReadOnlyDictionary<string, object?> FindWelcomeSendMeasurement()
-        => collector.Measurements
-            .Single(m => m.Instrument == "telegram.sends" && Equals(m.Tags.GetValueOrDefault("kind"), "welcome"))
-            .Tags;
-
-    private IReadOnlyDictionary<string, object?> FindWebhookMeasurement(string result, string reason)
-        => collector.Measurements
-            .Single(m => m is { Instrument: "telegram.webhooks" }
-                && Equals(m.Tags.GetValueOrDefault("result"), result)
-                && Equals(m.Tags.GetValueOrDefault("reason"), reason))
-            .Tags;
+    private void AssertWelcomeSendRecorded(string result, string? reason = null, string? retryable = null)
+        => collector.Measurements.ShouldContain(m => m.Instrument == "telegram.sends"
+            && Equals(m.Tags.GetValueOrDefault("kind"), "welcome")
+            && Equals(m.Tags.GetValueOrDefault("result"), result)
+            && (reason == null || Equals(m.Tags.GetValueOrDefault("reason"), reason))
+            && (retryable == null || Equals(m.Tags.GetValueOrDefault("retryable"), retryable)));
 
     private static Update CreateStartUpdate(long chatId) => new()
     {

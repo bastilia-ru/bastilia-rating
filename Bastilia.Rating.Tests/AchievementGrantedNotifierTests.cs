@@ -53,10 +53,12 @@ public class AchievementGrantedNotifierTests : IDisposable
             new AchievementMessageBuilder(),
             NullLogger<AchievementGrantedNotifier>.Instance);
 
-    private IReadOnlyDictionary<string, object?> FindAchievementSendMeasurement()
-        => collector.Measurements
-            .Single(m => m.Instrument == "telegram.sends" && Equals(m.Tags.GetValueOrDefault("kind"), "achievement"))
-            .Tags;
+    private void AssertAchievementSendRecorded(string result, string? reason = null, string? retryable = null)
+        => collector.Measurements.ShouldContain(m => m.Instrument == "telegram.sends"
+            && Equals(m.Tags.GetValueOrDefault("kind"), "achievement")
+            && Equals(m.Tags.GetValueOrDefault("result"), result)
+            && (reason == null || Equals(m.Tags.GetValueOrDefault("reason"), reason))
+            && (retryable == null || Equals(m.Tags.GetValueOrDefault("retryable"), retryable)));
 
     private static BastiliaMember CreateMember(TelegramSocialLink? telegram) =>
         new(JoinrpgUserId: 42, UserName: "Имя", AvatarUrl: "", Slug: null,
@@ -79,9 +81,7 @@ public class AchievementGrantedNotifierTests : IDisposable
 
         fake.WasCalled.ShouldBeFalse();
 
-        var tags = FindAchievementSendMeasurement();
-        tags["result"].ShouldBe("skipped");
-        tags["reason"].ShouldBe("Telegram не настроен");
+        AssertAchievementSendRecorded("skipped", reason: "Telegram не настроен");
     }
 
     [Fact]
@@ -94,9 +94,7 @@ public class AchievementGrantedNotifierTests : IDisposable
 
         fake.WasCalled.ShouldBeFalse();
 
-        var tags = FindAchievementSendMeasurement();
-        tags["result"].ShouldBe("skipped");
-        tags["reason"].ShouldBe("нет привязки Telegram");
+        AssertAchievementSendRecorded("skipped", reason: "нет привязки Telegram");
     }
 
     [Fact]
@@ -112,10 +110,11 @@ public class AchievementGrantedNotifierTests : IDisposable
         fake.CapturedHtml.ShouldNotBeNull();
         fake.CapturedHtml.Contents.ShouldContain("Ачивка");
 
-        var tags = FindAchievementSendMeasurement();
-        tags["result"].ShouldBe("success");
-        tags.ShouldNotContainKey("reason");
-        tags.ShouldNotContainKey("retryable");
+        AssertAchievementSendRecorded("success");
+        collector.Measurements.ShouldNotContain(m => m.Instrument == "telegram.sends"
+            && Equals(m.Tags.GetValueOrDefault("kind"), "achievement")
+            && Equals(m.Tags.GetValueOrDefault("result"), "success")
+            && (m.Tags.ContainsKey("reason") || m.Tags.ContainsKey("retryable")));
     }
 
     [Fact]
@@ -128,10 +127,7 @@ public class AchievementGrantedNotifierTests : IDisposable
 
         fake.WasCalled.ShouldBeTrue();
 
-        var tags = FindAchievementSendMeasurement();
-        tags["result"].ShouldBe("failure");
-        tags["reason"].ShouldBe("bot was blocked");
-        tags["retryable"].ShouldBe(false.ToString());
+        AssertAchievementSendRecorded("failure", reason: "bot was blocked", retryable: false.ToString());
     }
 
     [Fact]
