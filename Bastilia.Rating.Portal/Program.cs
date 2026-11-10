@@ -99,6 +99,8 @@ app.MapGet("/api/members/actual", async ([FromServices] IBastiliaMemberRepositor
 
 app.MapAuthEndpoints();
 
+app.MapTelegramWebhook();
+
 app.MapJoinHealthChecks();
 
 app.Run();
