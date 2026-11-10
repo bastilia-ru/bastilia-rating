@@ -12,7 +12,7 @@ public class WelcomeMessageBuilder
     {
         if (member is null)
         {
-            var unknown = "К сожалению, я пока не узнаю тебя. Убедись, что у тебя указан телеграмм в твоем профиле в joinrpg.ru а потом перезайди на сайт rating.bastilia.ru и напиши мне снова.";
+            var unknown = "К сожалению, я пока не узнаю тебя. Убедись, что у тебя указан телеграмм в твоем профиле в joinrpg.ru. Потом перезайди на сайт rating.bastilia.ru и напиши мне снова.";
             return string.Join("\n\n", Greeting, unknown);
         }
 
