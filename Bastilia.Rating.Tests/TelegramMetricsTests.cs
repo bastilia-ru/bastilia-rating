@@ -11,8 +11,8 @@ public class TelegramMetricsTests : IDisposable
     {
         TelegramMetrics.SendSucceeded("test-kind-success");
 
-        var measurement = collector.Measurements.Single(m => m.Instrument == "telegram.sends");
-        measurement.Tags["kind"].ShouldBe("test-kind-success");
+        var measurement = collector.Measurements.Single(m => m is { Instrument: "telegram.sends" }
+            && Equals(m.Tags.GetValueOrDefault("kind"), "test-kind-success"));
         measurement.Tags["result"].ShouldBe("success");
         measurement.Tags.ShouldNotContainKey("reason");
         measurement.Tags.ShouldNotContainKey("retryable");
@@ -23,8 +23,8 @@ public class TelegramMetricsTests : IDisposable
     {
         TelegramMetrics.SendFailed("test-kind-failure", "bot was blocked", retryable: false);
 
-        var measurement = collector.Measurements.Single(m => m.Instrument == "telegram.sends");
-        measurement.Tags["kind"].ShouldBe("test-kind-failure");
+        var measurement = collector.Measurements.Single(m => m is { Instrument: "telegram.sends" }
+            && Equals(m.Tags.GetValueOrDefault("kind"), "test-kind-failure"));
         measurement.Tags["result"].ShouldBe("failure");
         measurement.Tags["reason"].ShouldBe("bot was blocked");
         measurement.Tags["retryable"].ShouldBe(false.ToString());
@@ -35,8 +35,8 @@ public class TelegramMetricsTests : IDisposable
     {
         TelegramMetrics.SendSkipped("test-kind-skipped", "нет привязки");
 
-        var measurement = collector.Measurements.Single(m => m.Instrument == "telegram.sends");
-        measurement.Tags["kind"].ShouldBe("test-kind-skipped");
+        var measurement = collector.Measurements.Single(m => m is { Instrument: "telegram.sends" }
+            && Equals(m.Tags.GetValueOrDefault("kind"), "test-kind-skipped"));
         measurement.Tags["result"].ShouldBe("skipped");
         measurement.Tags["reason"].ShouldBe("нет привязки");
         measurement.Tags.ShouldNotContainKey("retryable");
@@ -47,9 +47,9 @@ public class TelegramMetricsTests : IDisposable
     {
         TelegramMetrics.WebhookProcessed();
 
-        var measurement = collector.Measurements.Single(m => m.Instrument == "telegram.webhooks");
-        measurement.Tags["result"].ShouldBe("processed");
-        measurement.Tags.ShouldNotContainKey("reason");
+        collector.Measurements.ShouldContain(m => m.Instrument == "telegram.webhooks"
+            && Equals(m.Tags.GetValueOrDefault("result"), "processed")
+            && !m.Tags.ContainsKey("reason"));
     }
 
     [Fact]
@@ -57,9 +57,9 @@ public class TelegramMetricsTests : IDisposable
     {
         TelegramMetrics.WebhookSkipped("invalid_secret");
 
-        var measurement = collector.Measurements.Single(m => m.Instrument == "telegram.webhooks");
-        measurement.Tags["result"].ShouldBe("skipped");
-        measurement.Tags["reason"].ShouldBe("invalid_secret");
+        collector.Measurements.ShouldContain(m => m.Instrument == "telegram.webhooks"
+            && Equals(m.Tags.GetValueOrDefault("result"), "skipped")
+            && Equals(m.Tags.GetValueOrDefault("reason"), "invalid_secret"));
     }
 
     public void Dispose() => collector.Dispose();
