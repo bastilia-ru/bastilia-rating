@@ -25,4 +25,14 @@ internal class TelegramBotApi(IOptions<TelegramBotOptions> options) : ITelegramB
         var me = await client.Value.GetMe(cancellationToken);
         return me.Username;
     }
+
+    public async Task SetWebhookAsync(string url, string secret, CancellationToken cancellationToken = default)
+        => await client.Value.SetWebhook(
+            url,
+            secretToken: secret,
+            allowedUpdates: [UpdateType.Message],
+            cancellationToken: cancellationToken);
+
+    public async Task DeleteWebhookAsync(CancellationToken cancellationToken = default)
+        => await client.Value.DeleteWebhook(dropPendingUpdates: true, cancellationToken: cancellationToken);
 }

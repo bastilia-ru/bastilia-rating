@@ -29,6 +29,12 @@ public class TelegramNewsSenderTests
         }
 
         public Task<string?> GetMyUserNameAsync(CancellationToken cancellationToken = default) => Task.FromResult<string?>("bastilia_bot");
+
+        public Task SetWebhookAsync(string url, string secret, CancellationToken cancellationToken = default)
+            => throw new NotSupportedException();
+
+        public Task DeleteWebhookAsync(CancellationToken cancellationToken = default)
+            => throw new NotSupportedException();
     }
 
     private static TelegramNewsSender CreateSender(TelegramBotOptions telegramOptions, FakeTelegramBotApi fake) =>
