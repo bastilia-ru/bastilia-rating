@@ -7,8 +7,10 @@ using AchievementTemplate = Bastilia.Rating.Domain.AchievementTemplate;
 
 namespace Bastilia.Rating.Tests;
 
-public class AchievementGrantedNotifierTests
+public class AchievementGrantedNotifierTests : IDisposable
 {
+    private readonly MeterListenerCollector collector = new(TelegramMetrics.MeterName);
+
     private sealed class FakeTelegramBotApi : ITelegramBotApi
     {
         public bool WasCalled { get; private set; }
@@ -51,6 +53,11 @@ public class AchievementGrantedNotifierTests
             new AchievementMessageBuilder(),
             NullLogger<AchievementGrantedNotifier>.Instance);
 
+    private IReadOnlyDictionary<string, object?> FindAchievementSendMeasurement()
+        => collector.Measurements
+            .Single(m => m.Instrument == "telegram.sends" && Equals(m.Tags.GetValueOrDefault("kind"), "achievement"))
+            .Tags;
+
     private static BastiliaMember CreateMember(TelegramSocialLink? telegram) =>
         new(JoinrpgUserId: 42, UserName: "Имя", AvatarUrl: "", Slug: null,
             ParticipateInRating: true, StatusHistory: [], HisProjects: [],
@@ -71,6 +78,10 @@ public class AchievementGrantedNotifierTests
         await notifier.NotifyAchievementGrantedAsync(CreateMember(TelegramSocialLink.FromOptional(123456789L, "leo")), Template, "Мой проект", "my-project");
 
         fake.WasCalled.ShouldBeFalse();
+
+        var tags = FindAchievementSendMeasurement();
+        tags["result"].ShouldBe("skipped");
+        tags["reason"].ShouldBe("Telegram не настроен");
     }
 
     [Fact]
@@ -82,6 +93,10 @@ public class AchievementGrantedNotifierTests
         await notifier.NotifyAchievementGrantedAsync(CreateMember(null), Template, "Мой проект", "my-project");
 
         fake.WasCalled.ShouldBeFalse();
+
+        var tags = FindAchievementSendMeasurement();
+        tags["result"].ShouldBe("skipped");
+        tags["reason"].ShouldBe("нет привязки Telegram");
     }
 
     [Fact]
@@ -96,6 +111,11 @@ public class AchievementGrantedNotifierTests
         fake.CapturedChatId.ShouldBe(new TelegramChatId(123456789));
         fake.CapturedHtml.ShouldNotBeNull();
         fake.CapturedHtml.Contents.ShouldContain("Ачивка");
+
+        var tags = FindAchievementSendMeasurement();
+        tags["result"].ShouldBe("success");
+        tags.ShouldNotContainKey("reason");
+        tags.ShouldNotContainKey("retryable");
     }
 
     [Fact]
@@ -107,6 +127,11 @@ public class AchievementGrantedNotifierTests
         await notifier.NotifyAchievementGrantedAsync(CreateMember(TelegramSocialLink.FromOptional(123456789L, "leo")), Template, "Мой проект", "my-project");
 
         fake.WasCalled.ShouldBeTrue();
+
+        var tags = FindAchievementSendMeasurement();
+        tags["result"].ShouldBe("failure");
+        tags["reason"].ShouldBe("bot was blocked");
+        tags["retryable"].ShouldBe(false.ToString());
     }
 
     [Fact]
@@ -124,4 +149,6 @@ public class AchievementGrantedNotifierTests
     [Fact]
     public void PackageSemantics_FromOptionalWithoutChatId_ReturnsNull()
         => TelegramSocialLink.FromOptional((long?)null, "leo").ShouldBeNull();
+
+    public void Dispose() => collector.Dispose();
 }

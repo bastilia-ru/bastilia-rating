@@ -17,6 +17,7 @@ internal class AchievementGrantedNotifier(
         if (!options.Value.Enabled)
         {
             logger.LogInformation("Telegram не настроен, личное уведомление о выдаче ачивки не отправлено");
+            TelegramMetrics.SendSkipped("achievement", "Telegram не настроен");
             return;
         }
 
@@ -25,6 +26,7 @@ internal class AchievementGrantedNotifier(
         if (member.Telegram is not { } telegram || telegram.Id is not { } chatId)
         {
             logger.LogInformation("У пользователя {UserName} нет привязки Telegram, личное уведомление о выдаче ачивки не отправлено", member.UserName);
+            TelegramMetrics.SendSkipped("achievement", "нет привязки Telegram");
             return;
         }
 
@@ -33,10 +35,12 @@ internal class AchievementGrantedNotifier(
         try
         {
             await botApi.SendHtmlMessageAsync(new TelegramChatId(chatId), new TelegramHtmlString(message), cancellationToken);
+            TelegramMetrics.SendSucceeded("achievement");
         }
         catch (Exception exception)
         {
             var (retryable, errorMessage) = TelegramErrorClassifier.Classify(exception);
+            TelegramMetrics.SendFailed("achievement", errorMessage, retryable);
             logger.LogWarning(exception, "Не удалось отправить личное уведомление о выдаче ачивки в Telegram (повторяемая ошибка: {Retryable}): {ErrorMessage}", retryable, errorMessage);
         }
     }
