@@ -30,6 +30,7 @@ builder.Services.Configure<JoinRpgHostNamesOptions>(builder.Configuration.GetSec
 
 builder.Services.AddCascadingAuthenticationState();
 builder.Services.AddJoinRpgAuthentication<AppDbContext>(builder.Configuration);
+builder.Services.AddSiteAdminAuthorization(builder.Configuration);
 builder.Services.AddScoped<IJoinUserLoginHandler, BastiliaUserLoginHandler>();
 
 builder.Services.AddRatingDal(builder.Configuration, builder.Environment);

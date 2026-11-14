@@ -12,6 +12,8 @@ public interface IBastiliaMemberRepository
 
     Task<IReadOnlyCollection<BastiliaMember>> GetActualAsync();
 
+    Task<IReadOnlyCollection<ActiveUserTelegramInfo>> GetActiveUsersWithTelegramAsync();
+
     Task<IReadOnlyCollection<MemberHistoryItem>> GetMembersHistory();
     Task<IReadOnlyCollection<BastiliaCalendarItem>> GetMemberCalendarFor(int year);
 }
