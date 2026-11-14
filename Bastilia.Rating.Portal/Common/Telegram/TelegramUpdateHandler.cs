@@ -25,6 +25,10 @@ internal class TelegramUpdateHandler(
 
         var chatId = update.Message!.Chat.Id;
         var member = await memberRepository.GetByTelegramChatIdAsync(new TelegramChatId(chatId));
+        logger.LogInformation("Команда /start из Telegram: chatId={ChatId}, username=@{TelegramUsername}, найден член клуба: {MemberDescription}",
+            chatId,
+            update.Message.From?.Username,
+            member is null ? "нет (пользователь не привязан)" : $"{member.JoinrpgUserId} ({member.UserName})");
         var message = welcomeMessageBuilder.BuildMessage(member, hostNames.Value.RatingHost);
 
         try

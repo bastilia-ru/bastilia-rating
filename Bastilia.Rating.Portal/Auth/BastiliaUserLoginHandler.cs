@@ -15,16 +15,21 @@ internal class BastiliaUserLoginHandler(UserImportService userImportService, ILo
         var nickName = externalPrincipal.FindFirst("preferred_username")?.Value;
         var avatarUrl = externalPrincipal.FindFirst("picture")?.Value;
 
+        var telegram = externalPrincipal.TryGetTelegram(logger);
+
         var member = (nickName, avatarUrl) switch
         {
-            (null, null) => await userImportService.ImportUser(userId.Value),
-            _ => await userImportService.ImportUser(userId.Value, nickName, avatarUrl),
+            (null, null) => await userImportService.ImportUserById(userId.Value, telegram),
+            _ => await userImportService.ImportUser(userId.Value, nickName, avatarUrl, telegram),
         };
         if (member is null)
         {
             logger.LogWarning("Не удалось загрузить пользователя {userId} с id.joinrpg.ru", userId);
             throw new InvalidOperationException($"Не удалось загрузить пользователя {userId} с id.joinrpg.ru");
         }
+
+        logger.LogInformation("Пользователь {UserId} вошёл: ник '{UserName}', slug '{Slug}', TelegramChatId привязан: {HasTelegramChat}",
+            userId.Value, member.UserName, member.Slug, member.Telegram is not null);
 
         claims.Add(new Claim(ClaimTypes.Name, member.UserName));
         claims.Add(new Claim("avatar", member.AvatarUrl));
