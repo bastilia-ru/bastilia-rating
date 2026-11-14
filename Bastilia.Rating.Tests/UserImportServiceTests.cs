@@ -94,23 +94,6 @@ public class UserImportServiceTests
     private static UserImportService CreateImportService(BastiliaMember? existingMember, FakeUserDbService dbService)
         => new(new FakeMemberRepository(existingMember), null!, dbService, NullLogger<UserImportService>.Instance);
 
-    private sealed class FakeMemberRepository(BastiliaMember? member) : IBastiliaMemberRepository
-    {
-        public Task<BastiliaMember?> GetByIdAsync(int userId) => Task.FromResult(member);
-
-        public Task<BastiliaMember?> GetBySlugAsync(string slug) => throw new NotImplementedException();
-
-        public Task<BastiliaMember?> GetByTelegramChatIdAsync(TelegramChatId chatId) => throw new NotImplementedException();
-
-        public Task<IReadOnlyCollection<BastiliaMember>> GetAllAsync() => throw new NotImplementedException();
-
-        public Task<IReadOnlyCollection<BastiliaMember>> GetActualAsync() => throw new NotImplementedException();
-
-        public Task<IReadOnlyCollection<MemberHistoryItem>> GetMembersHistory() => throw new NotImplementedException();
-
-        public Task<IReadOnlyCollection<BastiliaCalendarItem>> GetMemberCalendarFor(int year) => throw new NotImplementedException();
-    }
-
     private sealed class FakeUserDbService : IUserDbService
     {
         public List<(int Id, string? Nick, string? Avatar)> UpdateCalls { get; } = [];

@@ -135,18 +135,7 @@ public class TelegramUpdateHandlerTests : IDisposable
             BirthDay: null, Telegram: null);
 
     private static TelegramUpdateHandler CreateHandler(FakeTelegramBotApi fake, BastiliaMember? member)
-        => new(new StubMemberRepository(member), fake, new WelcomeMessageBuilder(), Options.Create(HostNames), NullLogger<TelegramUpdateHandler>.Instance);
-
-    private sealed class StubMemberRepository(BastiliaMember? member) : IBastiliaMemberRepository
-    {
-        public Task<BastiliaMember?> GetByIdAsync(int userId) => throw new NotImplementedException();
-        public Task<BastiliaMember?> GetBySlugAsync(string slug) => throw new NotImplementedException();
-        public Task<BastiliaMember?> GetByTelegramChatIdAsync(TelegramChatId chatId) => Task.FromResult(member);
-        public Task<IReadOnlyCollection<BastiliaMember>> GetAllAsync() => throw new NotImplementedException();
-        public Task<IReadOnlyCollection<BastiliaMember>> GetActualAsync() => throw new NotImplementedException();
-        public Task<IReadOnlyCollection<MemberHistoryItem>> GetMembersHistory() => throw new NotImplementedException();
-        public Task<IReadOnlyCollection<BastiliaCalendarItem>> GetMemberCalendarFor(int year) => throw new NotImplementedException();
-    }
+        => new(new FakeMemberRepository(member), fake, new WelcomeMessageBuilder(), Options.Create(HostNames), NullLogger<TelegramUpdateHandler>.Instance);
 
     private sealed class FakeTelegramBotApi : ITelegramBotApi
     {
