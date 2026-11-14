@@ -1,4 +1,4 @@
-@page "/admin/projects/from-kogda-igra"
+@page "/projects/from-kogda-igra"
 @using JoinRpg.Common.KogdaIgraClient
 @using Microsoft.AspNetCore.Components.Authorization
 @inject IKogdaIgraApiClient KogdaIgraApiClient
@@ -52,7 +52,7 @@
             return;
         }
 
-        NavigationManager.NavigateTo($"/admin/projects/create?kogdaIgraId={game.Id}");
+        NavigationManager.NavigateTo($"/projects/create?kogdaIgraId={game.Id}");
     }
 
     private class LookupViewModel
