@@ -1,4 +1,4 @@
-@page "/admin/projects/create"
+@page "/projects/create"
 @using Bastilia.Rating.Domain.Common
 @using JoinRpg.Common.KogdaIgraClient
 @using Microsoft.AspNetCore.Components.Authorization
@@ -161,7 +161,7 @@
             Model.AlreadyCompleted,
             Model.ProjectDescription);
 
-        NavigationManager.NavigateTo($"/admin/project/{id}");
+        NavigationManager.NavigateTo($"/project/{id}/manage");
     }
 
     private class CreateViewModel
