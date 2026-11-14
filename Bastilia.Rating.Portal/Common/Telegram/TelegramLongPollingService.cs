@@ -1,3 +1,4 @@
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
 using Telegram.Bot.Types;
 
@@ -17,7 +18,7 @@ internal class TelegramLongPollingService(
     ILogger<TelegramLongPollingService> logger,
     IOptions<TelegramBotOptions> options,
     ITelegramBotApi botApi,
-    TelegramUpdateHandler updateHandler) : BackgroundService
+    IServiceScopeFactory serviceScopeFactory) : BackgroundService
 {
     private static readonly TimeSpan PollingTimeout = TimeSpan.FromSeconds(25);
 
@@ -88,6 +89,11 @@ internal class TelegramLongPollingService(
                 offset = update.Id + 1;
                 try
                 {
+                    // Handler тянет scoped-зависимости (репозиторий, DbContext),
+                    // а hosted service — singleton, поэтому резолвим handler
+                    // в отдельном scope на каждый апдейт.
+                    await using var scope = serviceScopeFactory.CreateAsyncScope();
+                    var updateHandler = scope.ServiceProvider.GetRequiredService<TelegramUpdateHandler>();
                     await updateHandler.HandleStartCommandAsync(update, stoppingToken);
                     TelegramMetrics.WebhookProcessed("long_polling");
                 }
