@@ -19,7 +19,7 @@ internal class TelegramLongPollingService(
     ITelegramBotApi botApi,
     TelegramUpdateHandler updateHandler) : BackgroundService
 {
-    private const int PollingTimeoutSeconds = 25;
+    private static readonly TimeSpan PollingTimeout = TimeSpan.FromSeconds(25);
 
     internal TimeSpan ErrorRetryDelay { get; init; } = TimeSpan.FromSeconds(5);
 
@@ -59,7 +59,7 @@ internal class TelegramLongPollingService(
             IReadOnlyList<Update> updates;
             try
             {
-                updates = await botApi.GetUpdatesAsync(offset, PollingTimeoutSeconds, stoppingToken);
+                updates = await botApi.GetUpdatesAsync(offset, PollingTimeout, stoppingToken);
             }
             catch (OperationCanceledException)
             {

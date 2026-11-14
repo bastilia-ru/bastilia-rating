@@ -7,7 +7,7 @@ public class TelegramBotOptions
     public long ChatId { get; set; }
     public TelegramProxyOptions? Proxy { get; set; }
     public string WebhookSecret { get; set; } = "";
-    public TelegramTransport Transport { get; set; } = TelegramTransport.Webhook;
+    public TelegramTransport Transport { get; set; } = TelegramTransport.LongPolling;
     public bool Enabled => BotId > 0 && !string.IsNullOrEmpty(BotSecret);
 }
 

@@ -32,7 +32,7 @@ public class TelegramLongPollingServiceTests
     public async Task WebhookTransport_DoesNotPoll()
     {
         var fake = new FakeTelegramBotApi();
-        var service = CreateService(new TelegramBotOptions { BotId = 42, BotSecret = "s" }, fake);
+        var service = CreateService(new TelegramBotOptions { BotId = 42, BotSecret = "s", Transport = TelegramTransport.Webhook }, fake);
 
         await RunService(service);
 
@@ -177,9 +177,9 @@ public class TelegramLongPollingServiceTests
         public void EnqueueError(Exception exception) => getUpdatesResponses.Enqueue(exception);
         public void EnqueueCancellation() => getUpdatesResponses.Enqueue(new OperationCanceledException());
 
-        public Task<IReadOnlyList<Update>> GetUpdatesAsync(int offset, int timeoutSeconds, CancellationToken cancellationToken = default)
+        public Task<IReadOnlyList<Update>> GetUpdatesAsync(int offset, TimeSpan timeout, CancellationToken cancellationToken = default)
         {
-            Calls.Add($"get:{offset}:{timeoutSeconds}");
+            Calls.Add($"get:{offset}:{timeout.TotalSeconds}");
             RequestedOffsets.Add(offset);
             var response = getUpdatesResponses.Dequeue();
             if (response is Exception exception)

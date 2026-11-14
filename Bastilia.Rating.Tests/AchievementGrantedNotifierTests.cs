@@ -39,7 +39,7 @@ public class AchievementGrantedNotifierTests : IDisposable
             => throw new NotSupportedException();
 
         public Task<string?> GetMyUserNameAsync(CancellationToken cancellationToken = default) => Task.FromResult<string?>("bastilia_bot");
-        public Task<IReadOnlyList<Update>> GetUpdatesAsync(int offset, int timeoutSeconds, CancellationToken cancellationToken = default) => throw new NotSupportedException();
+        public Task<IReadOnlyList<Update>> GetUpdatesAsync(int offset, TimeSpan timeout, CancellationToken cancellationToken = default) => throw new NotSupportedException();
     }
 
     private static AchievementGrantedNotifier CreateNotifier(TelegramBotOptions telegramOptions, FakeTelegramBotApi fake) =>

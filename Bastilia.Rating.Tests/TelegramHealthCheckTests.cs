@@ -95,7 +95,7 @@ public class TelegramHealthCheckTests
         public Task DeleteWebhookAsync(CancellationToken cancellationToken = default)
             => throw new NotSupportedException();
 
-        public Task<IReadOnlyList<Telegram.Bot.Types.Update>> GetUpdatesAsync(int offset, int timeoutSeconds, CancellationToken cancellationToken = default)
+        public Task<IReadOnlyList<Telegram.Bot.Types.Update>> GetUpdatesAsync(int offset, TimeSpan timeout, CancellationToken cancellationToken = default)
             => throw new NotSupportedException();
     }
 
@@ -114,7 +114,7 @@ public class TelegramHealthCheckTests
         public Task DeleteWebhookAsync(CancellationToken cancellationToken = default)
             => throw new InvalidOperationException("Ненастроенный Telegram не должен создавать клиент");
 
-        public Task<IReadOnlyList<Telegram.Bot.Types.Update>> GetUpdatesAsync(int offset, int timeoutSeconds, CancellationToken cancellationToken = default)
+        public Task<IReadOnlyList<Telegram.Bot.Types.Update>> GetUpdatesAsync(int offset, TimeSpan timeout, CancellationToken cancellationToken = default)
             => throw new InvalidOperationException("Ненастроенный Telegram не должен создавать клиент");
     }
 
