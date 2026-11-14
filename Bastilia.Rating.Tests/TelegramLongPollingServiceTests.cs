@@ -123,7 +123,7 @@ public class TelegramLongPollingServiceTests
     {
         var member = memberLookupExceptionForChat is null ? null : CreateMember("leo");
         var services = new ServiceCollection();
-        services.AddSingleton<IBastiliaMemberRepository>(new StubMemberRepository(member, memberLookupExceptionForChat));
+        services.AddSingleton<IBastiliaMemberRepository>(new FakeMemberRepository(member, memberLookupExceptionForChat));
         services.AddSingleton<ITelegramBotApi>(fake);
         services.AddTransient<WelcomeMessageBuilder>();
         services.AddSingleton(Options.Create(HostNames));
@@ -154,20 +154,6 @@ public class TelegramLongPollingServiceTests
         new(JoinrpgUserId: 42, UserName: "Имя", AvatarUrl: "", Slug: slug,
             ParticipateInRating: true, StatusHistory: [], HisProjects: [], Achievements: [],
             BirthDay: null, Telegram: null);
-
-    private sealed class StubMemberRepository(BastiliaMember? member, long? exceptionForChat) : IBastiliaMemberRepository
-    {
-        public Task<BastiliaMember?> GetByIdAsync(int userId) => throw new NotImplementedException();
-        public Task<BastiliaMember?> GetBySlugAsync(string slug) => throw new NotImplementedException();
-        public Task<BastiliaMember?> GetByTelegramChatIdAsync(TelegramChatId chatId)
-            => exceptionForChat is not null && chatId.Value == exceptionForChat
-                ? throw new InvalidOperationException("member lookup failed")
-                : Task.FromResult(member);
-        public Task<IReadOnlyCollection<BastiliaMember>> GetAllAsync() => throw new NotImplementedException();
-        public Task<IReadOnlyCollection<BastiliaMember>> GetActualAsync() => throw new NotImplementedException();
-        public Task<IReadOnlyCollection<MemberHistoryItem>> GetMembersHistory() => throw new NotImplementedException();
-        public Task<IReadOnlyCollection<BastiliaCalendarItem>> GetMemberCalendarFor(int year) => throw new NotImplementedException();
-    }
 
     private sealed class FakeTelegramBotApi : ITelegramBotApi
     {
