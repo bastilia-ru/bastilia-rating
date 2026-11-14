@@ -7,8 +7,9 @@ namespace Bastilia.Rating.Portal.Common.Telegram;
 /// Получает апдейты Telegram через long polling (getUpdates): приложение само
 /// держит исходящий long-lived запрос. Работает там, куда Telegram не может
 /// достучаться webhook'ом, — нужен только исходящий доступ (в т.ч. через прокси).
-/// Апдейты, пришедшие до старта сервиса, игнорируются; offset не персистится,
-/// поэтому после рестарта возможен повтор последнего обработанного апдейта.
+/// Апдейты, пришедшие до старта сервиса, сбрасываются (drop_pending_updates
+/// при снятии webhook'а); offset не персистится, поэтому после рестарта
+/// возможен повтор последнего обработанного апдейта.
 /// Внимание: Bot API допускает ровно одного poller'а на бота — не поднимать
 /// больше одной реплики (см. leader election, joinrpg-net#6220).
 /// </summary>
@@ -37,17 +38,21 @@ internal class TelegramLongPollingService(
 
         try
         {
-            // Снимаем webhook, иначе getUpdates апдейтов не получит.
-            // drop_pendingUpdates не выставляется: накопленные апдейты дойдут через polling.
+            // Снимаем webhook (иначе getUpdates апдейтов не получит).
+            // drop_pending_updates: накопленные до старта апдейты нас не интересуют.
             await botApi.DeleteWebhookAsync(stoppingToken);
+        }
+        catch (OperationCanceledException) when (stoppingToken.IsCancellationRequested)
+        {
+            return;
         }
         catch (Exception exception)
         {
             logger.LogWarning(exception, "Не удалось снять webhook Telegram перед запуском long polling");
         }
 
-        var offset = await SkipAlreadyArrivedUpdatesAsync(stoppingToken);
         logger.LogInformation("Long polling Telegram запущен");
+        var offset = 0;
 
         while (!stoppingToken.IsCancellationRequested)
         {
@@ -84,7 +89,7 @@ internal class TelegramLongPollingService(
                 try
                 {
                     await updateHandler.HandleStartCommandAsync(update, stoppingToken);
-                    TelegramMetrics.WebhookProcessed();
+                    TelegramMetrics.WebhookProcessed("long_polling");
                 }
                 catch (OperationCanceledException) when (stoppingToken.IsCancellationRequested)
                 {
@@ -96,13 +101,5 @@ internal class TelegramLongPollingService(
                 }
             }
         }
-    }
-
-    private async Task<int> SkipAlreadyArrivedUpdatesAsync(CancellationToken cancellationToken)
-    {
-        // offset=-1 возвращает только последний апдейт; подтверждаем его
-        // (и всё до него), не обрабатывая — старое не интересует.
-        var latest = await botApi.GetUpdatesAsync(offset: -1, timeoutSeconds: 0, cancellationToken);
-        return latest.Count > 0 ? latest[^1].Id + 1 : 0;
     }
 }

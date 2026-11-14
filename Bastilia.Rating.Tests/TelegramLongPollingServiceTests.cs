@@ -40,33 +40,31 @@ public class TelegramLongPollingServiceTests
     }
 
     [Fact]
-    public async Task LongPolling_SkipsPreStartUpdatesAndProcessesNewOnes()
+    public async Task LongPolling_ProcessesUpdates()
     {
         var fake = new FakeTelegramBotApi();
         var service = CreateService(LongPollingOptions, fake);
-        fake.EnqueueUpdates(CreateStartUpdate(updateId: 100, chatId: 1)); // апдейт до старта — игнорируем
         fake.EnqueueUpdates(CreateStartUpdate(updateId: 101, chatId: 555));
         fake.EnqueueCancellation();
 
         await RunService(service);
 
-        fake.Calls.ShouldBe(["delete", "get:-1:0", "get:101:25", "send:555", "get:102:25"]);
+        fake.Calls.ShouldBe(["delete", "get:0:25", "send:555", "get:102:25"]);
         fake.CapturedChatIds.ShouldBe([new TelegramChatId(555)]);
     }
 
     [Fact]
-    public async Task LongPolling_NoPreStartUpdates_StartsFromZeroOffset()
+    public async Task DeleteWebhookThrows_StillStartsPolling()
     {
-        var fake = new FakeTelegramBotApi();
+        var fake = new FakeTelegramBotApi { DeleteWebhookExceptionToThrow = new HttpRequestException("connection failed") };
         var service = CreateService(LongPollingOptions, fake);
-        fake.EnqueueUpdates(); // до старта апдейтов не было
-        fake.EnqueueUpdates(CreateStartUpdate(updateId: 5, chatId: 777));
+        fake.EnqueueUpdates(CreateStartUpdate(updateId: 7, chatId: 444));
         fake.EnqueueCancellation();
 
         await RunService(service);
 
-        fake.RequestedOffsets.ShouldBe([-1, 0, 6]);
-        fake.CapturedChatIds.ShouldBe([new TelegramChatId(777)]);
+        fake.Calls.ShouldBe(["delete", "get:0:25", "send:444", "get:8:25"]);
+        fake.CapturedChatIds.ShouldBe([new TelegramChatId(444)]);
     }
 
     [Fact]
@@ -74,14 +72,13 @@ public class TelegramLongPollingServiceTests
     {
         var fake = new FakeTelegramBotApi { ErrorRetryDelay = TimeSpan.FromMilliseconds(1) };
         var service = CreateService(LongPollingOptions, fake);
-        fake.EnqueueUpdates();
         fake.EnqueueError(new HttpRequestException("connection failed"));
         fake.EnqueueUpdates(CreateStartUpdate(updateId: 9, chatId: 333));
         fake.EnqueueCancellation();
 
         await RunService(service);
 
-        fake.RequestedOffsets.ShouldBe([-1, 0, 0, 10]);
+        fake.RequestedOffsets.ShouldBe([0, 0, 10]);
         fake.CapturedChatIds.ShouldBe([new TelegramChatId(333)]);
     }
 
@@ -90,7 +87,6 @@ public class TelegramLongPollingServiceTests
     {
         var fake = new FakeTelegramBotApi();
         var service = CreateService(LongPollingOptions, fake, memberLookupExceptionForChat: 111);
-        fake.EnqueueUpdates();
         fake.EnqueueUpdates(
             CreateStartUpdate(updateId: 1, chatId: 111),
             CreateStartUpdate(updateId: 2, chatId: 222));
@@ -98,7 +94,7 @@ public class TelegramLongPollingServiceTests
 
         await RunService(service);
 
-        fake.RequestedOffsets.ShouldBe([-1, 0, 3]);
+        fake.RequestedOffsets.ShouldBe([0, 3]);
         fake.CapturedChatIds.ShouldBe([new TelegramChatId(222)]);
     }
 
@@ -175,6 +171,7 @@ public class TelegramLongPollingServiceTests
         public List<int> RequestedOffsets { get; } = [];
         public List<TelegramChatId> CapturedChatIds { get; } = [];
         public TimeSpan ErrorRetryDelay { get; set; } = TimeSpan.FromSeconds(5);
+        public Exception? DeleteWebhookExceptionToThrow { get; set; }
 
         public void EnqueueUpdates(params Update[] updates) => getUpdatesResponses.Enqueue((IReadOnlyList<Update>)updates);
         public void EnqueueError(Exception exception) => getUpdatesResponses.Enqueue(exception);
@@ -206,6 +203,11 @@ public class TelegramLongPollingServiceTests
         public Task DeleteWebhookAsync(CancellationToken cancellationToken = default)
         {
             Calls.Add("delete");
+            if (DeleteWebhookExceptionToThrow is not null)
+            {
+                throw DeleteWebhookExceptionToThrow;
+            }
+
             return Task.CompletedTask;
         }
     }
