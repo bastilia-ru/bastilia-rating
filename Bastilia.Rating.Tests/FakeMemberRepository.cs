@@ -14,6 +14,7 @@ internal sealed class FakeMemberRepository(BastiliaMember? member = null, long? 
     public Task<IReadOnlyCollection<BastiliaMember>> GetAllAsync() => throw new NotImplementedException();
 
     public Task<IReadOnlyCollection<BastiliaMember>> GetActualAsync() => throw new NotImplementedException();
+    public Task<IReadOnlyCollection<ActiveUserTelegramInfo>> GetActiveUsersWithTelegramAsync() => throw new NotImplementedException();
 
     public Task<IReadOnlyCollection<MemberHistoryItem>> GetMembersHistory() => throw new NotImplementedException();
 
