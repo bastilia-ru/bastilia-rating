@@ -1,3 +1,14 @@
 @page "/admin/"
 @using Microsoft.AspNetCore.Authorization
+@using Bastilia.Rating.Portal.Auth
 @attribute [Authorize]
+
+<h3>Админка</h3>
+
+<AuthorizeView Policy="@SiteAdminPolicy.Name">
+    <Authorized>
+        <ul>
+            <li><a href="/admin/users/telegram">Пользователи — Telegram</a></li>
+        </ul>
+    </Authorized>
+</AuthorizeView>
