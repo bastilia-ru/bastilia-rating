@@ -73,9 +73,9 @@ aws logs filter-log-events --profile selectel-logs --log-group-name k8s/bastilia
 | Шаблон | Что делает |
 |---|---|
 | `ERROR` | терм — подстрока в записи |
-| `GetForClaim 1611` | все термы сразу (AND) |
-| `?GetForClaim ?GetCharactersByType` | любой из термов (OR) |
-| `GetForClaim -1611` | исключить терм |
+| `bastilia-rating-migrator ERROR` | все термы сразу (AND) |
+| `?ERROR ?Fatal` | любой из термов (OR) |
+| `ERROR -health` | исключить терм |
 | `"atana@bastilia.ru"` | точная фраза |
 
 **JSON-фильтры (`{ $.Level = "Error" }`, `{ $.StatusCode >= 500 }`) не поддерживаются** — молча возвращают
@@ -114,9 +114,10 @@ $j.events | ForEach-Object { $_.message | ConvertFrom-Json } |
   "SourceContext": "Serilog.AspNetCore.RequestLoggingMiddleware",
   "TraceId": "...", "SpanId": "...", "RequestId": "0HNPDQID3O373:00000026",
   "RequestMethod": "GET", "RequestPath": "/api/...", "StatusCode": 200, "Elapsed": 45.4,
-  "EndpointName": "...", "QueryString": "...", "Referer": "...",
+  "EndpointName": "...", "QueryString": "...",
   "MachineName": "bastilia-rating-55548f6c85-68dhc",
   "exceptions": [{ "ClassName": "...", "Message": "...", "StackTraceString": "...", "Depth": 0 }],
+  "fields": { "http.request.method": "GET", "url.path": "...", "user_agent.original": "...", "Referer": "..." },
   "kubernetes": { "pod_name": "...", "container_name": "bastilia-rating", "namespace_name": "bastilia-rating-prod",
                   "container_hash": "cr.selcloud.ru/joinrpg/bastilia-rating@sha256:..." },
   "stream": "stdout", "time": "..."
@@ -135,6 +136,7 @@ $j.events | ForEach-Object { $_.message | ConvertFrom-Json } |
 
 - **Ошибки на проде за последний час:**
   ```powershell
+  $now = [DateTimeOffset]::UtcNow.ToUnixTimeMilliseconds()
   aws logs filter-log-events --profile selectel-logs --log-group-name k8s/bastilia-rating-prod --log-stream-names _all `
     --start-time ($now - 3600000) --filter-pattern ERROR --max-items 2000 --output json > err.json
   ```
