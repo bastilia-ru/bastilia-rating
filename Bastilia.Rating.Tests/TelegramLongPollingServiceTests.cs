@@ -129,7 +129,9 @@ public class TelegramLongPollingServiceTests
         services.AddSingleton(Options.Create(HostNames));
         services.AddSingleton<ILogger<TelegramUpdateHandler>>(NullLogger<TelegramUpdateHandler>.Instance);
         services.AddTransient<TelegramUpdateHandler>();
-        var serviceProvider = services.BuildServiceProvider();
+        // ValidateScopes = true: фиксируем регрессию исходного бага
+        // (singleton hosted service, потребляющий scoped-зависимости).
+        var serviceProvider = services.BuildServiceProvider(new ServiceProviderOptions { ValidateScopes = true });
         return new TelegramLongPollingService(
             NullLogger<TelegramLongPollingService>.Instance,
             Options.Create(options),
