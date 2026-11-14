@@ -8,7 +8,7 @@
                     @Achievement.AchievementName
                     @if (Achievement.RatingForDisplay is not null)
                     {
-                        <span class="text-muted"> (+@CountHelper.DisplayCount(Achievement.RatingForDisplay.Value, "очко", "очка", "очков"))</span>
+                        <span class="text-muted" style="white-space: nowrap"> (+@CountHelper.DisplayCount(Achievement.RatingForDisplay.Value, "очко", "очка", "очков"))</span>
                     }
                 </h5>
                 <div>
