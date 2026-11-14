@@ -169,6 +169,7 @@ public class TelegramUpdateHandlerTests : IDisposable
         }
 
         public Task<string?> GetMyUserNameAsync(CancellationToken cancellationToken = default) => throw new NotSupportedException();
+        public Task<IReadOnlyList<Update>> GetUpdatesAsync(int offset, int timeoutSeconds, CancellationToken cancellationToken = default) => throw new NotSupportedException();
         public Task SetWebhookAsync(string url, string secret, CancellationToken cancellationToken = default) => throw new NotSupportedException();
         public Task DeleteWebhookAsync(CancellationToken cancellationToken = default) => throw new NotSupportedException();
     }

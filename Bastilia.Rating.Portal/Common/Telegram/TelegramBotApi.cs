@@ -35,4 +35,7 @@ internal class TelegramBotApi(IOptions<TelegramBotOptions> options) : ITelegramB
 
     public async Task DeleteWebhookAsync(CancellationToken cancellationToken = default)
         => await client.Value.DeleteWebhook(dropPendingUpdates: true, cancellationToken: cancellationToken);
+
+    public async Task<IReadOnlyList<Update>> GetUpdatesAsync(int offset, int timeoutSeconds, CancellationToken cancellationToken = default)
+        => await client.Value.GetUpdates(offset, timeout: timeoutSeconds, allowedUpdates: [UpdateType.Message], cancellationToken: cancellationToken);
 }
