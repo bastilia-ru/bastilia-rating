@@ -10,7 +10,7 @@ else
 }
 @if (AdminProjectIds?.Contains(Project.BastiliaProjectId) == true)
 {
-    <a href="/admin/project/@Project.BastiliaProjectId" title="Управление проектом" class="ms-1">
+    <a href="/project/@Project.BastiliaProjectId/manage" title="Управление проектом" class="ms-1">
         <JoinIcon Icon="JoinIconType.Edit" />
     </a>
 }
