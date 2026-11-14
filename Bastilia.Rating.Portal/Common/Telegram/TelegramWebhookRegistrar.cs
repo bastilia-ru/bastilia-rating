@@ -24,6 +24,11 @@ internal class TelegramWebhookRegistrar(
             return;
         }
 
+        if (options.Value.Transport is not TelegramTransport.Webhook)
+        {
+            return;
+        }
+
         if (string.IsNullOrEmpty(options.Value.WebhookSecret))
         {
             logger.LogInformation("Telegram:WebhookSecret не задан, webhook не регистрируется");

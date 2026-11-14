@@ -31,7 +31,7 @@ public class TelegramWebhookRegistrarTests
     public async Task EnabledWithoutSecret_DoesNotCallApi()
     {
         var fake = new FakeTelegramBotApi();
-        var registrar = CreateRegistrar(new TelegramBotOptions { BotId = 42, BotSecret = "s" }, fake);
+        var registrar = CreateRegistrar(new TelegramBotOptions { BotId = 42, BotSecret = "s", Transport = TelegramTransport.Webhook }, fake);
 
         await RunRegistrar(registrar);
 
@@ -42,7 +42,7 @@ public class TelegramWebhookRegistrarTests
     public async Task EnabledWithSecret_CallsDeleteThenSetWithExpectedUrl()
     {
         var fake = new FakeTelegramBotApi();
-        var registrar = CreateRegistrar(new TelegramBotOptions { BotId = 42, BotSecret = "s", WebhookSecret = "secret" }, fake);
+        var registrar = CreateRegistrar(new TelegramBotOptions { BotId = 42, BotSecret = "s", WebhookSecret = "secret", Transport = TelegramTransport.Webhook }, fake);
 
         await RunRegistrar(registrar);
 
@@ -53,7 +53,7 @@ public class TelegramWebhookRegistrarTests
     public async Task ApiThrows_DoesNotPropagate()
     {
         var fake = new FakeTelegramBotApi { ExceptionToThrow = new HttpRequestException("connection failed") };
-        var registrar = CreateRegistrar(new TelegramBotOptions { BotId = 42, BotSecret = "s", WebhookSecret = "secret" }, fake);
+        var registrar = CreateRegistrar(new TelegramBotOptions { BotId = 42, BotSecret = "s", WebhookSecret = "secret", Transport = TelegramTransport.Webhook }, fake);
 
         await RunRegistrar(registrar);
     }
@@ -84,6 +84,9 @@ public class TelegramWebhookRegistrarTests
             => throw new NotSupportedException();
 
         public Task<string?> GetMyUserNameAsync(CancellationToken cancellationToken = default)
+            => throw new NotSupportedException();
+
+        public Task<IReadOnlyList<Telegram.Bot.Types.Update>> GetUpdatesAsync(int offset, TimeSpan timeout, CancellationToken cancellationToken = default)
             => throw new NotSupportedException();
 
         public Task SetWebhookAsync(string url, string secret, CancellationToken cancellationToken = default)
