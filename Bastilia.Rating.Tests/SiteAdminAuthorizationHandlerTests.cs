@@ -1,21 +1,21 @@
 using System.Security.Claims;
 using Bastilia.Rating.Portal.Auth;
+using JoinRpg.Common.PrimitiveTypes;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
-using DomainUserIdentification = Bastilia.Rating.Domain.Common.UserIdentification;
 
 namespace Bastilia.Rating.Tests;
 
 public class SiteAdminAuthorizationHandlerTests
 {
     [Fact]
-    public async Task UserIdInDefaultList_Succeeds()
+    public async Task UserIdInList_Succeeds()
     {
-        var context = CreateContext(new ClaimsPrincipal(new ClaimsIdentity([new Claim(ClaimTypes.NameIdentifier, "1")], "test")));
+        var context = CreateContext(new ClaimsPrincipal(new ClaimsIdentity([new Claim(ClaimTypes.NameIdentifier, "42")], "test")));
 
-        await CreateHandler().HandleAsync(context);
+        await CreateHandler(adminUserIds: [42]).HandleAsync(context);
 
         context.HasSucceeded.ShouldBeTrue();
     }
@@ -27,7 +27,7 @@ public class SiteAdminAuthorizationHandlerTests
             [new Claim(ClaimTypes.NameIdentifier, "2"), new Claim(ClaimTypes.Role, "president")], "test"));
         var context = CreateContext(principal);
 
-        await CreateHandler().HandleAsync(context);
+        await CreateHandler(adminUserIds: [1]).HandleAsync(context);
 
         context.HasSucceeded.ShouldBeFalse();
     }
@@ -37,7 +37,7 @@ public class SiteAdminAuthorizationHandlerTests
     {
         var context = CreateContext(new ClaimsPrincipal(new ClaimsIdentity()));
 
-        await CreateHandler().HandleAsync(context);
+        await CreateHandler(adminUserIds: [1]).HandleAsync(context);
 
         context.HasSucceeded.ShouldBeFalse();
     }
@@ -46,12 +46,12 @@ public class SiteAdminAuthorizationHandlerTests
     public void Options_BindFromConfiguration()
     {
         ResolveAdminUserIds(new Dictionary<string, string?> { ["SiteAdmin:AdminUserIds:0"] = "42" })
-            .ShouldBe([new DomainUserIdentification(42)]);
+            .ShouldBe([new UserIdentification(42)]);
         ResolveAdminUserIds([])
-            .ShouldBe([new DomainUserIdentification(1)]);
+            .ShouldBeEmpty();
     }
 
-    private static IReadOnlyCollection<DomainUserIdentification> ResolveAdminUserIds(Dictionary<string, string?> config)
+    private static IReadOnlyCollection<UserIdentification> ResolveAdminUserIds(Dictionary<string, string?> config)
     {
         var services = new ServiceCollection();
         var configuration = new ConfigurationBuilder().AddInMemoryCollection(config).Build();
@@ -60,8 +60,8 @@ public class SiteAdminAuthorizationHandlerTests
         return services.BuildServiceProvider().GetRequiredService<IOptions<SiteAdminOptions>>().Value.AdminUserIds;
     }
 
-    private static SiteAdminAuthorizationHandler CreateHandler(SiteAdminOptions? options = null)
-        => new(new StubOptionsMonitor(options ?? new SiteAdminOptions { AdminUserIds = [new DomainUserIdentification(1)] }));
+    private static SiteAdminAuthorizationHandler CreateHandler(int[] adminUserIds)
+        => new(new StubOptionsMonitor(new SiteAdminOptions { AdminUserIds = [.. adminUserIds.Select(id => new UserIdentification(id))] }));
 
     private static AuthorizationHandlerContext CreateContext(ClaimsPrincipal principal)
         => new([new SiteAdminRequirement()], principal, null);

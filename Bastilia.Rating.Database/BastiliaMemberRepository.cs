@@ -29,12 +29,18 @@ internal class BastiliaMemberRepository(IDbContextFactory<AppDbContext> contextF
     {
         await using var context = await contextFactory.CreateDbContextAsync();
         var threshold = DateOnly.FromDateTime(DateTime.Today).AddDays(-365);
-        return [.. await context.Users
+        var users = await context.Users
             .AsNoTracking()
             .Where(u => u.Achievements.Any(a => a.GrantedDate >= threshold))
             .OrderBy(u => u.Username)
-            .Select(u => new ActiveUserTelegramInfo(u.JoinRpgUserId, u.Slug, u.Username, u.TelegramChatId, u.TelegramUsername))
-            .ToArrayAsync()];
+            .Select(u => new { u.JoinRpgUserId, u.Slug, u.Username, u.TelegramChatId, u.TelegramUsername })
+            .ToArrayAsync();
+
+        return [.. users.Select(u => new ActiveUserTelegramInfo(
+            new UserIdentification(u.JoinRpgUserId),
+            u.Slug,
+            u.Username,
+            TelegramSocialLink.FromOptional(u.TelegramChatId, PrefferedName.FromOptional(u.TelegramUsername))))];
     }
 
     public async Task<IReadOnlyCollection<MemberHistoryItem>> GetMembersHistory()

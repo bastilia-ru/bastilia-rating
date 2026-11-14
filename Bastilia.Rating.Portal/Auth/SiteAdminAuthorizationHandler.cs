@@ -11,7 +11,7 @@ internal sealed class SiteAdminAuthorizationHandler(IOptionsMonitor<SiteAdminOpt
     protected override Task HandleRequirementAsync(AuthorizationHandlerContext context, SiteAdminRequirement requirement)
     {
         var userId = context.User.TryGetJoinrpgUserId();
-        if (userId is not null && options.CurrentValue.AdminUserIds.Any(a => a.Value == userId.Value))
+        if (userId is not null && options.CurrentValue.AdminUserIds.Contains(userId))
         {
             context.Succeed(requirement);
         }

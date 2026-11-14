@@ -15,15 +15,15 @@ else
 {
     <table class="table">
         <thead>
-            <tr><th>Пользователь</th><th>Telegram ID</th><th>Username</th></tr>
+            <tr><th>Пользователь</th><th>Telegram</th><th>Chat ID</th></tr>
         </thead>
         <tbody>
             @foreach (var user in users)
             {
                 <tr>
-                    <td><a href="/member/@user.JoinrpgUserId">@user.UserName</a></td>
-                    <td>@user.TelegramChatId</td>
-                    <td>@user.TelegramUsername</td>
+                    <td><BastiliaUserLink Member="user" /></td>
+                    <td><TelegramLink Contact="user.Telegram" /></td>
+                    <td>@user.Telegram?.ChatId?.Value</td>
                 </tr>
             }
         </tbody>
