@@ -1,4 +1,4 @@
-using Bastilia.Rating.Domain.Common;
+using JoinRpg.Common.PrimitiveTypes;
 
 namespace Bastilia.Rating.Domain
 {

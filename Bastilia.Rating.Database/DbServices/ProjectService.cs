@@ -1,5 +1,5 @@
 using Bastilia.Rating.Database.Entities;
-using Bastilia.Rating.Domain.Common;
+using JoinRpg.Common.PrimitiveTypes;
 
 namespace Bastilia.Rating.Database.DbServices
 {
