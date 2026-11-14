@@ -1,0 +1,37 @@
+@page "/admin/users/telegram"
+@using Microsoft.AspNetCore.Authorization
+@using Bastilia.Rating.Portal.Auth
+@attribute [Authorize(Policy = SiteAdminPolicy.Name)]
+@inject IBastiliaMemberRepository Repository
+
+<PageTitle>Активные пользователи — Telegram</PageTitle>
+<h3>Активные пользователи — Telegram</h3>
+
+@if (users is null)
+{
+    <LoadingSpinner />
+}
+else
+{
+    <table class="table">
+        <thead>
+            <tr><th>Пользователь</th><th>Telegram ID</th><th>Username</th></tr>
+        </thead>
+        <tbody>
+            @foreach (var user in users)
+            {
+                <tr>
+                    <td><a href="/member/@user.JoinrpgUserId">@user.UserName</a></td>
+                    <td>@user.TelegramChatId</td>
+                    <td>@user.TelegramUsername</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+
+@code {
+    private IReadOnlyCollection<ActiveUserTelegramInfo>? users;
+
+    protected override async Task OnInitializedAsync() => users = await Repository.GetActiveUsersWithTelegramAsync();
+}
