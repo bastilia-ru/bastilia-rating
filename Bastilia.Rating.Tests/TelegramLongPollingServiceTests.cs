@@ -1,6 +1,8 @@
 using Bastilia.Rating.Portal.Common.Telegram;
 using JoinRpg.Common.PrimitiveTypes;
 using JoinRpg.Common.WebInfrastructure;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Abstractions;
 using Microsoft.Extensions.Options;
 using Telegram.Bot.Types;
@@ -120,17 +122,19 @@ public class TelegramLongPollingServiceTests
         long? memberLookupExceptionForChat = null)
     {
         var member = memberLookupExceptionForChat is null ? null : CreateMember("leo");
-        var handler = new TelegramUpdateHandler(
-            new StubMemberRepository(member, memberLookupExceptionForChat),
-            fake,
-            new WelcomeMessageBuilder(),
-            Options.Create(HostNames),
-            NullLogger<TelegramUpdateHandler>.Instance);
+        var services = new ServiceCollection();
+        services.AddSingleton<IBastiliaMemberRepository>(new StubMemberRepository(member, memberLookupExceptionForChat));
+        services.AddSingleton<ITelegramBotApi>(fake);
+        services.AddTransient<WelcomeMessageBuilder>();
+        services.AddSingleton(Options.Create(HostNames));
+        services.AddSingleton<ILogger<TelegramUpdateHandler>>(NullLogger<TelegramUpdateHandler>.Instance);
+        services.AddTransient<TelegramUpdateHandler>();
+        var serviceProvider = services.BuildServiceProvider();
         return new TelegramLongPollingService(
             NullLogger<TelegramLongPollingService>.Instance,
             Options.Create(options),
             fake,
-            handler)
+            serviceProvider.GetRequiredService<IServiceScopeFactory>())
         { ErrorRetryDelay = fake.ErrorRetryDelay };
     }
 
