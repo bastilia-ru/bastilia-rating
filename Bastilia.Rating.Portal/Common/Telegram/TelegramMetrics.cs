@@ -21,6 +21,11 @@ public static class TelegramMetrics
         "telegram.webhooks",
         description: "Вызовы Telegram webhook");
 
+    private static readonly Histogram<double> apiDuration = meter.CreateHistogram<double>(
+        "telegram.api.duration",
+        unit: "s",
+        description: "Длительность вызовов Telegram Bot API (всех: sending, GetMe, GetUpdates и т.д.)");
+
     public static void SendSucceeded(string kind)
         => sends.Add(1,
             new KeyValuePair<string, object?>("kind", kind),
@@ -48,4 +53,9 @@ public static class TelegramMetrics
         => webhooks.Add(1,
             new KeyValuePair<string, object?>("result", "skipped"),
             new KeyValuePair<string, object?>("reason", reason));
+
+    public static void ApiCallFinished(string method, TimeSpan duration, string result)
+        => apiDuration.Record(duration.TotalSeconds,
+            new KeyValuePair<string, object?>("method", method),
+            new KeyValuePair<string, object?>("result", result));
 }

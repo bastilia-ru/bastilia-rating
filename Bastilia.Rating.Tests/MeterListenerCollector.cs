@@ -12,7 +12,7 @@ internal sealed class MeterListenerCollector : IDisposable
 {
     private readonly object sync = new();
     private readonly MeterListener listener = new();
-    private readonly List<(string Instrument, long Value, IReadOnlyDictionary<string, object?> Tags)> measurements = [];
+    private readonly List<(string Instrument, object? Value, IReadOnlyDictionary<string, object?> Tags)> measurements = [];
 
     public MeterListenerCollector(string meterName)
     {
@@ -25,21 +25,30 @@ internal sealed class MeterListenerCollector : IDisposable
         };
         listener.SetMeasurementEventCallback<long>((instrument, measurement, tags, _) =>
         {
-            var tagSnapshot = new Dictionary<string, object?>();
-            foreach (var tag in tags)
-            {
-                tagSnapshot[tag.Key] = tag.Value;
-            }
-
-            lock (sync)
-            {
-                measurements.Add((instrument.Name, measurement, tagSnapshot));
-            }
+            AddMeasurement(instrument.Name, measurement, tags);
+        });
+        listener.SetMeasurementEventCallback<double>((instrument, measurement, tags, _) =>
+        {
+            AddMeasurement(instrument.Name, measurement, tags);
         });
         listener.Start();
     }
 
-    public IReadOnlyList<(string Instrument, long Value, IReadOnlyDictionary<string, object?> Tags)> Measurements
+    private void AddMeasurement(string instrument, object? measurement, ReadOnlySpan<KeyValuePair<string, object?>> tags)
+    {
+        var tagSnapshot = new Dictionary<string, object?>();
+        foreach (var tag in tags)
+        {
+            tagSnapshot[tag.Key] = tag.Value;
+        }
+
+        lock (sync)
+        {
+            measurements.Add((instrument, measurement, tagSnapshot));
+        }
+    }
+
+    public IReadOnlyList<(string Instrument, object? Value, IReadOnlyDictionary<string, object?> Tags)> Measurements
     {
         get
         {
