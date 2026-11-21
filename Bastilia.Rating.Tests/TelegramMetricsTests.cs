@@ -21,12 +21,12 @@ public class TelegramMetricsTests : IDisposable
     [Fact]
     public void SendFailed_RecordsSendWithFailureReasonAndRetryable()
     {
-        TelegramMetrics.SendFailed("test-kind-failure", "bot was blocked", retryable: false);
+        TelegramMetrics.SendFailed("test-kind-failure", "forbidden", retryable: false);
 
         var measurement = collector.Measurements.Single(m => m is { Instrument: "telegram.sends" }
             && Equals(m.Tags.GetValueOrDefault("kind"), "test-kind-failure"));
         measurement.Tags["result"].ShouldBe("failure");
-        measurement.Tags["reason"].ShouldBe("bot was blocked");
+        measurement.Tags["reason"].ShouldBe("forbidden");
         measurement.Tags["retryable"].ShouldBe(false.ToString());
     }
 

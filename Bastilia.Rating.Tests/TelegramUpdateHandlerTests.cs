@@ -110,7 +110,7 @@ public class TelegramUpdateHandlerTests : IDisposable
 
         await handler.HandleStartCommandAsync(CreateStartUpdate(123));
 
-        AssertWelcomeSendRecorded("failure", reason: "bot was blocked", retryable: false.ToString());
+        AssertWelcomeSendRecorded("failure", reason: "forbidden", retryable: false.ToString());
     }
 
     private void AssertWelcomeSendRecorded(string result, string? reason = null, string? retryable = null)

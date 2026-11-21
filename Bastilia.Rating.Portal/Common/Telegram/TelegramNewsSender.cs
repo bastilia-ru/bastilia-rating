@@ -35,8 +35,8 @@ internal class TelegramNewsSender(
         }
         catch (Exception exception)
         {
-            var (retryable, errorMessage) = TelegramErrorClassifier.Classify(exception);
-            TelegramMetrics.SendFailed("news", errorMessage, retryable);
+            var (retryable, category, errorMessage) = TelegramErrorClassifier.Classify(exception);
+            TelegramMetrics.SendFailed("news", category, retryable);
             return NewsSendResult.Failure(errorMessage, retryable);
         }
     }

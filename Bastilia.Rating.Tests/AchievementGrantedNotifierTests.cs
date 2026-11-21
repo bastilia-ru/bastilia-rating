@@ -129,7 +129,7 @@ public class AchievementGrantedNotifierTests : IDisposable
 
         fake.WasCalled.ShouldBeTrue();
 
-        AssertAchievementSendRecorded("failure", reason: "bot was blocked", retryable: false.ToString());
+        AssertAchievementSendRecorded("failure", reason: "forbidden", retryable: false.ToString());
     }
 
     [Fact]
