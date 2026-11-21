@@ -31,11 +31,18 @@ public static class TelegramMetrics
             new KeyValuePair<string, object?>("kind", kind),
             new KeyValuePair<string, object?>("result", "success"));
 
-    public static void SendFailed(string kind, string error, bool retryable)
+    /// <param name="reason">
+    /// Категория ошибки из <see cref="TelegramErrorClassifier" />. Должна быть
+    /// низкокардинальной: значение тега хранится в памяти Prometheus-экспортера
+    /// навсегда, поэтому сюда нельзя класть текст исключения.
+    /// </param>
+    /// <param name="kind">Вид отправки: news, achievement или welcome.</param>
+    /// <param name="retryable">true, если отправку стоит повторить.</param>
+    public static void SendFailed(string kind, string reason, bool retryable)
         => sends.Add(1,
             new KeyValuePair<string, object?>("kind", kind),
             new KeyValuePair<string, object?>("result", "failure"),
-            new KeyValuePair<string, object?>("reason", error),
+            new KeyValuePair<string, object?>("reason", reason),
             new KeyValuePair<string, object?>("retryable", retryable.ToString()));
 
     public static void SendSkipped(string kind, string reason)

@@ -38,8 +38,8 @@ internal class TelegramUpdateHandler(
         }
         catch (Exception exception)
         {
-            var (retryable, errorMessage) = TelegramErrorClassifier.Classify(exception);
-            TelegramMetrics.SendFailed("welcome", errorMessage, retryable);
+            var (retryable, category, errorMessage) = TelegramErrorClassifier.Classify(exception);
+            TelegramMetrics.SendFailed("welcome", category, retryable);
             logger.LogWarning(exception, "Не удалось отправить приветствие на /start в Telegram (повторяемая ошибка: {Retryable}): {ErrorMessage}", retryable, errorMessage);
         }
     }

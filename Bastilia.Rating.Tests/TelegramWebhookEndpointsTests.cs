@@ -83,7 +83,7 @@ public class TelegramWebhookEndpointsTests : IDisposable
         collector.Measurements.ShouldContain(m => m.Instrument == "telegram.sends"
             && Equals(m.Tags.GetValueOrDefault("kind"), "welcome")
             && Equals(m.Tags.GetValueOrDefault("result"), "failure")
-            && Equals(m.Tags.GetValueOrDefault("reason"), "bot was blocked"));
+            && Equals(m.Tags.GetValueOrDefault("reason"), "forbidden"));
     }
 
     private static DefaultHttpContext CreateAuthorizedHttpContext()

@@ -39,8 +39,8 @@ internal class AchievementGrantedNotifier(
         }
         catch (Exception exception)
         {
-            var (retryable, errorMessage) = TelegramErrorClassifier.Classify(exception);
-            TelegramMetrics.SendFailed("achievement", errorMessage, retryable);
+            var (retryable, category, errorMessage) = TelegramErrorClassifier.Classify(exception);
+            TelegramMetrics.SendFailed("achievement", category, retryable);
             logger.LogWarning(exception, "Не удалось отправить личное уведомление о выдаче ачивки в Telegram (повторяемая ошибка: {Retryable}): {ErrorMessage}", retryable, errorMessage);
         }
     }

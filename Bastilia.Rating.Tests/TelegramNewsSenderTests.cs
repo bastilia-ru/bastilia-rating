@@ -111,7 +111,7 @@ public class TelegramNewsSenderTests : IDisposable
         result.Retryable.ShouldBeFalse();
         result.ErrorMessage.ShouldBe("bot was kicked");
 
-        AssertNewsSendRecorded("failure", reason: "bot was kicked", retryable: false.ToString());
+        AssertNewsSendRecorded("failure", reason: "forbidden", retryable: false.ToString());
     }
 
     [Fact]
@@ -127,7 +127,7 @@ public class TelegramNewsSenderTests : IDisposable
         result.Retryable.ShouldBeTrue();
         result.ErrorMessage.ShouldBe("internal error");
 
-        AssertNewsSendRecorded("failure", reason: "internal error", retryable: true.ToString());
+        AssertNewsSendRecorded("failure", reason: "api_error", retryable: true.ToString());
     }
 
     [Fact]
