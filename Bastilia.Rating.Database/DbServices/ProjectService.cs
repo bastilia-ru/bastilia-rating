@@ -57,6 +57,16 @@ namespace Bastilia.Rating.Database.DbServices
             await appDbContext.SaveChangesAsync();
         }
 
+        public async Task DeleteProject(int projectId)
+        {
+            var entity = await appDbContext.Set<Entities.BastiliaProject>()
+                .FirstOrDefaultAsync(x => x.BastiliaProjectId == projectId) ?? throw new InvalidOperationException();
+
+            entity.DeletedAt = DateTimeOffset.UtcNow;
+
+            await appDbContext.SaveChangesAsync();
+        }
+
         public async Task AddAchievementTemplates(int projectId, IReadOnlyList<AchievementTemplateInput> achievementTemplates)
         {
             var entity = await appDbContext.Set<Entities.BastiliaProject>()
