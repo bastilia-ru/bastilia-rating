@@ -100,7 +100,8 @@ internal class BastiliaProjectRepository(IDbContextFactory<AppDbContext> context
            project.DeletedAt,
            project.LastUpdatedAt,
            project.PlannedEndDate,
-           lastNewsDate
+           lastNewsDate,
+           project.NewsCadence
            );
     }
 }
