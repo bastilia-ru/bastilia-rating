@@ -4,12 +4,26 @@
 @inject NavigationManager navigationManager
 
 <JoinCollapsePanel>
-    <Header>Координаторы проекта</Header>
+    <Header>Координаторы и новости</Header>
     <ChildContent>
         <EditForm FormName="EditCoordinatorsForm" Model="Model" OnValidSubmit="Submit">
             <div>
                 <MultiUserInput Label="Координаторы проекта:" @bind-Value="Model!.Coordinators" />
             </div>
+            @if (IsActive)
+            {
+                <div>
+                    <label>
+                        Как часто ждём новостей:
+                        <InputSelect @bind-Value="Model!.NewsCadence" class="form-select">
+                            @foreach (var cadence in Enum.GetValues<NewsCadence>())
+                            {
+                                <option value="@cadence">@cadence.GetNewsCadenceDescription()</option>
+                            }
+                        </InputSelect>
+                    </label>
+                </div>
+            }
             <div>
                 <JoinButton Submit Preset="ButtonPreset.Save" />
             </div>
@@ -24,6 +38,12 @@
     [Parameter, EditorRequired]
     public IReadOnlyCollection<IUserLink> Coordinators { get; set; } = [];
 
+    [Parameter, EditorRequired]
+    public NewsCadence CurrentCadence { get; set; }
+
+    [Parameter, EditorRequired]
+    public bool IsActive { get; set; }
+
     [Parameter]
     public EventCallback OnCompleted { get; set; }
 
@@ -35,6 +55,7 @@
         Model ??= new EditCoordinatorsViewModel
         {
             Coordinators = [.. Coordinators.Select(c => c.Slug ?? c.JoinrpgUserId.ToString())],
+            NewsCadence = CurrentCadence,
         };
         base.OnInitialized();
     }
@@ -45,6 +66,10 @@
         var coordinators = users.Select(u => new UserIdentification(u.JoinrpgUserId)).ToList();
 
         await projectService.UpdateCoordinators(ProjectId, coordinators);
+        if (IsActive)
+        {
+            await projectService.SetNewsCadence(ProjectId, Model.NewsCadence);
+        }
         await OnCompleted.InvokeAsync();
         navigationManager.NavigateTo(navigationManager.Uri, forceLoad: true);
     }
@@ -52,5 +77,6 @@
     private class EditCoordinatorsViewModel
     {
         public string[] Coordinators { get; set; } = [];
+        public NewsCadence NewsCadence { get; set; }
     }
 }
