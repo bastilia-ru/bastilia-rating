@@ -63,8 +63,8 @@ public record BastiliaProject(int BastiliaProjectId,
             problems |= ProjectProblem.TemplatesWithoutAchievements;
         }
         if (status == ProjectStatus.Ongoing && newsCadence != NewsCadence.Never
-            && lastNewsDate is DateTimeOffset lastNews
-            && DateOnly.FromDateTime(lastNews.UtcDateTime) < today.AddDays(-newsCadence.GetIntervalDays()))
+            && (lastNewsDate is null
+                || DateOnly.FromDateTime(lastNewsDate.Value.UtcDateTime) < today.AddDays(-newsCadence.GetIntervalDays())))
         {
             problems |= ProjectProblem.NewsOverdue;
         }

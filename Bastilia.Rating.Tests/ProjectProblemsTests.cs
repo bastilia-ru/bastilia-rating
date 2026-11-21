@@ -64,11 +64,12 @@ public class ProjectProblemsTests
     }
 
     [Fact]
-    public void OngoingProject_WithoutAnyNews_HasNoNewsOverdueProblem()
+    public void OngoingProject_WithoutAnyNews_HasNewsOverdueProblem()
     {
         var project = CreateProject(ongoing: true, lastNewsDate: null);
 
-        project.Problems.HasFlag(ProjectProblem.NewsOverdue).ShouldBeFalse();
+        project.Problems.HasFlag(ProjectProblem.NewsOverdue).ShouldBeTrue();
+        project.HasProblems.ShouldBeTrue();
     }
 
     [Fact]
