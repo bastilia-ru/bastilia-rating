@@ -148,6 +148,11 @@ namespace Bastilia.Rating.Database.Migrations
                     b.Property<DateTimeOffset?>("LastUpdatedAt")
                         .HasColumnType("timestamp with time zone");
 
+                    b.Property<int>("NewsCadence")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer")
+                        .HasDefaultValue(2);
+
                     b.Property<bool>("OngoingProject")
                         .HasColumnType("boolean");
 
@@ -690,7 +695,7 @@ namespace Bastilia.Rating.Database.Migrations
                         .IsRequired();
 
                     b.HasOne("Bastilia.Rating.Database.Entities.BastiliaProject", "Project")
-                        .WithMany()
+                        .WithMany("ProjectNews")
                         .HasForeignKey("ProjectId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
@@ -745,6 +750,8 @@ namespace Bastilia.Rating.Database.Migrations
                     b.Navigation("AchievementTemplates");
 
                     b.Navigation("ProjectAdmins");
+
+                    b.Navigation("ProjectNews");
                 });
 
             modelBuilder.Entity("Bastilia.Rating.Database.Entities.User", b =>

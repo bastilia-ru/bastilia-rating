@@ -30,6 +30,8 @@ namespace Bastilia.Rating.Domain
 
         Task SetProjectLevel(int projectId, ProjectLevel projectLevel);
 
+        Task SetNewsCadence(int projectId, NewsCadence newsCadence);
+
         Task UpdateCoordinators(int projectId, IReadOnlyList<UserIdentification> coordinators);
 
         Task UpdateAchievementTemplate(int templateId, string name, string description);
