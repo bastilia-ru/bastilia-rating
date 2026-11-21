@@ -21,6 +21,7 @@ public record BastiliaProject(int BastiliaProjectId,
                               int TemplatesCount,
                               int AchievementsCount,
                               DateTimeOffset? LastNewsDate,
+                              DateOnly CreateDate,
                               NewsCadence NewsCadence
                               ) : IBastiliaProjectLink
 {
@@ -28,7 +29,7 @@ public record BastiliaProject(int BastiliaProjectId,
     public bool IsActive => Status != ProjectStatus.Completed && Status != ProjectStatus.Deleted;
     public ProjectStatus Status { get; } = CalculateStatus(OngoingProject, EndDate, DeletedAt);
     public bool HelpRequired => !string.IsNullOrWhiteSpace(HowToHelp) && IsActive;
-    public ProjectProblem Problems => CalculateProblems(PlannedEndDate, EndDate, Status, TemplatesCount, AchievementsCount, ProjectLevel, NewsCadence, LastNewsDate, DateOnly.FromDateTime(DateTime.UtcNow));
+    public ProjectProblem Problems => CalculateProblems(PlannedEndDate, EndDate, Status, TemplatesCount, AchievementsCount, ProjectLevel, NewsCadence, LastNewsDate, CreateDate, DateOnly.FromDateTime(DateTime.UtcNow));
     public bool HasProblems => Problems != ProjectProblem.None;
 
     private static ProjectStatus CalculateStatus(bool ongoingProject, DateOnly? endDate, DateTimeOffset? deletedAt)
@@ -43,7 +44,7 @@ public record BastiliaProject(int BastiliaProjectId,
         };
     }
 
-    private static ProjectProblem CalculateProblems(DateOnly? plannedEndDate, DateOnly? endDate, ProjectStatus status, int templatesCount, int achievementsCount, ProjectLevel? projectLevel, NewsCadence newsCadence, DateTimeOffset? lastNewsDate, DateOnly today)
+    private static ProjectProblem CalculateProblems(DateOnly? plannedEndDate, DateOnly? endDate, ProjectStatus status, int templatesCount, int achievementsCount, ProjectLevel? projectLevel, NewsCadence newsCadence, DateTimeOffset? lastNewsDate, DateOnly createDate, DateOnly today)
     {
         var problems = ProjectProblem.None;
         if (endDate is null && plannedEndDate is not null && plannedEndDate < today)
@@ -62,11 +63,15 @@ public record BastiliaProject(int BastiliaProjectId,
         {
             problems |= ProjectProblem.TemplatesWithoutAchievements;
         }
-        if (status == ProjectStatus.Ongoing && newsCadence != NewsCadence.Never
-            && (lastNewsDate is null
-                || DateOnly.FromDateTime(lastNewsDate.Value.UtcDateTime) < today.AddDays(-newsCadence.GetIntervalDays())))
+        if (status == ProjectStatus.Ongoing && newsCadence != NewsCadence.Never)
         {
-            problems |= ProjectProblem.NewsOverdue;
+            var lastNewsOrCreated = lastNewsDate is null
+                ? createDate
+                : DateOnly.FromDateTime(lastNewsDate.Value.UtcDateTime);
+            if (lastNewsOrCreated < today.AddDays(-newsCadence.GetIntervalDays()))
+            {
+                problems |= ProjectProblem.NewsOverdue;
+            }
         }
         return problems;
     }

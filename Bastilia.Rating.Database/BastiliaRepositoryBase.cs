@@ -40,6 +40,7 @@ internal abstract class BastiliaRepositoryBase
             templatesCount,
             achievementsCount,
             lastNewsDate,
+            project.CreateDate,
             project.NewsCadence
             );
     }
