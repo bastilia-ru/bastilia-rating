@@ -86,6 +86,11 @@
     }
 
     <EditCoordinatorsForm ProjectId="project.BastiliaProjectId" Coordinators="project.Coordinators" CurrentCadence="project.NewsCadence" IsActive="project.IsActive" OnCompleted="ReloadProject" />
+
+    @if (isPresident && project.DeletedAt is null)
+    {
+        <DeleteProjectForm ProjectId="project.BastiliaProjectId" />
+    }
 </JoinCollapsePanelGroup>
 
 @code {
