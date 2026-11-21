@@ -10,8 +10,9 @@ public class ProjectProblemsTests
         int achievementsCount = 0,
         bool ongoing = false,
         NewsCadence newsCadence = NewsCadence.Monthly,
-        DateTimeOffset? lastNewsDate = null)
-        => new(1, "Test", ProjectType.MasteringGame, BrandType.Bastilia, ongoing, null, null, null, null, [], endDate, projectLevel, "", new Uri("https://example.com"), null, null, null, plannedEndDate, templatesCount, achievementsCount, lastNewsDate, newsCadence);
+        DateTimeOffset? lastNewsDate = null,
+        DateOnly? createDate = null)
+        => new(1, "Test", ProjectType.MasteringGame, BrandType.Bastilia, ongoing, null, null, null, null, [], endDate, projectLevel, "", new Uri("https://example.com"), null, null, null, plannedEndDate, templatesCount, achievementsCount, lastNewsDate, createDate ?? DateOnly.FromDateTime(DateTime.UtcNow), newsCadence);
 
     [Fact]
     public void CompletedProject_WithoutLevel_HasCompletedWithoutLevelProblem()
@@ -64,11 +65,20 @@ public class ProjectProblemsTests
     }
 
     [Fact]
-    public void OngoingProject_WithoutAnyNews_HasNoNewsOverdueProblem()
+    public void OngoingProject_RecentlyCreatedWithoutAnyNews_HasNoNewsOverdueProblem()
     {
-        var project = CreateProject(ongoing: true, lastNewsDate: null);
+        var project = CreateProject(ongoing: true, lastNewsDate: null, createDate: DateOnly.FromDateTime(DateTime.UtcNow).AddDays(-10));
 
         project.Problems.HasFlag(ProjectProblem.NewsOverdue).ShouldBeFalse();
+    }
+
+    [Fact]
+    public void OngoingProject_CreatedLongAgoWithoutAnyNews_HasNewsOverdueProblem()
+    {
+        var project = CreateProject(ongoing: true, lastNewsDate: null, createDate: DateOnly.FromDateTime(DateTime.UtcNow).AddDays(-40));
+
+        project.Problems.HasFlag(ProjectProblem.NewsOverdue).ShouldBeTrue();
+        project.HasProblems.ShouldBeTrue();
     }
 
     [Fact]

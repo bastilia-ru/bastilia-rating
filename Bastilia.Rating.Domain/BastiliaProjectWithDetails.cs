@@ -18,11 +18,12 @@ namespace Bastilia.Rating.Domain
                                           DateTimeOffset? lastUpdatedAt,
                                           DateOnly? plannedEndDate,
                                           DateTimeOffset? lastNewsDate,
+                                          DateOnly createDate,
                                           NewsCadence newsCadence
                                           )
             : base(BastiliaProjectId, ProjectName, ProjectType, BrandType, OngoingProject, ProjectOfTheYear,
                    JoinrpgProjectId, KogdaIgraProjectId, ProjectUri, Coordinators, endDate, projectLevel, HowToHelp, ProjectIconUri, slug, deletedAt, lastUpdatedAt,
-                   plannedEndDate, Templates.Count, ProjectMemberAchievements.Count, lastNewsDate, newsCadence)
+                   plannedEndDate, Templates.Count, ProjectMemberAchievements.Count, lastNewsDate, createDate, newsCadence)
         {
             this.ProjectMemberAchievements = ProjectMemberAchievements;
             this.Templates = Templates;
