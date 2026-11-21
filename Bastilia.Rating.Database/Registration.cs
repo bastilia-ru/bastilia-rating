@@ -1,5 +1,6 @@
 using Bastilia.Rating.Database.DbServices;
 using JoinRpg.Common.EntityFrameworkCore;
+using JoinRpg.Common.WebInfrastructure.Job;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
@@ -23,6 +24,7 @@ namespace Bastilia.Rating.Database
             services.AddTransient<IProjectService, ProjectService>();
             services.AddTransient<IProjectNewsRepository, BastiliaNewsRepository>();
             services.AddTransient<IProjectNewsService, NewsService>();
+            services.AddTransient<IJobRepository, DailyJobRepository>();
         }
     }
 }

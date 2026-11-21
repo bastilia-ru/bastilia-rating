@@ -2,6 +2,7 @@ using Bastilia.Rating.Database;
 using Bastilia.Rating.Domain;
 using Bastilia.Rating.Domain.DomainServices;
 using Bastilia.Rating.Portal.AppServices;
+using Bastilia.Rating.Portal.AppServices.Jobs;
 using Bastilia.Rating.Portal.Auth;
 using Bastilia.Rating.Portal.Common;
 using Bastilia.Rating.Portal.Common.Telegram;
@@ -34,6 +35,7 @@ builder.Services.AddSiteAdminAuthorization(builder.Configuration);
 builder.Services.AddScoped<IJoinUserLoginHandler, BastiliaUserLoginHandler>();
 
 builder.Services.AddRatingDal(builder.Configuration, builder.Environment);
+builder.Services.AddBastiliaJobs();
 builder.Services.AddDatabaseHealthCheck(builder.Configuration);
 builder.Services.AddLocalization();
 

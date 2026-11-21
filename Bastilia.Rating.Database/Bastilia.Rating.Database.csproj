@@ -6,6 +6,7 @@
 	<ItemGroup>
 		<PackageReference Include="Microsoft.AspNetCore.DataProtection.EntityFrameworkCore" />
 		<PackageReference Include="JoinRpg.Common.EntityFrameworkCore" />
+		<PackageReference Include="JoinRpg.Common.WebInfrastructure.Interfaces" />
 		<PackageReference Include="LinqKit.Microsoft.EntityFrameworkCore" />
 		<PackageReference Include="OpenIddict.EntityFrameworkCore" />
 	</ItemGroup>

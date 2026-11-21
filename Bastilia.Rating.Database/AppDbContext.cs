@@ -17,6 +17,7 @@ public class AppDbContext(DbContextOptions<AppDbContext> options) : DbContext(op
     public DbSet<ClubEvent> ClubEvents { get; set; }
     public DbSet<KogdaIgraGame> KogdaIgraGames { get; set; }
     public DbSet<ProjectNewsEntity> ProjectNews { get; set; }
+    public DbSet<DailyJobRunEntity> DailyJobRuns { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -111,6 +112,11 @@ public class AppDbContext(DbContextOptions<AppDbContext> options) : DbContext(op
 
             entity.Property(x => x.SendStatus)
                 .HasConversion<string>();
+        });
+
+        modelBuilder.Entity<DailyJobRunEntity>(entity =>
+        {
+            entity.HasKey(x => x.DailyJobRunId);
         });
     }
 

@@ -17,7 +17,7 @@ namespace Bastilia.Rating.Database.Migrations
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "10.0.14")
+                .HasAnnotation("ProductVersion", "10.0.15")
                 .HasAnnotation("Relational:MaxIdentifierLength", 63);
 
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
@@ -234,6 +234,38 @@ namespace Bastilia.Rating.Database.Migrations
                     b.HasIndex("ProjectId");
 
                     b.ToTable("ClubEvents", (string)null);
+                });
+
+            modelBuilder.Entity("Bastilia.Rating.Database.Entities.DailyJobRunEntity", b =>
+                {
+                    b.Property<int>("DailyJobRunId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("DailyJobRunId"));
+
+                    b.Property<DateOnly>("DayOfRun")
+                        .HasColumnType("date");
+
+                    b.Property<string>("JobName")
+                        .IsRequired()
+                        .HasMaxLength(1024)
+                        .HasColumnType("character varying(1024)");
+
+                    b.Property<int>("JobStatus")
+                        .HasColumnType("integer");
+
+                    b.Property<string>("MachineName")
+                        .IsRequired()
+                        .HasMaxLength(1024)
+                        .HasColumnType("character varying(1024)");
+
+                    b.HasKey("DailyJobRunId");
+
+                    b.HasIndex("JobName", "DayOfRun")
+                        .IsUnique();
+
+                    b.ToTable("DailyJobRuns");
                 });
 
             modelBuilder.Entity("Bastilia.Rating.Database.Entities.KogdaIgraGame", b =>
