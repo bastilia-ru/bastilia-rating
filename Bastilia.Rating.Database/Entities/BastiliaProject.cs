@@ -17,6 +17,7 @@ public class BastiliaProject
     public DateOnly? EndDate { get; set; }
     public bool? ProjectOfTheYear { get; set; }
     public ProjectLevel? ProjectLevel { get; set; }
+    public NewsCadence NewsCadence { get; set; } = NewsCadence.Monthly;
 
     public int? JoinrpgProjectId { get; set; }
     public int? KogdaIgraProjectId { get; set; }

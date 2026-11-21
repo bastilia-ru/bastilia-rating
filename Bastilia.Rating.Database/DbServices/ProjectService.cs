@@ -78,6 +78,16 @@ namespace Bastilia.Rating.Database.DbServices
             await appDbContext.SaveChangesAsync();
         }
 
+        public async Task SetNewsCadence(int projectId, NewsCadence newsCadence)
+        {
+            var entity = await appDbContext.Set<Entities.BastiliaProject>()
+                .FirstOrDefaultAsync(x => x.BastiliaProjectId == projectId) ?? throw new InvalidOperationException();
+
+            entity.NewsCadence = newsCadence;
+
+            await appDbContext.SaveChangesAsync();
+        }
+
         public async Task UpdateAchievementTemplate(int templateId, string name, string description)
         {
             var entity = await appDbContext.Set<Entities.AchievementTemplate>()
