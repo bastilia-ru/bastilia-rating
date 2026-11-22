@@ -133,14 +133,16 @@ public class AchievementGrantedNotifierTests : IDisposable
     }
 
     [Fact]
-    public void PackageSemantics_FromOptionalWithChatId_IsNotVerifiedByDefault()
+    public void PackageSemantics_FromOptionalWithChatId_IsVerifiedByDefault()
     {
-        // FromOptional не считает ссылку верифицированной (флаг isVerified по умолчанию false),
-        // поэтому нотификатор проверяет наличие chat id, а не IsVerified.
+        // В JoinRpg.Common 2026.9.760 FromOptional с chatId по умолчанию считает ссылку
+        // верифицированной (chat id получают только из привязанного ExternalLogin);
+        // для неверифицированных данных есть параметр isVerified: false.
+        // Нотификатор всё равно проверяет наличие chat id, а не IsVerified.
         var link = TelegramSocialLink.FromOptional(123456789L, "leo");
 
         link.ShouldNotBeNull();
-        link.IsVerified.ShouldBeFalse();
+        link.IsVerified.ShouldBeTrue();
         link.Id.ShouldBe(123456789L);
     }
 
