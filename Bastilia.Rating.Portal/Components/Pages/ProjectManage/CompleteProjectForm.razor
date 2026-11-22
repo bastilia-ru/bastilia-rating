@@ -1,7 +1,6 @@
 @using Microsoft.AspNetCore.Components.Authorization
 @inject IProjectService projectService
 @inject NavigationManager navigationManager
-@inject AuthenticationStateProvider AuthenticationStateProvider
 
 <JoinCollapsePanel>
     <Header>Завершить проект</Header>
@@ -35,6 +34,9 @@
     [SupplyParameterFromForm]
     private CompleteViewModel? Model { get; set; }
 
+    [CascadingParameter]
+    private Task<AuthenticationState>? AuthenticationStateTask { get; set; }
+
     private string? error;
 
     protected override void OnInitialized()
@@ -45,7 +47,7 @@
 
     private async Task Complete()
     {
-        var authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
+        var authState = await AuthenticationStateTask!;
         if (!authState.User.IsInRole(BastiliaRoles.President))
         {
             error = "Завершить проект может только председатель";

@@ -1,7 +1,6 @@
 @using Microsoft.AspNetCore.Components.Authorization
 @inject IProjectService projectService
 @inject NavigationManager navigationManager
-@inject AuthenticationStateProvider AuthenticationStateProvider
 
 <JoinCollapsePanel>
     <Header>Уровень проекта</Header>
@@ -47,6 +46,9 @@
     [SupplyParameterFromForm]
     private SetLevelViewModel? Model { get; set; }
 
+    [CascadingParameter]
+    private Task<AuthenticationState>? AuthenticationStateTask { get; set; }
+
     private string? error;
 
     protected override void OnInitialized()
@@ -57,7 +59,7 @@
 
     private async Task Save()
     {
-        var authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
+        var authState = await AuthenticationStateTask!;
         if (!authState.User.IsInRole(BastiliaRoles.President))
         {
             error = "Уровень проекта может изменить только председатель";
