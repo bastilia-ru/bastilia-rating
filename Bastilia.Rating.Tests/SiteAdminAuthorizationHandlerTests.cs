@@ -51,7 +51,7 @@ public class SiteAdminAuthorizationHandlerTests
             .ShouldBeEmpty();
     }
 
-    private static IReadOnlyCollection<UserIdentification> ResolveAdminUserIds(Dictionary<string, string?> config)
+    private static UserIdentification[] ResolveAdminUserIds(Dictionary<string, string?> config)
     {
         var services = new ServiceCollection();
         var configuration = new ConfigurationBuilder().AddInMemoryCollection(config).Build();
