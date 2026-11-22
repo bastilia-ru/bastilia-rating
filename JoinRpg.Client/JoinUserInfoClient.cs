@@ -48,14 +48,14 @@ namespace JoinRpg.Client
                         return tokenResponse.access_token;
                     }
                 }
-                logger.LogWarning($"Ошибка авторизации: {response.StatusCode}");
+                logger.LogWarning("Ошибка авторизации: {StatusCode}", response.StatusCode);
                 var errorResponse = await response.Content.ReadAsStringAsync();
-                logger.LogWarning($"Ответ сервера: {errorResponse}");
+                logger.LogWarning("Ответ сервера: {ErrorResponse}", errorResponse);
                 return null;
             }
             catch (Exception ex)
             {
-                logger.LogWarning($"Ошибка при авторизации: {ex.Message}");
+                logger.LogWarning("Ошибка при авторизации: {Message}", ex.Message);
                 return null;
             }
         }
