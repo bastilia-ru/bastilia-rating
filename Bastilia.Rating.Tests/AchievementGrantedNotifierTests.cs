@@ -63,13 +63,13 @@ public class AchievementGrantedNotifierTests : IDisposable
             && (retryable == null || Equals(m.Tags.GetValueOrDefault("retryable"), retryable)));
 
     private static BastiliaMember CreateMember(TelegramSocialLink? telegram) =>
-        new(JoinrpgUserId: 42, UserName: "Имя", AvatarUrl: "", Slug: null,
+        new(JoinrpgUserId: new UserIdentification(42), UserName: "Имя", AvatarUrl: "", Slug: null,
             ParticipateInRating: true, StatusHistory: [], HisProjects: [],
             Achievements: [], BirthDay: null, Telegram: telegram);
 
     private static readonly AchievementTemplate Template =
         new(Project: null, Name: "Ачивка", Description: "", DefaultUri: false,
-            RatingValue: 5, YearlyAchievement: false, TemplateId: 7);
+            RatingValue: 5, YearlyAchievement: false, TemplateId: new TemplateId(7));
 
     private static TelegramBotOptions EnabledOptions() => new() { BotId = 42, BotSecret = "secret", ChatId = 100 };
 

@@ -29,9 +29,9 @@ public class ProjectNewsTests
     public void ProjectNews_Record_RoundTrips()
     {
         var created = DateTimeOffset.UtcNow;
-        var news = new ProjectNews(1, 2, 3, "Имя Автора", created, "**текст**", NewsSendStatus.Failed, "chat not found");
+        var news = new ProjectNews(1, new BastiliaProjectId(2), new UserIdentification(3), "Имя Автора", created, "**текст**", NewsSendStatus.Failed, "chat not found");
         news.Id.ShouldBe(1);
-        news.ProjectId.ShouldBe(2);
+        news.ProjectId.ShouldBe(new BastiliaProjectId(2));
         news.SendStatus.ShouldBe(NewsSendStatus.Failed);
         news.TelegramError.ShouldBe("chat not found");
     }

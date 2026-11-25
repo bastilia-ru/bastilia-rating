@@ -19,8 +19,8 @@ internal class BastiliaUserLoginHandler(UserImportService userImportService, ILo
 
         var member = (nickName, avatarUrl) switch
         {
-            (null, null) => await userImportService.ImportUserById(userId.Value, telegram),
-            _ => await userImportService.ImportUser(userId.Value, nickName, avatarUrl, telegram),
+            (null, null) => await userImportService.ImportUserById(userId, telegram),
+            _ => await userImportService.ImportUser(userId, nickName, avatarUrl, telegram),
         };
         if (member is null)
         {

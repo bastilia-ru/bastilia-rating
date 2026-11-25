@@ -7,9 +7,9 @@ namespace Bastilia.Rating.Domain.DomainServices;
 public class UserImportService(IBastiliaMemberRepository bastiliaMemberRepository, JoinUserInfoClient joinUserInfoClient, IUserDbService userDbService,
     ILogger<UserImportService> logger)
 {
-    public Task<BastiliaMember?> ImportUser(int userId) => ImportUserById(userId);
+    public Task<BastiliaMember?> ImportUser(UserIdentification userId) => ImportUserById(userId);
 
-    public async Task<BastiliaMember?> ImportUserById(int userId, TelegramSocialLink? telegram = null)
+    public async Task<BastiliaMember?> ImportUserById(UserIdentification userId, TelegramSocialLink? telegram = null)
     {
         var user = await bastiliaMemberRepository.GetByIdAsync(userId);
         if (user is not null)
@@ -18,17 +18,17 @@ public class UserImportService(IBastiliaMemberRepository bastiliaMemberRepositor
         }
 
         logger.LogInformation("Пользователь {UserId} не найден в локальной БД при логине; запрашиваем данные из JoinRPG", userId);
-        var info = await joinUserInfoClient.GetUserInfo(userId);
+        var info = await joinUserInfoClient.GetUserInfo(userId.Value);
         if (info is not null)
         {
-            return await userDbService.AddUser(info.PlayerId, info.NickName, info.AvatarUrl, telegram);
+            return await userDbService.AddUser(new UserIdentification(info.PlayerId), info.NickName, info.AvatarUrl, telegram);
         }
 
         logger.LogWarning("Не удалось загрузить пользователя {userId}", userId);
         return null;
     }
 
-    public async Task<BastiliaMember?> ImportUser(int userId, string? nickName, string? avatarUrl, TelegramSocialLink? telegram = null)
+    public async Task<BastiliaMember?> ImportUser(UserIdentification userId, string? nickName, string? avatarUrl, TelegramSocialLink? telegram = null)
     {
         var user = await bastiliaMemberRepository.GetByIdAsync(userId);
         if (user is not null)

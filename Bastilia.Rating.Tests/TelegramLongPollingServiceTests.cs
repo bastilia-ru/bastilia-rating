@@ -151,7 +151,7 @@ public class TelegramLongPollingServiceTests
     };
 
     private static BastiliaMember CreateMember(string slug) =>
-        new(JoinrpgUserId: 42, UserName: "Имя", AvatarUrl: "", Slug: slug,
+        new(JoinrpgUserId: new UserIdentification(42), UserName: "Имя", AvatarUrl: "", Slug: slug,
             ParticipateInRating: true, StatusHistory: [], HisProjects: [], Achievements: [],
             BirthDay: null, Telegram: null);
 

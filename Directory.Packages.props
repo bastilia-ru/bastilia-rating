@@ -26,6 +26,7 @@
     <PackageVersion Include="xunit.runner.visualstudio" Version="4.0.1" />
     <PackageVersion Include="Verify.Xunit" Version="31.12.5" />
     <PackageVersion Include="JoinRpg.Common.KogdaIgraClient" Version="2026.9.760" />
+    <PackageVersion Include="JoinRpg.Common.PrimitiveTypes.SourceGenerator" Version="2026.9.760" />
     <PackageVersion Include="OpenIddict.EntityFrameworkCore" Version="7.9.0" />
     <PackageVersion Include="Markdig" Version="1.6.0" />
     <PackageVersion Include="JoinRpg.Common.WebInfrastructure.Interfaces" Version="2026.9.760" />

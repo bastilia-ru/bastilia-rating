@@ -2,7 +2,7 @@
 
 @if (Member.Slug is null)
 {
-    <a href="/member/@Member.JoinrpgUserId">@Member.UserName</a>
+    <a href="/member/@Member.JoinrpgUserId.Value">@Member.UserName</a>
 }
 else
 {

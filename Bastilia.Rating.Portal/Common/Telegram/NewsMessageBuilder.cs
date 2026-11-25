@@ -9,7 +9,7 @@ public class NewsMessageBuilder(NewsHtmlRenderer htmlRenderer)
     {
         var header = $"<b>{WebUtility.HtmlEncode(projectName)}</b>" + (projectSlug is not null ? $" #{projectSlug}" : string.Empty);
         var body = htmlRenderer.RenderMarkdownToTelegramHtml(news.Text);
-        var linkTarget = projectSlug ?? news.ProjectId.ToString();
+        var linkTarget = projectSlug ?? news.ProjectId.Value.ToString();
         var footer = $"— {WebUtility.HtmlEncode(news.AuthorName)} · <a href=\"https://{ratingHost}/project/{linkTarget}\">{ratingHost}/project/{linkTarget}</a>";
 
         return string.Join("\n\n", header, body, footer);

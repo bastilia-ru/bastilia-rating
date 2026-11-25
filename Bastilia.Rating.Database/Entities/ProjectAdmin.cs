@@ -2,8 +2,8 @@ namespace Bastilia.Rating.Database.Entities;
 
 public class ProjectAdmin
 {
-    public int ProjectId { get; set; }
-    public int UserId { get; set; }
+    public BastiliaProjectId ProjectId { get; set; } = null!;
+    public UserIdentification UserId { get; set; } = null!;
     public DateOnly AddDate { get; set; }
     public DateOnly? RemoveDate { get; set; }
 

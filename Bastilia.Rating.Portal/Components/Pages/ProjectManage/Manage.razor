@@ -45,7 +45,7 @@
                             <InputSelect @bind-Value="AddModel!.TemplateId" class="form-select">
                                 @foreach (var template in project.Templates)
                                 {
-                                    <option value="@template.TemplateId">@template.Name</option>
+                                    <option value="@template.TemplateId.Value">@template.Name</option>
                                 }
                             </InputSelect>
                         </label>
@@ -113,7 +113,7 @@
     private BastiliaProjectWithDetails? project;
     private bool addedSuccess = false;
     private bool isPresident = false;
-    private int currentUserId;
+    private UserIdentification currentUserId = null!;
     private int addFormResetKey;
 
     protected override async Task OnParametersSetAsync()
@@ -143,9 +143,9 @@
             var users = await userLoaderHelper.LoadUsersWithCheck(AddModel!.UserId);
             foreach (var user in users)
             {
-                await achievementService.GrantAchivement(project.BastiliaProjectId, user.JoinrpgUserId, AddModel.TemplateId, currentUserId, null);
-                var template = project.Templates.Single(t => t.TemplateId == AddModel.TemplateId);
-                await achievementNotifier.NotifyAchievementGrantedAsync(user, template, project.ProjectName, project.Slug ?? project.BastiliaProjectId.ToString());
+                await achievementService.GrantAchivement(project.BastiliaProjectId, user.JoinrpgUserId, new TemplateId(AddModel.TemplateId), currentUserId, null);
+                var template = project.Templates.Single(t => t.TemplateId.Value == AddModel.TemplateId);
+                await achievementNotifier.NotifyAchievementGrantedAsync(user, template, project.ProjectName, project.Slug ?? project.BastiliaProjectId.Value.ToString());
             }
             addedSuccess = true;
         }

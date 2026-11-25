@@ -22,7 +22,7 @@ public class NewsMessageSnapshotTests : VerifyBase
     [Fact]
     public Task BuildMessage_ProducesStableTelegramPost()
     {
-        var news = new ProjectNews(1, 2, 3, "Имя Автора", CreatedAt, Markdown, NewsSendStatus.NotSent, null);
+        var news = new ProjectNews(1, new BastiliaProjectId(2), new UserIdentification(3), "Имя Автора", CreatedAt, Markdown, NewsSendStatus.NotSent, null);
 
         var message = TelegramTestFactory.CreateMessageBuilder().BuildMessage(news, "Мой проект", "my-project", "rating.bastilia.ru");
 

@@ -7,7 +7,7 @@ public class AchievementMessageBuilder
 {
     public string BuildMessage(string memberName, AchievementTemplate template, string projectName, string? projectSlug, string ratingHost, bool participatesInRating)
     {
-        var linkTarget = projectSlug ?? template.Project?.BastiliaProjectId.ToString()
+        var linkTarget = projectSlug ?? template.Project?.BastiliaProjectId.Value.ToString()
             ?? throw new ArgumentException("Не удалось определить ссылку на проект: ни projectSlug, ни template.Project не заданы.", nameof(projectSlug));
 
         var greeting = $"Здравствуйте, <b>{WebUtility.HtmlEncode(memberName)}</b>!";

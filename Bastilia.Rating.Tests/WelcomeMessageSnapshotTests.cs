@@ -13,7 +13,7 @@ public class WelcomeMessageSnapshotTests : VerifyBase
     public Task BuildMessage_KnownMember_IncludesProfileLink()
     {
         var member = new BastiliaMember(
-            JoinrpgUserId: 42, UserName: "Имя & Фамилия", AvatarUrl: "",
+            JoinrpgUserId: new UserIdentification(42), UserName: "Имя & Фамилия", AvatarUrl: "",
             Slug: "leo", ParticipateInRating: true,
             StatusHistory: [], HisProjects: [], Achievements: [],
             BirthDay: null, Telegram: null);

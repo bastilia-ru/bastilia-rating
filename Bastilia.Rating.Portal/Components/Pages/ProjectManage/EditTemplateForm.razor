@@ -2,7 +2,7 @@
 @inject NavigationManager navigationManager
 @rendermode InteractiveServer
 
-<EditForm FormName="@($"EditTemplateForm_{Template.TemplateId}")" Model="Model" OnValidSubmit="Save">
+<EditForm FormName="@($"EditTemplateForm_{Template.TemplateId.Value}")" Model="Model" OnValidSubmit="Save">
     <div>
         <label>
             Название:
