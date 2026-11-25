@@ -111,7 +111,11 @@ namespace Bastilia.Rating.Database.DbServices
         public async Task DeleteAchievementTemplate(TemplateId templateId)
         {
             var entity = await appDbContext.Set<Entities.AchievementTemplate>()
-                .FirstOrDefaultAsync(x => x.AchievementTemplateId == templateId) ?? throw new InvalidOperationException();
+                .FirstOrDefaultAsync(x => x.AchievementTemplateId == templateId);
+            if (entity is null)
+            {
+                return;
+            }
 
             var isUsed = await appDbContext.Set<Entities.Achievement>()
                 .AnyAsync(x => x.AchievementTemplateId == templateId);

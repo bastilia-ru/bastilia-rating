@@ -23,7 +23,7 @@
         <JoinButton Submit Preset="ButtonPreset.Save" />
         <JoinButton Preset="ButtonPreset.Delete" Style="VariationStyleEnum.Danger"
                     AutoConfirm AutoConfirmMessage="@($"Удалить шаблон ачивки «{Template.Name}»?")"
-                    OnClick="args => Delete()" />
+                    OnClick="args => Delete(args)" />
     </div>
 </EditForm>
 
@@ -59,7 +59,7 @@
         navigationManager.NavigateTo(navigationManager.Uri, forceLoad: true);
     }
 
-    private async Task Delete()
+    private async Task Delete(ButtonClickEventArgs args)
     {
         error = null;
         try
@@ -70,6 +70,10 @@
         {
             error = "Нельзя удалить шаблон: по нему уже выданы достижения";
             return;
+        }
+        finally
+        {
+            args.ExitProgressState = true;
         }
 
         await OnCompleted.InvokeAsync();
