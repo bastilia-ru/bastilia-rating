@@ -26,11 +26,12 @@ public static class ProjectLevelExtensions
         {
             throw new ArgumentException("Нужно добавить хотя бы один шаблон ачивки", nameof(ratingValues));
         }
-        var maxAllowed = level.GetAchievementRatingValue(0);
-        if (ratingValues.Max() > maxAllowed)
+        var scheme = level.GetAchievementRatingValues();
+        var invalidValue = ratingValues.FirstOrDefault(v => !scheme.Contains(v));
+        if (ratingValues.Any(v => !scheme.Contains(v)))
         {
             throw new ArgumentException(
-                $"Максимальный балл шаблона для уровня {level} — {maxAllowed}, передан балл {ratingValues.Max()}",
+                $"Балл шаблона {invalidValue} не входит в схему уровня {level} (допустимые баллы: {string.Join(", ", scheme)})",
                 nameof(ratingValues));
         }
     }
