@@ -15,7 +15,7 @@
     <Authorized>
         @if (Model is null)
         {
-            <LoadingSpinner />
+            <JoinLoadingMessage />
             return;
         }
         <EditForm FormName="CreateProjectForm" Model="Model" OnValidSubmit="Submit">
