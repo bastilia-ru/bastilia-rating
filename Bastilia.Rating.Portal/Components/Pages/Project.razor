@@ -13,7 +13,7 @@
 <PageTitle>Проект @project?.ProjectName</PageTitle>
 @if (project is null)
 {
-    <LoadingSpinner />
+    <JoinLoadingMessage />
     return;
 }
 <ProjectCard Project="project" ShowAdminLink="isAdmin" />
