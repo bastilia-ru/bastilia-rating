@@ -112,10 +112,7 @@ namespace Bastilia.Rating.Database.DbServices
         private void AddTemplateEntities(Entities.BastiliaProject entity, IReadOnlyList<AchievementTemplateInput> achievementTemplates)
         {
             var projectLevel = entity.ProjectLevel ?? throw new InvalidOperationException("У проекта не проставлен уровень");
-            var startIndex = entity.AchievementTemplates.Count(t => t.DeletedDate == null);
-            var ratingValues = Enumerable.Range(startIndex, achievementTemplates.Count)
-                .Select(i => projectLevel.GetAchievementRatingValue(i))
-                .ToList();
+            var ratingValues = achievementTemplates.Select(t => t.RatingValue).ToList();
             projectLevel.ValidateRatingValues(ratingValues);
 
             for (var i = 0; i < achievementTemplates.Count; i++)
@@ -127,7 +124,7 @@ namespace Bastilia.Rating.Database.DbServices
                     AchievementName = achievementTemplates[i].Name,
                     AchievementDescription = achievementTemplates[i].Description,
                     AchievementImageUrl = entity.ProjectIconUri,
-                    AchievementRatingValue = ratingValues[i],
+                    AchievementRatingValue = achievementTemplates[i].RatingValue,
                     YearlyAchievement = false,
                     CreateDate = DateTime.UtcNow,
                 });
