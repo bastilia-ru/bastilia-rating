@@ -77,7 +77,14 @@
     }
     @if (project.EndDate is not null && project.ProjectLevel is not null)
     {
-        <AddTemplatesForm ProjectId="project.BastiliaProjectId" ProjectLevel="project.ProjectLevel.Value" OnCompleted="ReloadProject" />
+        @if (project.Templates.Count == 0)
+        {
+            <AddTemplatesForm ProjectId="project.BastiliaProjectId" ProjectLevel="project.ProjectLevel.Value" OnCompleted="ReloadProject" />
+        }
+        else
+        {
+            <AddTemplateForm ProjectId="project.BastiliaProjectId" ProjectLevel="project.ProjectLevel.Value" OnCompleted="ReloadProject" />
+        }
     }
 
     @if (isPresident)

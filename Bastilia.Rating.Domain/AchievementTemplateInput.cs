@@ -1,16 +1,18 @@
 namespace Bastilia.Rating.Domain;
 
-public sealed record AchievementTemplateInput(string Name, string Description)
+public sealed record AchievementTemplateInput(string Name, string Description, int RatingValue)
 {
     public string Name { get; set; } = Name;
     public string Description { get; set; } = Description;
+    public int RatingValue { get; set; } = RatingValue;
 }
 
 public static class AchievementTemplateInputHelper
 {
     public static AchievementTemplateInput[] CreateDefaults(ProjectLevel level)
     {
-        return [.. level.GetDefaultAchievementDescriptions().Select(desc => new AchievementTemplateInput("", desc))];
+        return [.. level.GetDefaultAchievementDescriptions()
+            .Select((desc, i) => new AchievementTemplateInput("", desc, level.GetAchievementRatingValue(i)))];
     }
 
     private static IReadOnlyList<string> GetDefaultAchievementDescriptions(this ProjectLevel level) => level switch

@@ -1,7 +1,13 @@
+using VerifyXunit;
+
 namespace Bastilia.Rating.Tests;
 
-public class ProjectLevelSchemeTests
+public class ProjectLevelSchemeTests : VerifyBase
 {
+    public ProjectLevelSchemeTests() : base()
+    {
+    }
+
     [Fact]
     public void NullLevel_GetAchievementRatingValues_Throws()
     {
@@ -54,7 +60,8 @@ public class ProjectLevelSchemeTests
     [InlineData(ProjectLevel.XS, new[] { 1 })]
     [InlineData(ProjectLevel.M, new[] { 5, 3, 1 })]
     [InlineData(ProjectLevel.M, new[] { 5, 3, 1, 1, 1 })]
-    public void MaxValueWithinScheme_ValidateRatingValues_Passes(ProjectLevel level, int[] ratingValues)
+    [InlineData(ProjectLevel.M, new[] { 1, 1 })]
+    public void SchemeValues_ValidateRatingValues_Passes(ProjectLevel level, int[] ratingValues)
     {
         Should.NotThrow(() => level.ValidateRatingValues(ratingValues));
     }
@@ -63,10 +70,19 @@ public class ProjectLevelSchemeTests
     [InlineData(ProjectLevel.XS, new[] { 2 })]
     [InlineData(ProjectLevel.S, new[] { 5, 1 })]
     [InlineData(ProjectLevel.M, new[] { 7, 3, 1 })]
-    public void MaxValueAboveScheme_ValidateRatingValues_Throws(ProjectLevel level, int[] ratingValues)
+    [InlineData(ProjectLevel.M, new[] { 5, 2 })]
+    [InlineData(ProjectLevel.XS, new[] { 3 })]
+    public void OutOfScheme_ValidateRatingValues_Throws(ProjectLevel level, int[] ratingValues)
     {
         var exception = Should.Throw<ArgumentException>(() => level.ValidateRatingValues(ratingValues));
 
         exception.Message.ShouldContain("балл");
+    }
+
+    [Fact]
+    public Task OutOfScheme_ValidateRatingValues_MessageSnapshot()
+    {
+        var exception = Should.Throw<ArgumentException>(() => ProjectLevel.M.ValidateRatingValues([4]));
+        return Verify(exception.Message);
     }
 }

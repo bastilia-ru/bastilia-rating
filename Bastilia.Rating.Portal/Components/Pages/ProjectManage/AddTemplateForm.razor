@@ -1,0 +1,93 @@
+@inject IProjectService projectService
+@inject NavigationManager navigationManager
+
+<JoinCollapsePanel>
+    <Header>Добавить шаблон ачивки</Header>
+    <ChildContent>
+        <EditForm FormName="AddTemplateForm" Model="Model" OnValidSubmit="Add">
+            <div class="mb-2">
+                <label>
+                    Название:
+                    <InputText @bind-Value="Model!.Name" class="form-control" />
+                </label>
+            </div>
+            <div class="mb-2">
+                <label>
+                    Описание:
+                    <InputTextArea @bind-Value="Model!.Description" class="form-control" />
+                </label>
+            </div>
+            <div class="mb-2">
+                <label>
+                    Стоимость:
+                    <InputSelect @bind-Value="Model!.RatingValue" class="form-select">
+                        @foreach (var value in ProjectLevel.GetAchievementRatingValues())
+                        {
+                            <option value="@value">@CountHelper.DisplayCount(value, "балл", "балла", "баллов")</option>
+                        }
+                    </InputSelect>
+                </label>
+            </div>
+            @if (error is not null)
+            {
+                <Alert>@error</Alert>
+            }
+            <div>
+                <JoinButton Submit Preset="ButtonPreset.Add" Label="Добавить шаблон" />
+            </div>
+        </EditForm>
+    </ChildContent>
+</JoinCollapsePanel>
+
+@code {
+    [Parameter, EditorRequired]
+    public int ProjectId { get; set; }
+
+    [Parameter, EditorRequired]
+    public ProjectLevel ProjectLevel { get; set; }
+
+    [Parameter]
+    public EventCallback OnCompleted { get; set; }
+
+    [SupplyParameterFromForm]
+    private AddTemplateViewModel? Model { get; set; }
+
+    private string? error;
+
+    protected override void OnInitialized()
+    {
+        Model ??= new AddTemplateViewModel { RatingValue = ProjectLevel.GetAchievementRatingValues()[^1] };
+        base.OnInitialized();
+    }
+
+    private async Task Add()
+    {
+        if (string.IsNullOrWhiteSpace(Model!.Name))
+        {
+            error = "Заполните название ачивки";
+            return;
+        }
+        error = null;
+
+        try
+        {
+            await projectService.AddAchievementTemplates(ProjectId,
+                [new AchievementTemplateInput(Model.Name, Model.Description, Model.RatingValue)]);
+        }
+        catch (Exception exception) when (exception is ArgumentException or InvalidOperationException)
+        {
+            error = exception.Message;
+            return;
+        }
+
+        await OnCompleted.InvokeAsync();
+        navigationManager.NavigateTo(navigationManager.Uri, forceLoad: true);
+    }
+
+    private class AddTemplateViewModel
+    {
+        public string Name { get; set; } = "";
+        public string Description { get; set; } = "";
+        public int RatingValue { get; set; }
+    }
+}
