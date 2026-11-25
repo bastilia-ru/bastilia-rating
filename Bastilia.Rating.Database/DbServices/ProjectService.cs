@@ -108,6 +108,27 @@ namespace Bastilia.Rating.Database.DbServices
             await appDbContext.SaveChangesAsync();
         }
 
+        public async Task DeleteAchievementTemplate(TemplateId templateId)
+        {
+            var entity = await appDbContext.Set<Entities.AchievementTemplate>()
+                .FirstOrDefaultAsync(x => x.AchievementTemplateId == templateId);
+            if (entity is null)
+            {
+                return;
+            }
+
+            var isUsed = await appDbContext.Set<Entities.Achievement>()
+                .AnyAsync(x => x.AchievementTemplateId == templateId);
+            if (isUsed)
+            {
+                throw new InvalidOperationException($"Нельзя удалить шаблон ачивки {templateId}: по нему уже выданы достижения");
+            }
+
+            appDbContext.Set<Entities.AchievementTemplate>().Remove(entity);
+
+            await appDbContext.SaveChangesAsync();
+        }
+
         private void AddTemplateEntities(Entities.BastiliaProject entity, IReadOnlyList<AchievementTemplateInput> achievementTemplates)
         {
             var projectLevel = entity.ProjectLevel ?? throw new InvalidOperationException("У проекта не проставлен уровень");

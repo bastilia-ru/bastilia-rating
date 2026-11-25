@@ -37,6 +37,8 @@ namespace Bastilia.Rating.Domain
         Task UpdateCoordinators(BastiliaProjectId projectId, IReadOnlyList<UserIdentification> coordinators);
 
         Task UpdateAchievementTemplate(TemplateId templateId, string name, string description);
+
+        Task DeleteAchievementTemplate(TemplateId templateId);
     }
 
     public interface IProjectNewsService

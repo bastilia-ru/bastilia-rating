@@ -50,6 +50,11 @@ public class AppDbContext(DbContextOptions<AppDbContext> options) : DbContext(op
                 .WithMany()
                 .HasForeignKey(a => a.RemovedBy)
                 .OnDelete(DeleteBehavior.Restrict);
+
+            entity.HasOne(a => a.Template)
+                .WithMany(t => t.Achievements)
+                .HasForeignKey(a => a.AchievementTemplateId)
+                .OnDelete(DeleteBehavior.Restrict);
         });
 
         // Конвертация typed-id свойств (реализующих IEntityId<TSelf,TValue>) зарегистрирована в
