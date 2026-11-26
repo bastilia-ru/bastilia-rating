@@ -4,6 +4,7 @@ using Bastilia.Rating.Domain.DomainServices;
 using Bastilia.Rating.Portal.AppServices;
 using Bastilia.Rating.Portal.AppServices.Jobs;
 using Bastilia.Rating.Portal.Auth;
+using Bastilia.Rating.Portal.Client;
 using Bastilia.Rating.Portal.Common;
 using Bastilia.Rating.Portal.Common.Telegram;
 using Bastilia.Rating.Portal.Components;
@@ -50,6 +51,7 @@ builder.Services.AddTransient<CalendarService>();
 builder.Services.AddTransient<ICalService>();
 builder.Services.AddTransient<KiAddService>();
 builder.Services.AddTelegramNewsSender();
+builder.Services.AddUserLinkLocator();
 
 
 builder.Services.AddHttpClient<JoinUserInfoClient>();

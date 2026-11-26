@@ -12,7 +12,7 @@
                     }
                 </h5>
                 <div>
-                    <BastiliaUserLink Member="@Achievement.User" />
+                    <UserLink Model="@Achievement.User.ToViewModel()" ShowIcon="false" />
                 </div>
             </div>
         </div>
@@ -25,7 +25,7 @@
             }
             else
             {
-                <span>Выдал(а) <BastiliaUserLink Member="Achievement.GrantedBy" /></span>
+                <span>Выдал(а) <UserLink Model="Achievement.GrantedBy.ToViewModel()" ShowIcon="false" /></span>
             }
             </div>
 

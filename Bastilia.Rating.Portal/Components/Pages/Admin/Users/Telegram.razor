@@ -21,7 +21,7 @@ else
             @foreach (var user in users)
             {
                 <tr>
-                    <td><BastiliaUserLink Member="user" /></td>
+                    <td><UserLink Model="user.ToViewModel()" ShowIcon="false" /></td>
                     <td><TelegramLink Contact="user.Telegram" /></td>
                     <td>@user.Telegram?.ChatId?.Value</td>
                 </tr>

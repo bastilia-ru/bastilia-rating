@@ -19,7 +19,7 @@ else
     <TemplateColumn Context="member" Title="Имя" SortBy="@(GridSort<MemberHistoryItem>.ByAscending(x => x.Since).ThenAscending(x => x.Until))" IsDefaultSortColumn="true">
         @if (member.User.JoinrpgUserId > 0)
             {
-                <BastiliaUserLink  Member="@member.User"/>
+                <UserLink Model="@member.User.ToViewModel()" ShowIcon="false" />
             }
             else
             {
