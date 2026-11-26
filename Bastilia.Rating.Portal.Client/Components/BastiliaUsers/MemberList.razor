@@ -4,7 +4,7 @@
 
 <QuickGrid Items="members" Class="table table-striped" Virtualize="false">
     <TemplateColumn Context="member" Title="Имя" SortBy="@usernameSort">
-        <UserLink Model="@member.ToViewModel()" ShowIcon="false" />
+        <UserLink Model="@member.ToViewModel()" />
     </TemplateColumn>
     <TemplateColumn Context="member" Title="Статус" SortBy="GridSort<BastiliaMember>.ByAscending(x => x.CurrentStatus)">
         @if (member.IsPresident)

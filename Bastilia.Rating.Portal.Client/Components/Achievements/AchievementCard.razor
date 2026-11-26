@@ -12,7 +12,7 @@
                     }
                 </h5>
                 <div>
-                    <UserLink Model="@Achievement.User.ToViewModel()" ShowIcon="false" />
+                    <UserLink Model="@Achievement.User.ToViewModel()" />
                 </div>
             </div>
         </div>
@@ -25,7 +25,7 @@
             }
             else
             {
-                <span>Выдал(а) <UserLink Model="Achievement.GrantedBy.ToViewModel()" ShowIcon="false" /></span>
+                <span>Выдал(а) <UserLink Model="Achievement.GrantedBy.ToViewModel()" /></span>
             }
             </div>
 
