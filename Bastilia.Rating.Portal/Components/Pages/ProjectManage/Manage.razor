@@ -21,12 +21,12 @@
 
 @if (addedSuccess)
 {
-    <Alert>Успешно добавлена ачивка</Alert>
+    <JoinAlert Variation="VariationStyleEnum.Info">Успешно добавлена ачивка</JoinAlert>
 }
 
 @if (project.ProjectMemberAchievements.Count == 0 && project.EndDate is not null)
 {
-    <Alert>Здесь нет ни одной ачивки. Скорее всего данные об этом проекте еще восстанавливаются с архивов.</Alert>
+    <JoinAlert Variation="VariationStyleEnum.Warning">Здесь нет ни одной ачивки. Скорее всего данные об этом проекте еще восстанавливаются с архивов.</JoinAlert>
 }
 
 <JoinCollapsePanelGroup>

@@ -40,7 +40,7 @@ else if (isAdmin)
 }
 else if (project.EndDate is not null)
 {
-    <Alert>Здесь нет ни одной ачивки. Скорее всего данные об этом проекте еще восстанавливаются с архивов.</Alert>
+    <JoinAlert Variation="VariationStyleEnum.Warning">Здесь нет ни одной ачивки. Скорее всего данные об этом проекте еще восстанавливаются с архивов.</JoinAlert>
 }
 
 @code {

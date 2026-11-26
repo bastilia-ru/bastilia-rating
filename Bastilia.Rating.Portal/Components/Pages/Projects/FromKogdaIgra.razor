@@ -19,7 +19,7 @@
             </div>
             @if (error is not null)
             {
-                <Alert>@error</Alert>
+                <JoinAlert Variation="VariationStyleEnum.Danger">@error</JoinAlert>
             }
             <div>
                 <JoinButton Submit Preset="ButtonPreset.Create" Label="Загрузить и создать проект" />

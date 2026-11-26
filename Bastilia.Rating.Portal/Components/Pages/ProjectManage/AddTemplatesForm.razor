@@ -8,7 +8,7 @@
             <AchievementTemplateNamesInput ProjectLevel="ProjectLevel" Templates="Model!.Templates" LevelSelectable="false" />
             @if (error is not null)
             {
-                <Alert>@error</Alert>
+                <JoinAlert Variation="VariationStyleEnum.Danger">@error</JoinAlert>
             }
             <div>
                 <JoinButton Submit Preset="ButtonPreset.Add" Label="Добавить шаблоны" />
