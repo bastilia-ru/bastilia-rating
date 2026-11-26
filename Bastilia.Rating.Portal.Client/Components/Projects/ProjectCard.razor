@@ -15,7 +15,7 @@
                         <b>Координаторы: </b>
                         @foreach (var user in Project.Coordinators)
                         {
-                            <text><BastiliaUserLink Member="@user" /> &nbsp;</text>
+                            <text><UserLink Model="@user.ToViewModel()" /> &nbsp;</text>
                         } 
                         <br />
                     }

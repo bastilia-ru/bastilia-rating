@@ -9,7 +9,7 @@
 
             <div class="col">
                 <h3 class="mb-0">
-                    <BastiliaUserLink Member="Member" />
+                    <UserLink Model="Member.ToViewModel()" />
                     @if (Member.ParticipateInRating)
                     {
                         <strong class="h5">&nbsp;(+@Member.RatingValue / +@Member.HistoricalRatingValue)</strong>

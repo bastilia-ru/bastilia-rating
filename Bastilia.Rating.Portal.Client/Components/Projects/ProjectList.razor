@@ -32,7 +32,7 @@
     <TemplateColumn Context="project" Title="Глава/Координатор">
         @foreach (var user in project.Coordinators)
         {
-            <text><BastiliaUserLink Member="@user" /> &nbsp;</text>
+            <text><UserLink Model="@user.ToViewModel()" /> &nbsp;</text>
         }
     </TemplateColumn>
     @if (ShowNews)
