@@ -1,5 +1,6 @@
 using Bastilia.Rating.Portal.Client;
 using JoinRpg.Common.WebComponents;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace JoinRpg.PrimitiveTypes.Test;
 
@@ -13,7 +14,7 @@ public class UserLinkViewModelHelperTests
         model.ViewMode.ShouldBe(ViewMode.Show);
         model.UserId.ShouldBe(new UserIdentification(42));
         model.Slug.ShouldBe("ivanov");
-        new UserLinkUriLocator().GetUri(model).ToString().ShouldBe("/member/ivanov");
+        CreateLocator().GetUri(model).ToString().ShouldBe("/member/ivanov");
     }
 
     [Fact]
@@ -23,7 +24,7 @@ public class UserLinkViewModelHelperTests
 
         model.ViewMode.ShouldBe(ViewMode.Show);
         model.Slug.ShouldBeNull();
-        new UserLinkUriLocator().GetUri(model).ToString().ShouldBe("/member/42");
+        CreateLocator().GetUri(model).ToString().ShouldBe("/member/42");
     }
 
     [Fact]
@@ -34,6 +35,12 @@ public class UserLinkViewModelHelperTests
         model.ViewMode.ShouldBe(ViewMode.Deleted);
         model.UserId.ShouldBeNull();
         model.DisplayName.ShouldBe("Йорик");
+    }
+
+    private static IUriLocator<UserLinkViewModel> CreateLocator()
+    {
+        using var provider = new ServiceCollection().AddUserLinkLocator().BuildServiceProvider();
+        return provider.GetRequiredService<IUriLocator<UserLinkViewModel>>();
     }
 
     private sealed record TestUserLink(UserIdentification JoinrpgUserId, string? Slug, string UserName) : IUserLink;
