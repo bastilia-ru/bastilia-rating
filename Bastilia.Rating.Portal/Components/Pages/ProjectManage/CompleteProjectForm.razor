@@ -15,7 +15,7 @@
             <AchievementTemplateNamesInput @bind-ProjectLevel="Model!.ProjectLevel" @bind-Templates="Model!.Templates" />
             @if (error is not null)
             {
-                <JoinAlert Variation="VariationStyleEnum.Warning">@error</JoinAlert>
+                <JoinAlert Variation="VariationStyleEnum.Danger">@error</JoinAlert>
             }
             <div>
                 <JoinButton Submit Label="Завершить проект" Style="VariationStyleEnum.Danger" />

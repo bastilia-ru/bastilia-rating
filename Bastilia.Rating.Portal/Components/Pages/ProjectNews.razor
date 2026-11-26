@@ -22,7 +22,7 @@
 
 @if (sendErrorAlert is not null)
 {
-    <JoinAlert Variation="VariationStyleEnum.Warning">@sendErrorAlert</JoinAlert>
+    <JoinAlert Variation="VariationStyleEnum.Danger">@sendErrorAlert</JoinAlert>
 }
 
 @if (isAdmin)
@@ -60,7 +60,7 @@ else
                 {
                     @if (!string.IsNullOrWhiteSpace(news.TelegramError))
                     {
-                        <JoinAlert Variation="VariationStyleEnum.Warning">Не удалось отправить в Telegram: @news.TelegramError</JoinAlert>
+                        <JoinAlert Variation="VariationStyleEnum.Danger">Не удалось отправить в Telegram: @news.TelegramError</JoinAlert>
                     }
                     <JoinButton Preset="ButtonPreset.Publish" Label="Отправить в Telegram повторно" OnClick="args => Retry(news.Id, args)" />
                 }
