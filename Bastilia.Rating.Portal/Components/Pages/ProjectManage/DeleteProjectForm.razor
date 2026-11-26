@@ -8,7 +8,7 @@
         <EditForm FormName="DeleteProjectForm" Model="Model" OnValidSubmit="Delete">
             @if (error is not null)
             {
-                <Alert>@error</Alert>
+                <JoinAlert Variation="VariationStyleEnum.Warning">@error</JoinAlert>
             }
             <div>
                 <JoinButton Submit Label="Удалить проект" Style="VariationStyleEnum.Danger" />
